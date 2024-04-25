@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 
 @Getter
@@ -34,12 +35,12 @@ public class Task {
     @Column(name = "taskStatus",nullable = false)
     private Status status;
 
-    @JsonFormat(pattern =  "dd-MM-yyyy'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @Column(name = "createdOn",nullable = false)
-    private Timestamp createdOn;
+    private ZonedDateTime createdOn;
 
-    @JsonFormat(pattern =  "dd-MM-yyyy'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @Column(name = "updatedOn",nullable = false)
-    private Timestamp updatedOn;
+    private ZonedDateTime updatedOn;
 
 }

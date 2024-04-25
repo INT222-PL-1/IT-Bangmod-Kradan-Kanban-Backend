@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sit.int221.itbkkbackend.entities.Status;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Setter
 @Getter
@@ -36,8 +38,8 @@ public class TaskDTO {
     @NotNull
     private Status status;
     @NotNull
-    private Timestamp createdOn;
+    private ZonedDateTime createdOn;
     @NotNull
-    private Timestamp updatedOn;
+    private ZonedDateTime updatedOn;
 
 }
