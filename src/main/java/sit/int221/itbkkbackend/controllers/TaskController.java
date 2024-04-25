@@ -8,12 +8,13 @@ import sit.int221.itbkkbackend.dtos.TaskDTO;
 import sit.int221.itbkkbackend.services.TaskService;
 
 import java.util.List;
-@CrossOrigin(origins = {
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://ip23pl1.sit.kmutt.ac.th:5173",
-        "http://ip23pl1.sit.kmutt.ac.th:3000",
-})
+//@CrossOrigin(origins = {
+//        "http://localhost:5173",
+//        "http://localhost:3000",
+//        "http://ip23pl1.sit.kmutt.ac.th:5173",
+//        "http://ip23pl1.sit.kmutt.ac.th:3000",
+//})
+@CrossOrigin
 @RestController
 @RequestMapping("/v1/tasks")
 public class TaskController {
