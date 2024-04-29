@@ -14,6 +14,11 @@ public class SimpleTaskDTO {
     @NotNull
     @Max(100)
     private String title;
+
+    public String getTitle() {
+        return title.trim();
+    }
+
     @NotEmpty
     @Max(30)
     private String assignees;

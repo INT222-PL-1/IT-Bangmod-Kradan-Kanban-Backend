@@ -23,6 +23,11 @@ public class TaskDTO {
     @NotNull
     @Max(100)
     private String title;
+
+    public String getTitle() {
+        return title.trim();
+    }
+
     @NotEmpty
     @Max(500)
     private String description;
