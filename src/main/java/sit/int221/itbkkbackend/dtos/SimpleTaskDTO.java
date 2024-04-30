@@ -23,7 +23,7 @@ public class SimpleTaskDTO {
     @Max(30)
     private String assignees;
     public String getAssignees() {
-        return assignees.trim();
+        return assignees == null ? assignees : assignees.trim();
     }
     @NotNull
     private Status status;

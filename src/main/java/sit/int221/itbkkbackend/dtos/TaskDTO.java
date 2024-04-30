@@ -32,13 +32,13 @@ public class TaskDTO {
     @Max(500)
     private String description;
     public String getDescription(){
-        return description.trim();
+        return description == null ? description : description.trim();
     }
     @NotEmpty
     @Max(30)
     private String assignees;
     public String getAssignees() {
-        return assignees.trim();
+        return assignees == null ? assignees : assignees.trim();
     }
     @NotNull
     private Status status;
