@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sit.int221.itbkkbackend.entities.Status;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Setter
 @Getter
@@ -21,23 +23,28 @@ public class TaskDTO {
     @NotNull
     @Max(100)
     private String title;
+
+    public String getTitle() {
+        return title.trim();
+    }
+
     @NotEmpty
     @Max(500)
     private String description;
     public String getDescription(){
-        return description.trim();
+        return description == null ? description : description.trim();
     }
     @NotEmpty
     @Max(30)
     private String assignees;
     public String getAssignees() {
-        return assignees.trim();
+        return assignees == null ? assignees : assignees.trim();
     }
     @NotNull
     private Status status;
     @NotNull
-    private Timestamp createdOn;
+    private ZonedDateTime createdOn;
     @NotNull
-    private Timestamp updatedOn;
+    private ZonedDateTime updatedOn;
 
 }

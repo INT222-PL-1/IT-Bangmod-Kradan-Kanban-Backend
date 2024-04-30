@@ -14,11 +14,16 @@ public class SimpleTaskDTO {
     @NotNull
     @Max(100)
     private String title;
+
+    public String getTitle() {
+        return title.trim();
+    }
+
     @NotEmpty
     @Max(30)
     private String assignees;
     public String getAssignees() {
-        return assignees.trim();
+        return assignees == null ? assignees : assignees.trim();
     }
     @NotNull
     private Status status;
