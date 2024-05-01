@@ -1,13 +1,17 @@
 package sit.int221.itbkkbackend.controllers;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.dtos.TaskDTO;
+import sit.int221.itbkkbackend.entities.Task;
 import sit.int221.itbkkbackend.services.TaskService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = {
         "http://localhost:5173",
@@ -24,12 +28,34 @@ public class TaskController {
     private TaskService service;
 
     @GetMapping("")
-    public List<SimpleTaskDTO> getAllTasks() {
-        return service.getAllTasks();
+    public List<SimpleTaskDTO> getAllTasks(){
+        return service.getAllSimpleTasksDTO();
     }
 
     @GetMapping("/{id}")
-    public TaskDTO getTaskById(@PathVariable Integer id) {
-        return service.getTaskById(id);
+    public TaskDTO getTask(@PathVariable Integer id){
+        return service.getTaskDTOById(id);
+    }
+
+
+    @PostMapping("")
+    public Task addTask(@Valid @RequestBody TaskDTO task){
+        return service.addTask(task);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public SimpleTaskDTO deleteTask(@PathVariable Integer id){
+        return service.deleteTaskById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Integer id ,@RequestBody Task task){
+        return service.updateTaskById(id,task);
+    }
+
+    @PatchMapping("/{id}")
+    public Task updatePartialTask(@PathVariable Integer id ,@RequestBody Map<String, Optional<Object>> task){
+        return service.updatePartialTaskById(id,task);
     }
 }

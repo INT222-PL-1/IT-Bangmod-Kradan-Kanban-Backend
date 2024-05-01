@@ -12,19 +12,16 @@ public class SimpleTaskDTO {
     @NotNull
     private Integer id;
     @NotNull
-    @Max(100)
+    @Size(min = 1,max = 100)
     private String title;
-
     public String getTitle() {
         return title.trim();
     }
 
-    @NotEmpty
-    @Max(30)
+    @Size(min = 1 , max = 30)
     private String assignees;
     public String getAssignees() {
         return assignees == null ? assignees : assignees.trim();
     }
-    @NotNull
     private Status status;
 }

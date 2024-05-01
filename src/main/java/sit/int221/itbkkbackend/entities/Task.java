@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
 public class Task {
     @Id
     @Column(name = "taskId",nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
     @Column(name = "taskTitle")
@@ -30,10 +32,12 @@ public class Task {
     private Status status;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonIgnore
     @Column(name = "createdOn",nullable = false)
     private ZonedDateTime createdOn;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonIgnore
     @Column(name = "updatedOn",nullable = false)
     private ZonedDateTime updatedOn;
 
