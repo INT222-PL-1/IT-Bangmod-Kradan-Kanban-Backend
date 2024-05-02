@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> XD (){
-        return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(ConstraintViolationException.class)
+//    public ResponseEntity<Object> XD (){
+//        return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//    }
 }
