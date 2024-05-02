@@ -24,21 +24,21 @@ public class Task {
     @Column(name = "taskDescription")
     private String description;
     
-    @Column(name = "taskAssignees",nullable = false)
+    @Column(name = "taskAssignees")
     private String assignees;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "taskStatus",nullable = false)
+    @Column(name = "taskStatus")
     private Status status;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonIgnore
-    @Column(name = "createdOn",nullable = false)
+    @Column(name = "createdOn", insertable = false ,updatable = false)
     private ZonedDateTime createdOn;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonIgnore
-    @Column(name = "updatedOn",nullable = false)
+    @Column(name = "updatedOn", insertable = false ,updatable = false)
     private ZonedDateTime updatedOn;
 
 }

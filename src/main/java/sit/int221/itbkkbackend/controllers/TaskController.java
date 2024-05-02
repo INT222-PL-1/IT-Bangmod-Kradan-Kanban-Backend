@@ -41,7 +41,6 @@ public class TaskController {
     @PostMapping("")
     public Task addTask(@Valid @RequestBody TaskDTO task){
         return service.addTask(task);
-
     }
 
     @DeleteMapping("/{id}")
