@@ -12,6 +12,7 @@ import sit.int221.itbkkbackend.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.dtos.TaskDTO;
 import sit.int221.itbkkbackend.entities.Status;
 import sit.int221.itbkkbackend.entities.Task;
+import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.repositories.TaskRepository;
 
 import java.lang.reflect.Field;
@@ -29,8 +30,8 @@ public class TaskService {
     ValidatingService validatingService;
 
     private Task findById(Integer id){
-        return repository.findById(id).orElseThrow(()-> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,String.format("Task id %d does not exist !!!",id)
+        return repository.findById(id).orElseThrow(()-> new ItemNotFoundException(
+                HttpStatus.NOT_FOUND,id
         ));
     }
     public List<SimpleTaskDTO> getAllSimpleTasksDTO(){
@@ -59,7 +60,11 @@ public class TaskService {
         findById(id);
         task.setId(id);
         TaskDTO validatedUpdateTask =  mapper.map(task,TaskDTO.class);
-        validatingService.validateTaskDTO(validatedUpdateTask);
+        try {
+            validatingService.validateTaskDTO(validatedUpdateTask);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         return repository.save(mapper.map(validatedUpdateTask,Task.class));
     }
 
@@ -85,7 +90,11 @@ public class TaskService {
 
         }
         TaskDTO validatedUpdateTask =  mapper.map(updateTask,TaskDTO.class);
-        validatingService.validateTaskDTO(validatedUpdateTask);
+        try {
+            validatingService.validateTaskDTO(validatedUpdateTask);
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         return repository.save(updateTask);
 
     }

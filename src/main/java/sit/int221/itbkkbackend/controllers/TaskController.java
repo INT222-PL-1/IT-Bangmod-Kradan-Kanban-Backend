@@ -3,6 +3,7 @@ package sit.int221.itbkkbackend.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.dtos.TaskDTO;
@@ -38,6 +39,7 @@ public class TaskController {
     }
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public Task addTask(@Valid @RequestBody TaskDTO task){
         return service.addTask(task);
