@@ -4,17 +4,14 @@ on:
   push:
     branches:
     - 'main'
+    - 'develop/**'
   
-jobs:     
+jobs:
   Docker-Image-Build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Create .env file
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-          cat .env
+        uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -45,4 +42,4 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           docker pull wanassanan/itb-kk-backend:latest
-          docker compose -f ./INT221/project/docker-compose.yml up -d --no-deps --build backfend
+          docker compose -f ./INT221/project/docker-compose.yml up -d --no-deps --build backend
