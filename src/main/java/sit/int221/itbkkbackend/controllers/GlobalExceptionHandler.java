@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DeleteItemNotFoundException.class)
     public ResponseEntity<DeleteErrorResponse> handleDeleteItemNotFoundException(Exception e, HttpServletRequest request){
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        errorDetails.setProperty("asfsasafsafa",request.getRequestURI());
         DeleteErrorResponse error = new DeleteErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
