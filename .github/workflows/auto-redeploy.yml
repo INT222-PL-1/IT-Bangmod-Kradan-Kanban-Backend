@@ -29,7 +29,21 @@ jobs:
           push: true
           tags: wanassanan/itb-kk-backend:latest
 
-  SSH-Remote-Deploy:
+  Database:
+    permissions: 
+      contents: write
+    runs-on: ubuntu-latest
+    if: ${{github.event.head_commit.message === "Deploy BE & DB"}} 
+    steps: 
+        - uses: actions/checkout@v4
+        - run: npx --yes prettier --write .
+        - uses: actions4git/add-commit-push@v1
+        - uses: actions/checkout@v4
+        - uses: actions4git/setup-git@v1
+        - run: git push origin other-branch:main --force
+    
+
+  SSH-Remote-Deploy-backend:
     needs: Docker-Image-Build
     runs-on: ubuntu-latest
     steps:
