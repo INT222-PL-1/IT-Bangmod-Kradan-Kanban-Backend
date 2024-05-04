@@ -12,6 +12,7 @@ import sit.int221.itbkkbackend.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.dtos.TaskDTO;
 import sit.int221.itbkkbackend.entities.Status;
 import sit.int221.itbkkbackend.entities.Task;
+import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.repositories.TaskRepository;
 
@@ -50,7 +51,10 @@ public class TaskService {
 
     @Transactional
     public SimpleTaskDTO deleteTaskById(Integer id){
-        Task foundedTask = findById(id);
+//        Task foundedTask = findById(id);
+        Task foundedTask = repository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
+                HttpStatus.NOT_FOUND
+        ));
         repository.delete(findById(id));
         return mapper.map(foundedTask,SimpleTaskDTO.class);
     }
@@ -87,7 +91,6 @@ public class TaskService {
             catch(Exception exception){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
-
         }
         TaskDTO validatedUpdateTask =  mapper.map(updateTask,TaskDTO.class);
         try {
