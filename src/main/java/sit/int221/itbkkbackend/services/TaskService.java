@@ -51,7 +51,6 @@ public class TaskService {
 
     @Transactional
     public SimpleTaskDTO deleteTaskById(Integer id){
-//        Task foundedTask = findById(id);
         Task foundedTask = repository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
                 HttpStatus.NOT_FOUND
         ));
