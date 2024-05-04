@@ -1,9 +1,7 @@
 package sit.int221.itbkkbackend.dtos;
 
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,30 +19,28 @@ import java.time.ZonedDateTime;
 public class TaskDTO {
     private Integer id;
     @NotNull
-    @Max(100)
+    @NotEmpty
+    @NotBlank
+    @Size(min = 1,max = 100 )
     private String title;
-
-    public String getTitle() {
+    public String getTitle(){
         return title.trim();
     }
-
-    @NotEmpty
-    @Max(500)
+    @Size(min = 1,max = 500 )
     private String description;
     public String getDescription(){
-        return description == null ? description : description.trim();
+        return description == null || description.isBlank() ? null : description.trim();
     }
-    @NotEmpty
-    @Max(30)
+    @Size(min = 1 , max = 30)
     private String assignees;
     public String getAssignees() {
-        return assignees == null ? assignees : assignees.trim();
+        return assignees == null ||  assignees.isBlank() ? null : assignees.trim();
     }
-    @NotNull
     private Status status;
-    @NotNull
+    public Status getStatus(){
+        return  status == null  ? Status.NO_STATUS : status;
+    }
     private ZonedDateTime createdOn;
-    @NotNull
     private ZonedDateTime updatedOn;
 
 }
