@@ -44,7 +44,7 @@ jobs:
             password: ${{ secrets.SSH_PASSWORD }}
             script: |
               docker pull wanassanan/itb-kk-backend:latest
-              docker compose -f ./INT221/project/docker-compose.yml up -d --no-deps --build backend
+              docker compose -f ./INT221/project/docker-compose.yml up -d --no-deps --build database
 
 
   SSH-Remote-Deploy-backend:
