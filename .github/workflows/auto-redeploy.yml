@@ -31,7 +31,7 @@ jobs:
 
   Database:
     runs-on: ubuntu-latest
-    if: ${{needs.rules.github.event.head_commit.message = 'Deploy DB'}} 
+    if: ${{contains(github.event.head_commit.message, 'Deploy DB')}} 
     steps: 
         - name: executing remote ssh commands using password
           uses: appleboy/ssh-action@master
