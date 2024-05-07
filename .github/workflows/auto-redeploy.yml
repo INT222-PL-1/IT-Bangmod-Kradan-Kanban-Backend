@@ -29,7 +29,8 @@ jobs:
           push: true
           tags: wanassanan/itb-kk-backend:latest
 
-  SSH-Remote-Deploy:
+
+  SSH-Remote-Deploy-backend:
     needs: Docker-Image-Build
     runs-on: ubuntu-latest
     steps:

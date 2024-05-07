@@ -46,12 +46,13 @@ public class TaskService {
     @Transactional
     public Task addTask(TaskDTO task){
         task.setId(null);
-        return repository.save(mapper.map(task,Task.class));
+        Task validateTask = mapper.map(task,Task.class);
+        validatingService.validateTaskDTO(mapper.map(validateTask,TaskDTO.class));
+        return repository.save(validateTask);
     }
 
     @Transactional
     public SimpleTaskDTO deleteTaskById(Integer id){
-//        Task foundedTask = findById(id);
         Task foundedTask = repository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
                 HttpStatus.NOT_FOUND
         ));

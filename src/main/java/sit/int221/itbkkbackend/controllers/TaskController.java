@@ -42,7 +42,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public Task addTask(@Valid @RequestBody TaskDTO task){
+    public Task addTask(@RequestBody TaskDTO task){
         return service.addTask(task);
     }
 
