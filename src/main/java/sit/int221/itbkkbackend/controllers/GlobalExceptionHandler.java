@@ -25,7 +25,6 @@ public class GlobalExceptionHandler {
                 errorDetails.getStatus(),
                 "NOT FOUND",
                 request.getRequestURI()
-//                errorDetails.getInstance()
                 );
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }

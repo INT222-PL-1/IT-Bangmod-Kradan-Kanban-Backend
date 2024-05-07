@@ -46,7 +46,9 @@ public class TaskService {
     @Transactional
     public Task addTask(TaskDTO task){
         task.setId(null);
-        return repository.save(mapper.map(task,Task.class));
+        Task validateTask = mapper.map(task,Task.class);
+        validatingService.validateTaskDTO(mapper.map(validateTask,TaskDTO.class));
+        return repository.save(validateTask);
     }
 
     @Transactional
