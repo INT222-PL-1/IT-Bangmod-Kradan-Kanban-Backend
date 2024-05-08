@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v2.dtos.TaskDetailsDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.services.TaskServiceV2;
 
@@ -28,7 +29,7 @@ public class TaskControllerV2 {
     }
 
     @GetMapping("/{id}")
-    public TaskV2 getTask(@PathVariable Integer id){
+    public TaskDetailsDTO getTask(@PathVariable Integer id){
         return service.getTaskById(id);
     }
 

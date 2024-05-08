@@ -13,6 +13,7 @@ import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v2.dtos.TaskDetailsDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
@@ -42,8 +43,8 @@ public class TaskServiceV2 {
         return listMapper.mapList(taskRepository.findAll(Sort.by("createdOn").ascending()), SimpleTaskDTO.class,mapper);
     }
 
-    public TaskV2 getTaskById(Integer id){
-        return mapper.map(findById(id), TaskV2.class) ;
+    public TaskDetailsDTO getTaskById(Integer id){
+        return mapper.map(findById(id), TaskDetailsDTO.class) ;
     }
 
     @Transactional
