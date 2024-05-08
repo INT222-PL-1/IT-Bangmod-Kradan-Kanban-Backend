@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.itbkkbackend.v2.entities.Task;
+import sit.int221.itbkkbackend.v2.entities.TaskV2;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class StatusDTO {
     private String description;
     private String color;
     @JsonIgnore
-    private List<Task> tasks;
+    private List<TaskV2> tasks;
 
     private Integer count;
 

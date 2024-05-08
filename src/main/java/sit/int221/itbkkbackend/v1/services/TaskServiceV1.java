@@ -11,28 +11,28 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v1.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v1.dtos.TaskDTO;
-import sit.int221.itbkkbackend.v1.entities.Status;
-import sit.int221.itbkkbackend.v1.entities.Task;
+import sit.int221.itbkkbackend.v1.entities.StatusV1;
+import sit.int221.itbkkbackend.v1.entities.TaskV1;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
-import sit.int221.itbkkbackend.v1.repositories.TaskRepository;
+import sit.int221.itbkkbackend.v1.repositories.TaskRepositoryV1;
 
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
-public class TaskService {
+public class TaskServiceV1 {
     @Autowired
-    private TaskRepository repository;
+    private TaskRepositoryV1 repository;
     @Autowired
     private ModelMapper mapper;
     @Autowired
     private ListMapper listMapper;
     @Autowired
-    ValidatingService validatingService;
+    ValidatingServiceV1 validatingService;
 
-    private Task findById(Integer id){
+    private TaskV1 findById(Integer id){
         return repository.findById(id).orElseThrow(()-> new ItemNotFoundException(
                 HttpStatus.NOT_FOUND,id
         ));
@@ -46,9 +46,9 @@ public class TaskService {
     }
 
     @Transactional
-    public Task addTask(TaskDTO task){
+    public TaskV1 addTask(TaskDTO task){
         task.setId(null);
-        Task validateTask = mapper.map(task,Task.class);
+        TaskV1 validateTask = mapper.map(task, TaskV1.class);
         try {
             validatingService.validateTaskDTO(mapper.map(validateTask,TaskDTO.class));
         }catch (Exception e){
@@ -59,7 +59,7 @@ public class TaskService {
 
     @Transactional
     public SimpleTaskDTO deleteTaskById(Integer id){
-        Task foundedTask = repository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
+        TaskV1 foundedTask = repository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
                 HttpStatus.NOT_FOUND
         ));
         repository.delete(findById(id));
@@ -67,7 +67,7 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTaskById(Integer id, Task task){
+    public TaskV1 updateTaskById(Integer id, TaskV1 task){
         findById(id);
         task.setId(id);
         TaskDTO validatedUpdateTask =  mapper.map(task,TaskDTO.class);
@@ -76,21 +76,21 @@ public class TaskService {
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return repository.save(mapper.map(validatedUpdateTask,Task.class));
+        return repository.save(mapper.map(validatedUpdateTask, TaskV1.class));
     }
 
     @Transactional
-    public Task updatePartialTaskById(Integer id, Map<String, Optional<Object>> task){
-        Task updateTask = findById(id);
+    public TaskV1 updatePartialTaskById(Integer id, Map<String, Optional<Object>> task){
+        TaskV1 updateTask = findById(id);
         List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("title","description", "assignees",  "status")).stream().filter(task::containsKey).toList();
         for (String attribute : validUpdateInfo){
             Object value = task.get(attribute).isPresent() ?  task.get(attribute).get() : null;
             if (attribute.equals("status")){
                 assert value != null;
-                value = Status.valueOf(value.toString());
+                value = StatusV1.valueOf(value.toString());
             }
             try {
-                Field updateInfo = Task.class.getDeclaredField(attribute);
+                Field updateInfo = TaskV1.class.getDeclaredField(attribute);
                 updateInfo.setAccessible(true);
                 updateInfo.set(updateTask, value);
                 updateInfo.setAccessible(false);

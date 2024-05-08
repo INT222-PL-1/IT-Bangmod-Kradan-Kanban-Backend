@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import sit.int221.itbkkbackend.v2.entities.Status;
+import sit.int221.itbkkbackend.v2.entities.StatusV2;
 
 @Setter
 @Getter
@@ -36,7 +36,7 @@ public class TaskDTO {
     }
 
     @JsonIgnore
-    private Status status;
+    private StatusV2 status;
 
     @NotNull
     private Integer statusId;

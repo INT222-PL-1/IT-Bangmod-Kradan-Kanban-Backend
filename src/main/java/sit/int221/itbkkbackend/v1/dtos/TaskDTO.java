@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.v1.entities.Status;
+import sit.int221.itbkkbackend.v1.entities.StatusV1;
 
 import java.time.ZonedDateTime;
 
@@ -34,9 +34,9 @@ public class TaskDTO {
     public String getAssignees() {
         return assignees == null ||  assignees.isBlank() ? null : assignees.trim();
     }
-    private Status status;
-    public Status getStatus(){
-        return  status == null  ? Status.NO_STATUS : status;
+    private StatusV1 status;
+    public StatusV1 getStatus(){
+        return  status == null  ? StatusV1.NO_STATUS : status;
     }
     private ZonedDateTime createdOn;
     private ZonedDateTime updatedOn;

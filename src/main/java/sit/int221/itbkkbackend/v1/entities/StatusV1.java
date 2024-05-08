@@ -1,6 +1,6 @@
 package sit.int221.itbkkbackend.v1.entities;
 
-public enum Status {
+public enum StatusV1 {
     NO_STATUS,
     DOING,
     DONE,

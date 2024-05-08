@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v1.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v1.dtos.TaskDTO;
-import sit.int221.itbkkbackend.v1.entities.Task;
-import sit.int221.itbkkbackend.v1.services.TaskService;
+import sit.int221.itbkkbackend.v1.entities.TaskV1;
+import sit.int221.itbkkbackend.v1.services.TaskServiceV1;
 
 import java.util.List;
 import java.util.Map;
@@ -24,9 +24,9 @@ import java.util.Optional;
 })
 @RestController
 @RequestMapping("/v1/tasks")
-public class TaskController {
+public class TaskControllerV1 {
     @Autowired
-    private TaskService service;
+    private TaskServiceV1 service;
 
     @GetMapping("")
     public List<SimpleTaskDTO> getAllTasks(){
@@ -41,7 +41,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public Task addTask(@RequestBody TaskDTO task){
+    public TaskV1 addTask(@RequestBody TaskDTO task){
         return service.addTask(task);
     }
 
@@ -51,12 +51,12 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Integer id ,@RequestBody Task task){
+    public TaskV1 updateTask(@PathVariable Integer id , @RequestBody TaskV1 task){
         return service.updateTaskById(id,task);
     }
 
     @PatchMapping("/{id}")
-    public Task updatePartialTask(@PathVariable Integer id ,@RequestBody Map<String, Optional<Object>> task){
+    public TaskV1 updatePartialTask(@PathVariable Integer id , @RequestBody Map<String, Optional<Object>> task){
         return service.updatePartialTaskById(id,task);
     }
 }

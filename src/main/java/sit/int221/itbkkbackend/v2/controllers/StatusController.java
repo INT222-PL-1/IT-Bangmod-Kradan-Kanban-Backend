@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
-import sit.int221.itbkkbackend.v2.entities.Status;
+import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.services.StatusService;
 
 @CrossOrigin
@@ -24,22 +24,22 @@ public class StatusController {
     }
 
     @PostMapping("")
-    public Status addStatus(@Valid @RequestBody StatusDTO status){
+    public StatusV2 addStatus(@Valid @RequestBody StatusDTO status){
         return service.addStatus(status);
     }
 
     @PutMapping("/{id}")
-    public Status updateStatus(@PathVariable Integer id ,@Valid @RequestBody StatusDTO status){
+    public StatusV2 updateStatus(@PathVariable Integer id , @Valid @RequestBody StatusDTO status){
         return service.editStatus(id,status);
     }
 
     @DeleteMapping("/{id}")
-    public Status deleteStatus(@PathVariable Integer id){
+    public StatusV2 deleteStatus(@PathVariable Integer id){
         return service.deleteStatus(id);
     }
 
     @DeleteMapping("/{oldId}/{newId}")
-    public Status transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
+    public StatusV2 transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
         return service.transferAndDeleteStatus(oldId,newId);
     }
 }

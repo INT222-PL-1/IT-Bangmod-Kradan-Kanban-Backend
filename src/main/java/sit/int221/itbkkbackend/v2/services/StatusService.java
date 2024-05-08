@@ -11,9 +11,9 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
-import sit.int221.itbkkbackend.v2.entities.Status;
+import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepository;
-import sit.int221.itbkkbackend.v2.repositories.TaskRepository;
+import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
 import java.util.List;
 
@@ -23,17 +23,17 @@ public class StatusService {
     @Autowired
     private StatusRepository statusRepository;
     @Autowired
-    private TaskRepository taskRepository;
+    private TaskRepositoryV2 taskRepository;
     @Autowired
     private ListMapper listMapper;
     @Autowired
     private ModelMapper mapper;
 
-    public Status findByName(String name) {
+    public StatusV2 findByName(String name) {
         return statusRepository.findByName(name);
     }
 
-    public Status findById(Integer id){
+    public StatusV2 findById(Integer id){
         return statusRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     }
@@ -43,10 +43,10 @@ public class StatusService {
     }
 
     @Transactional
-    public Status addStatus(StatusDTO status){
+    public StatusV2 addStatus(StatusDTO status){
         status.setId(null);
         try {
-            return statusRepository.save(mapper.map(status,Status.class));
+            return statusRepository.save(mapper.map(status, StatusV2.class));
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -54,32 +54,32 @@ public class StatusService {
     }
 
     @Transactional
-    public Status editStatus(Integer id, StatusDTO status){
-        Status foundedStatus = findById(id);
+    public StatusV2 editStatus(Integer id, StatusDTO status){
+        StatusV2 foundedStatus = findById(id);
         status.setId(id);
         try {
-            return statusRepository.save(mapper.map(status,Status.class));
+            return statusRepository.save(mapper.map(status, StatusV2.class));
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    public void transferTasksStatus(Status oldStatus,Status newStatus){
+    public void transferTasksStatus(StatusV2 oldStatus, StatusV2 newStatus){
         taskRepository.updateAllStatusByStatus(oldStatus,newStatus);
     }
 
     @Transactional
-    public Status deleteStatus(Integer id){
-        Status oldStatus = statusRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND));
+    public StatusV2 deleteStatus(Integer id){
+        StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND));
         statusRepository.delete(oldStatus);
         return oldStatus;
     }
 
     @Transactional
-    public Status transferAndDeleteStatus(Integer oldId,Integer newId){
-        Status oldStatus = findById(oldId);
-        Status newStatus = findById(newId);
+    public StatusV2 transferAndDeleteStatus(Integer oldId, Integer newId){
+        StatusV2 oldStatus = findById(oldId);
+        StatusV2 newStatus = findById(newId);
         transferTasksStatus(oldStatus,newStatus);
         statusRepository.delete(oldStatus);
         return oldStatus;

@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
-import sit.int221.itbkkbackend.v2.entities.Task;
-import sit.int221.itbkkbackend.v2.services.TaskService;
+import sit.int221.itbkkbackend.v2.entities.TaskV2;
+import sit.int221.itbkkbackend.v2.services.TaskServiceV2;
 
 import java.util.List;
 
@@ -18,9 +18,9 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/v2/tasks")
-public class TaskController {
+public class TaskControllerV2 {
     @Autowired
-    private TaskService service;
+    private TaskServiceV2 service;
 
     @GetMapping("")
     public List<SimpleTaskDTO> getAllTasks(){
@@ -28,7 +28,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTask(@PathVariable Integer id){
+    public TaskV2 getTask(@PathVariable Integer id){
         return service.getTaskById(id);
     }
 

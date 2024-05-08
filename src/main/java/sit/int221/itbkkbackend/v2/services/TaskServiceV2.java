@@ -13,17 +13,17 @@ import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
-import sit.int221.itbkkbackend.v2.entities.Status;
-import sit.int221.itbkkbackend.v2.entities.Task;
-import sit.int221.itbkkbackend.v2.repositories.TaskRepository;
+import sit.int221.itbkkbackend.v2.entities.StatusV2;
+import sit.int221.itbkkbackend.v2.entities.TaskV2;
+import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
 import java.util.List;
 
 @Slf4j
 @Service
-public class TaskService {
+public class TaskServiceV2 {
     @Autowired
-    private TaskRepository taskRepository;
+    private TaskRepositoryV2 taskRepository;
     @Autowired
     private StatusService statusService;
     @Autowired
@@ -31,9 +31,9 @@ public class TaskService {
     @Autowired
     private ListMapper listMapper;
     @Autowired
-    ValidatingService validatingService;
+    ValidatingServiceV2 validatingService;
 
-    private Task findById(Integer id){
+    private TaskV2 findById(Integer id){
         return taskRepository.findById(id).orElseThrow(()-> new ItemNotFoundException(
                 HttpStatus.NOT_FOUND,id
         ));
@@ -42,8 +42,8 @@ public class TaskService {
         return listMapper.mapList(taskRepository.findAll(Sort.by("createdOn").ascending()), SimpleTaskDTO.class,mapper);
     }
 
-    public Task getTaskById(Integer id){
-        return mapper.map(findById(id),Task.class) ;
+    public TaskV2 getTaskById(Integer id){
+        return mapper.map(findById(id), TaskV2.class) ;
     }
 
     @Transactional
@@ -53,8 +53,8 @@ public class TaskService {
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        Task validatedTask = mapper.map(task,Task.class);
-        Status taskStatus = statusService.findById(task.getStatusId());
+        TaskV2 validatedTask = mapper.map(task, TaskV2.class);
+        StatusV2 taskStatus = statusService.findById(task.getStatusId());
         validatedTask.setStatus(taskStatus);
         validatedTask.setId(null);
 
@@ -64,7 +64,7 @@ public class TaskService {
 
     @Transactional
     public SimpleTaskDTO deleteTaskById(Integer id){
-        Task foundedTask = taskRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
+        TaskV2 foundedTask = taskRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(
                 HttpStatus.NOT_FOUND
         ));
         taskRepository.delete(findById(id));
@@ -80,8 +80,8 @@ public class TaskService {
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        Task validatedUpdateTask = mapper.map(task,Task.class);
-        Status taskStatus = statusService.findById(task.getStatusId());
+        TaskV2 validatedUpdateTask = mapper.map(task, TaskV2.class);
+        StatusV2 taskStatus = statusService.findById(task.getStatusId());
         validatedUpdateTask.setStatus(taskStatus);
         return mapper.map(taskRepository.save(validatedUpdateTask),TaskDTO.class);
 

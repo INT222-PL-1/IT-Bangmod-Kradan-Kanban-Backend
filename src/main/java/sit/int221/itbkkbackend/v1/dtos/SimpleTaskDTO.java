@@ -2,7 +2,7 @@ package sit.int221.itbkkbackend.v1.dtos;
 
 import lombok.*;
 import jakarta.validation.constraints.*;
-import sit.int221.itbkkbackend.v1.entities.Status;
+import sit.int221.itbkkbackend.v1.entities.StatusV1;
 
 @Getter
 @Setter
@@ -23,5 +23,5 @@ public class SimpleTaskDTO {
     public String getAssignees() {
         return assignees == null ? assignees : assignees.trim();
     }
-    private Status status;
+    private StatusV1 status;
 }

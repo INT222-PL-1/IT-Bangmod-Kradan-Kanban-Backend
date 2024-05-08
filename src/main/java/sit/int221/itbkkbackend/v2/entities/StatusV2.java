@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @ToString
 @Table(name = "status", schema = "kanban")
-public class Status {
+public class StatusV2 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "statusId")
@@ -30,5 +30,5 @@ public class Status {
 
     @JsonIgnore
     @OneToMany(mappedBy = "status")
-    private List<Task> tasks;
+    private List<TaskV2> tasks;
 }

@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.v2.entities.Status;
+import sit.int221.itbkkbackend.v2.entities.StatusV2;
 
 @Getter
 @Setter
@@ -30,7 +30,7 @@ public class SimpleTaskDTO {
         this.assignees = assignees == null ? assignees : assignees.trim();
     }
     @JsonIgnore
-    private Status status;
+    private StatusV2 status;
 
     private Integer statusId;
 
