@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.services;
+package sit.int221.itbkkbackend.v1.services;
 
 
 import jakarta.transaction.Transactional;
@@ -8,13 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.dtos.SimpleTaskDTO;
-import sit.int221.itbkkbackend.dtos.TaskDTO;
-import sit.int221.itbkkbackend.entities.Status;
-import sit.int221.itbkkbackend.entities.Task;
+import sit.int221.itbkkbackend.utils.ListMapper;
+import sit.int221.itbkkbackend.v1.dtos.SimpleTaskDTO;
+import sit.int221.itbkkbackend.v1.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v1.entities.Status;
+import sit.int221.itbkkbackend.v1.entities.Task;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
-import sit.int221.itbkkbackend.repositories.TaskRepository;
+import sit.int221.itbkkbackend.v1.repositories.TaskRepository;
+
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -47,7 +49,11 @@ public class TaskService {
     public Task addTask(TaskDTO task){
         task.setId(null);
         Task validateTask = mapper.map(task,Task.class);
-        validatingService.validateTaskDTO(mapper.map(validateTask,TaskDTO.class));
+        try {
+            validatingService.validateTaskDTO(mapper.map(validateTask,TaskDTO.class));
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         return repository.save(validateTask);
     }
 

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @AllArgsConstructor
-public class DeleteErrorResponse {
+public class ErrorResponse {
     private Timestamp timestamp;
     private Integer status;
     private String message;

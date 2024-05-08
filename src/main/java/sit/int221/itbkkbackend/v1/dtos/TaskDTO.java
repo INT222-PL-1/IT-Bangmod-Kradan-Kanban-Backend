@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.dtos;
+package sit.int221.itbkkbackend.v1.dtos;
 
 
 import jakarta.validation.constraints.*;
@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.entities.Status;
+import sit.int221.itbkkbackend.v1.entities.Status;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
 @Setter

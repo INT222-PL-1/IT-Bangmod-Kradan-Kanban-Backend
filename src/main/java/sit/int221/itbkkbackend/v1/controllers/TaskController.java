@@ -1,14 +1,13 @@
-package sit.int221.itbkkbackend.controllers;
+package sit.int221.itbkkbackend.v1.controllers;
 
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.itbkkbackend.dtos.SimpleTaskDTO;
-import sit.int221.itbkkbackend.dtos.TaskDTO;
-import sit.int221.itbkkbackend.entities.Task;
-import sit.int221.itbkkbackend.services.TaskService;
+import sit.int221.itbkkbackend.v1.dtos.SimpleTaskDTO;
+import sit.int221.itbkkbackend.v1.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v1.entities.Task;
+import sit.int221.itbkkbackend.v1.services.TaskService;
 
 import java.util.List;
 import java.util.Map;

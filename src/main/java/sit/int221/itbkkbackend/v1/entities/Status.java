@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.entities;
+package sit.int221.itbkkbackend.v1.entities;
 
 public enum Status {
     NO_STATUS,
