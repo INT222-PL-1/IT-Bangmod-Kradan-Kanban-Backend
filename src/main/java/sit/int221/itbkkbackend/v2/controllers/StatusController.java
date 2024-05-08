@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
-import sit.int221.itbkkbackend.v2.services.StatusService;
+import sit.int221.itbkkbackend.v2.services.StatusServiceV1;
 
 @CrossOrigin
 @RestController
@@ -16,7 +16,7 @@ import sit.int221.itbkkbackend.v2.services.StatusService;
 public class StatusController {
 
     @Autowired
-    private StatusService service;
+    private StatusServiceV1 service;
 
     @GetMapping("")
     public ResponseEntity<Object> getAllStatus(@RequestParam(defaultValue = "false") Boolean count){

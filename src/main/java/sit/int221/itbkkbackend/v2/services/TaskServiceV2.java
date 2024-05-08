@@ -25,7 +25,7 @@ public class TaskServiceV2 {
     @Autowired
     private TaskRepositoryV2 taskRepository;
     @Autowired
-    private StatusService statusService;
+    private StatusServiceV1 statusService;
     @Autowired
     private ModelMapper mapper;
     @Autowired

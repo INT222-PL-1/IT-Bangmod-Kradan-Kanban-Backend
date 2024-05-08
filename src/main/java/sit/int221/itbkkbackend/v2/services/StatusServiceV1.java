@@ -12,16 +12,16 @@ import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
-import sit.int221.itbkkbackend.v2.repositories.StatusRepository;
+import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV1;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
 import java.util.List;
 
 @Slf4j
 @Service
-public class StatusService {
+public class StatusServiceV1 {
     @Autowired
-    private StatusRepository statusRepository;
+    private StatusRepositoryV1 statusRepository;
     @Autowired
     private TaskRepositoryV2 taskRepository;
     @Autowired
@@ -56,6 +56,7 @@ public class StatusService {
     @Transactional
     public StatusV2 editStatus(Integer id, StatusDTO status){
         StatusV2 foundedStatus = findById(id);
+
         status.setId(id);
         try {
             return statusRepository.save(mapper.map(status, StatusV2.class));

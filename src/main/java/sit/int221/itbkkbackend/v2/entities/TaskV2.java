@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 @Setter
 @Entity
 @ToString
-@Table(name = "tasksV2", schema = "kanban")
+@Table(name = "tasksV2", schema = "itb-kk")
 public class TaskV2 {
     @Id
     @Column(name = "taskId",nullable = false)
