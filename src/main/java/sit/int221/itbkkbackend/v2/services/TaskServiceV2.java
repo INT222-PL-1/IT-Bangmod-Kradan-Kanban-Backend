@@ -43,8 +43,8 @@ public class TaskServiceV2 {
         return listMapper.mapList(taskRepository.findAll(Sort.by("createdOn").ascending()), SimpleTaskDTO.class,mapper);
     }
 
-    public TaskDetailsDTO getTaskById(Integer id){
-        return mapper.map(findById(id), TaskDetailsDTO.class) ;
+    public TaskV2 getTaskById(Integer id){
+        return findById(id) ;
     }
 
     @Transactional

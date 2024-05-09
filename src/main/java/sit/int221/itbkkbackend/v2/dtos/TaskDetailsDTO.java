@@ -41,10 +41,10 @@ public class TaskDetailsDTO {
 
     @NotNull
     private Integer statusId;
-
     public Integer getStatusId() {
         return status == null ? statusId :  status.getId();
     }
+
     public ZonedDateTime createdOn;
     public ZonedDateTime updatedOn;
 }

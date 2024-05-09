@@ -44,4 +44,6 @@ public class TaskDTO {
     public Integer getStatusId() {
         return status == null ? statusId :  status.getId();
     }
+
+
 }
