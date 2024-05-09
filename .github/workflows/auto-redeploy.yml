@@ -28,6 +28,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: wanassanan/itb-kk-backend:latest
+          cache-from: type=inline
+          cache-to: type=inline
 
 
   SSH-Remote-Deploy-backend:
