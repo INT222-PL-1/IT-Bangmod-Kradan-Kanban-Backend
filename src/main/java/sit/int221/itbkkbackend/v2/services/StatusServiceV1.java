@@ -38,11 +38,11 @@ public class StatusServiceV1 {
 
     }
 
-    public List<?> findAllStatus(Boolean count){
+    public List<?> getAllStatus(Boolean count){
         return count ?  listMapper.mapList( statusRepository.findAll(), StatusDTO.class,mapper) : statusRepository.findAll();
     }
 
-    public Object findStatusById(Integer id , Boolean count){
+    public Object getStatusById(Integer id , Boolean count){
         return count ? mapper.map(findById(id),StatusDTO.class) : findById(id);
     }
 
@@ -58,7 +58,7 @@ public class StatusServiceV1 {
     }
 
     @Transactional
-    public StatusV2 editStatus(Integer id, StatusDTO status){
+    public StatusV2 updateStatusById(Integer id, StatusDTO status){
         StatusV2 foundedStatus = findById(id);
 
         status.setId(id);
@@ -75,7 +75,7 @@ public class StatusServiceV1 {
     }
 
     @Transactional
-    public StatusV2 deleteStatus(Integer id){
+    public StatusV2 deleteStatusById(Integer id){
         StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND));
         statusRepository.delete(oldStatus);
         return oldStatus;

@@ -5,11 +5,9 @@ package sit.int221.itbkkbackend.v2.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
-import sit.int221.itbkkbackend.v2.dtos.TaskDetailsDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.services.TaskServiceV2;
 
@@ -24,7 +22,8 @@ import java.util.List;
         "http://ip23pl1.sit.kmutt.ac.th:5173",
         "http://ip23pl1.sit.kmutt.ac.th:3000",
         "http://ip23pl1.sit.kmutt.ac.th:4173",
-        "http://ip23pl1.sit.kmutt.ac.th"
+        "http://ip23pl1.sit.kmutt.ac.th",
+        "http://intproj23.sit.kmutt.ac.th"
 })
 @RestController
 @RequestMapping("/v2/tasks")

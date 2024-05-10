@@ -20,7 +20,8 @@ import java.util.Optional;
         "http://ip23pl1.sit.kmutt.ac.th:5173",
         "http://ip23pl1.sit.kmutt.ac.th:3000",
         "http://ip23pl1.sit.kmutt.ac.th:4173",
-        "http://ip23pl1.sit.kmutt.ac.th"
+        "http://ip23pl1.sit.kmutt.ac.th",
+        "http://intproj23.sit.kmutt.ac.th"
 })
 @RestController
 @RequestMapping("/v1/tasks")
