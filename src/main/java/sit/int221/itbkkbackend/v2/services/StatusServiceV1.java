@@ -9,12 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
+import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV1;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Slf4j
@@ -52,20 +54,21 @@ public class StatusServiceV1 {
         try {
             return statusRepository.save(mapper.map(status, StatusV2.class));
         }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
         }
+
+
 
     }
 
     @Transactional
     public StatusV2 updateStatusById(Integer id, StatusDTO status){
         StatusV2 foundedStatus = findById(id);
-
         status.setId(id);
         try {
             return statusRepository.save(mapper.map(status, StatusV2.class));
         }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
         }
 
     }
