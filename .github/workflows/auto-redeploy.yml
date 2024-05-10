@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -21,6 +19,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -28,8 +27,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: wanassanan/itb-kk-backend:latest
-          cache-from: type=inline
-          cache-to: type=inline
+          # cache-from: type=inline
+          # cache-to: type=inline
 
 
   SSH-Remote-Deploy-backend:
