@@ -3,6 +3,7 @@ package sit.int221.itbkkbackend.v2.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,11 @@ public class StatusController {
     @GetMapping("")
     public ResponseEntity<Object> getAllStatus(@RequestParam(defaultValue = "false") Boolean count){
         return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.findAllStatus(count)) ;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getStatus(@PathVariable Integer id ,@RequestParam(defaultValue = "false") Boolean count){
+        return ResponseEntity.status(HttpStatus.OK).body(service.findStatusById(id,count));
     }
 
     @PostMapping("")

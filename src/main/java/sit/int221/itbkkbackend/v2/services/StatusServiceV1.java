@@ -42,6 +42,10 @@ public class StatusServiceV1 {
         return count ?  listMapper.mapList( statusRepository.findAll(), StatusDTO.class,mapper) : statusRepository.findAll();
     }
 
+    public Object findStatusById(Integer id , Boolean count){
+        return count ? mapper.map(findById(id),StatusDTO.class) : findById(id);
+    }
+
     @Transactional
     public StatusV2 addStatus(StatusDTO status){
         status.setId(null);
