@@ -18,6 +18,7 @@ import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -51,25 +52,25 @@ public class StatusServiceV1 {
     @Transactional
     public StatusV2 addStatus(StatusDTO status){
         status.setId(null);
-        try {
-            return statusRepository.save(mapper.map(status, StatusV2.class));
-        }catch (Exception e){
+        if (findByName(status.getName()) != null){
             throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
         }
-
-
+        return statusRepository.save(mapper.map(status, StatusV2.class));
 
     }
 
     @Transactional
     public StatusV2 updateStatusById(Integer id, StatusDTO status){
         StatusV2 foundedStatus = findById(id);
-        status.setId(id);
-        try {
-            return statusRepository.save(mapper.map(status, StatusV2.class));
-        }catch (Exception e){
+        if (foundedStatus.getIs_fixed_status() == 1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
+        }
+        StatusV2 duplicateStatus = findByName(status.getName());
+        if (duplicateStatus != null && !Objects.equals(duplicateStatus.getId(), id)){
             throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
         }
+        status.setId(id);
+        return statusRepository.save(mapper.map(status, StatusV2.class));
 
     }
 
@@ -80,6 +81,9 @@ public class StatusServiceV1 {
     @Transactional
     public StatusV2 deleteStatusById(Integer id){
         StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND));
+        if (oldStatus.getIs_fixed_status() == 1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
+        }
         statusRepository.delete(oldStatus);
         return oldStatus;
     }
@@ -87,6 +91,9 @@ public class StatusServiceV1 {
     @Transactional
     public StatusV2 transferAndDeleteStatus(Integer oldId, Integer newId){
         StatusV2 oldStatus = findById(oldId);
+        if (oldStatus.getIs_fixed_status() == 1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
+        }
         StatusV2 newStatus = findById(newId);
         transferTasksStatus(oldStatus,newStatus);
         statusRepository.delete(oldStatus);

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import sit.int221.itbkkbackend.v2.dtos.SaveTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
@@ -43,7 +44,7 @@ public class TaskControllerV2 {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public TaskDTO addTask(@RequestBody TaskDTO task){
+    public TaskDTO addTask(@RequestBody SaveTaskDTO task){
         return service.addTask(task);
     }
 
@@ -56,6 +57,11 @@ public class TaskControllerV2 {
     public TaskDTO updateTask(@PathVariable Integer id ,@RequestBody TaskDTO task){
         return service.updateTaskById(id,task);
     }
+
+//    @PatchMapping("/{oldId}/{newId}")
+//    public void transferStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
+//        service.transferTasksStatus(oldId,newId);
+//    }
 
 //    @PatchMapping("/{id}")
 //    public Task updatePartialTask(@PathVariable Integer id ,@RequestBody Map<String, Optional<Object>> task){

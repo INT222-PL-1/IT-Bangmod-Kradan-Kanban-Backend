@@ -30,7 +30,7 @@ public class TaskV2 {
     @Column(name = "taskAssignees")
     private String assignees;
 
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "statusId", referencedColumnName = "statusId", nullable = false)
     private StatusV2 status;

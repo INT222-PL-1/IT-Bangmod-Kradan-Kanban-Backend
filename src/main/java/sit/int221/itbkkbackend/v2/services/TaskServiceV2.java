@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
+import sit.int221.itbkkbackend.v2.dtos.SaveTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
@@ -47,14 +48,14 @@ public class TaskServiceV2 {
     }
 
     @Transactional
-    public TaskDTO addTask(TaskDTO task){
+    public TaskDTO addTask(SaveTaskDTO task){
         try{
-            validatingService.validateTaskDTO(task);
+            validatingService.validateSaveTaskDTO(task);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
-        StatusV2 taskStatus = statusService.findById(task.getStatusId());
+        StatusV2 taskStatus = statusService.findById(task.getStatus() == null ? task.getStatusId() : task.getStatus());
         validatedTask.setStatus(taskStatus);
         validatedTask.setId(null);
 

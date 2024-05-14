@@ -39,6 +39,7 @@ public class StatusController {
         return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,count));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public StatusV2 addStatus(@Valid @RequestBody StatusDTO status){
         return service.addStatus(status);
@@ -48,6 +49,8 @@ public class StatusController {
     public StatusV2 updateStatus(@PathVariable Integer id , @Valid @RequestBody StatusDTO status){
         return service.updateStatusById(id,status);
     }
+
+
 
     @DeleteMapping("/{id}")
     public StatusV2 deleteStatus(@PathVariable Integer id){

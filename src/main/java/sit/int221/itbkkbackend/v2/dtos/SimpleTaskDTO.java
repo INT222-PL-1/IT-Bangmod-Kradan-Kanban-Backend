@@ -15,7 +15,6 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SimpleTaskDTO {
-    @NotNull
     private Integer id;
     @NotNull
     @Size(max = 100)
