@@ -1,10 +1,11 @@
-package sit.int221.itbkkbackend.entities;
+package sit.int221.itbkkbackend.v1.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.ZonedDateTime;
 
 
@@ -12,7 +13,7 @@ import java.time.ZonedDateTime;
 @Setter
 @Entity
 @Table(name = "tasks", schema = "itb-kk")
-public class Task {
+public class TaskV1 {
     @Id
     @Column(name = "taskId",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class Task {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "taskStatus")
-    private Status status;
+    private StatusV1 status;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonIgnore

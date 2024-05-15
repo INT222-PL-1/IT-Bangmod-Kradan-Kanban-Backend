@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.dtos;
+package sit.int221.itbkkbackend.v1.dtos;
 
 
 import jakarta.validation.constraints.*;
@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.entities.Status;
+import sit.int221.itbkkbackend.v1.entities.StatusV1;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
 @Setter
@@ -36,9 +34,9 @@ public class TaskDTO {
     public String getAssignees() {
         return assignees == null ||  assignees.isBlank() ? null : assignees.trim();
     }
-    private Status status;
-    public Status getStatus(){
-        return  status == null  ? Status.NO_STATUS : status;
+    private StatusV1 status;
+    public StatusV1 getStatus(){
+        return  status == null  ? StatusV1.NO_STATUS : status;
     }
     private ZonedDateTime createdOn;
     private ZonedDateTime updatedOn;
