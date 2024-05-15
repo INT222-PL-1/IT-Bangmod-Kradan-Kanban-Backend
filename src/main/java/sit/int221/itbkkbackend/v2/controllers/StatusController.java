@@ -1,15 +1,18 @@
 package sit.int221.itbkkbackend.v2.controllers;
 
 
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sit.int221.itbkkbackend.v2.dtos.SetStatusMaxTasksDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.services.StatusServiceV1;
+
+import java.util.Map;
 
 @CrossOrigin(origins = {
         "http://localhost:5173",
@@ -41,16 +44,14 @@ public class StatusController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public StatusV2 addStatus(@Valid @RequestBody StatusDTO status){
+    public StatusV2 addStatus(@RequestBody StatusDTO status){
         return service.addStatus(status);
     }
 
     @PutMapping("/{id}")
-    public StatusV2 updateStatus(@PathVariable Integer id , @Valid @RequestBody StatusDTO status){
+    public StatusV2 updateStatus(@PathVariable Integer id , @RequestBody StatusDTO status){
         return service.updateStatusById(id,status);
     }
-
-
 
     @DeleteMapping("/{id}")
     public StatusV2 deleteStatus(@PathVariable Integer id){
@@ -60,5 +61,10 @@ public class StatusController {
     @DeleteMapping("/{oldId}/{newId}")
     public StatusV2 transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
         return service.transferAndDeleteStatus(oldId,newId);
+    }
+
+    @PatchMapping("/{id}/maximum-task")
+    public SetStatusMaxTasksDTO updateStatusMaximumTasks(@PathVariable Integer id, @RequestBody SetStatusMaxTasksDTO status){
+        return service.updateStatusMaxTasksById(id,status);
     }
 }

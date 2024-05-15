@@ -3,9 +3,13 @@ package sit.int221.itbkkbackend.exceptions;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,6 +22,15 @@ public class ErrorResponse {
     private String message;
     private String instance;
     private String path;
+    private List<ValidationError> errors;
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    private static class ValidationError {
+        private final String field;
+        private final String message;
+    }
 
     public ErrorResponse(Timestamp timestamp, Integer status, String message, String instance) {
         this.timestamp = timestamp;
@@ -32,5 +45,18 @@ public class ErrorResponse {
         this.error = error;
         this.message = message;
         this.path = path;
+    }
+
+    public ErrorResponse(Integer status, String message , String instance){
+        this.status = status;
+        this.message = message;
+        this.instance = instance;
+    }
+
+    public void addValidationError(String field, String message) {
+        if (Objects.isNull(errors)) {
+            errors = new ArrayList<>();
+        }
+        errors.add(new ValidationError(field, message));
     }
 }

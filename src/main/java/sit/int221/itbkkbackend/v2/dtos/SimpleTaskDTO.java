@@ -28,14 +28,12 @@ public class SimpleTaskDTO {
     public void setAssignees(String assignees) {
         this.assignees = assignees == null ? assignees : assignees.trim();
     }
-    @JsonIgnore
+    //    @JsonIgnore
     private StatusV2 status;
-
-    private Integer statusId;
-
-    public Integer getStatusId() {
-        return status == null ? statusId :  status.getId();
-    }
+//    private Integer statusId;
+//    public Integer getStatusId() {
+//        return status == null ? statusId :  status.getId();
+//    }
 
 
 }

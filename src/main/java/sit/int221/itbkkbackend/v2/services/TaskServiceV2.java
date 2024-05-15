@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -39,8 +41,15 @@ public class TaskServiceV2 {
                 HttpStatus.NOT_FOUND,id
         ));
     }
-    public List<SimpleTaskDTO> getAllSimpleTasksDTO(){
-        return listMapper.mapList(taskRepository.findAll(Sort.by("createdOn").ascending()), SimpleTaskDTO.class,mapper);
+    public List<SimpleTaskDTO> getAllSimpleTasksDTO(String sortBy,String sortDirection, ArrayList<String> filterStatuses){
+        try{
+            List<TaskV2> taskV2List = taskRepository.findAll(Sort.by(Sort.Direction.fromString(sortDirection),sortBy));
+            List<TaskV2> filteredTaskList = filterStatuses == null ? taskV2List : taskV2List.stream().filter(taskV2 -> filterStatuses.contains(taskV2.getStatus().getName())).toList();
+            return listMapper.mapList(filteredTaskList, SimpleTaskDTO.class,mapper);
+        }catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
     }
 
     public TaskV2 getTaskById(Integer id){
@@ -49,11 +58,7 @@ public class TaskServiceV2 {
 
     @Transactional
     public TaskDTO addTask(SaveTaskDTO task){
-        try{
-            validatingService.validateSaveTaskDTO(task);
-        }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        validatingService.validateSaveTaskDTO(task);
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatus() == null ? task.getStatusId() : task.getStatus());
         validatedTask.setStatus(taskStatus);
@@ -76,48 +81,14 @@ public class TaskServiceV2 {
     public TaskDTO updateTaskById(Integer id, TaskDTO task){
         findById(id);
         task.setId(id);
-        try{
-            validatingService.validateTaskDTO(task);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        validatingService.validateTaskDTO(task);
         TaskV2 validatedUpdateTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
         validatedUpdateTask.setStatus(taskStatus);
         return mapper.map(taskRepository.save(validatedUpdateTask),TaskDTO.class);
-
     }
 
-//    @Transactional
-//    public Task updatePartialTaskById(Integer id, Map<String, Optional<Object>> task){
-//        Task updateTask = findById(id);
-//        List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("title","description", "assignees",  "status")).stream().filter(task::containsKey).toList();
-//        for (String attribute : validUpdateInfo){
-//            Object value = task.get(attribute).isPresent() ?  task.get(attribute).get() : null;
-//            if (attribute.equals("status")){
-//                assert value != null;
-//                value = Status.valueOf(value.toString());
-//            }
-//            try {
-//                Field updateInfo = Task.class.getDeclaredField(attribute);
-//                updateInfo.setAccessible(true);
-//                updateInfo.set(updateTask, value);
-//                updateInfo.setAccessible(false);
-//            }
-//            catch(Exception exception){
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//            }
-//        }
-//        TaskDTO validatedUpdateTask =  mapper.map(updateTask,TaskDTO.class);
-//        try {
-//            validatingService.validateTaskDTO(validatedUpdateTask);
-//        } catch (Exception e){
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        }
-//        return taskRepository.save(updateTask);
-//        return null;
-//
-//    }
+
 
 
 }

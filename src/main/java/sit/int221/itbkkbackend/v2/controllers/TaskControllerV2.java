@@ -12,6 +12,7 @@ import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.services.TaskServiceV2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,8 +34,8 @@ public class TaskControllerV2 {
     private TaskServiceV2 service;
 
     @GetMapping("")
-    public List<SimpleTaskDTO> getAllTasks(){
-        return service.getAllSimpleTasksDTO();
+    public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,@RequestParam(defaultValue = "ASC") String sortDirection, @RequestParam(required = false) ArrayList<String> filterStatuses){
+        return service.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses);
     }
 
     @GetMapping("/{id}")
@@ -58,13 +59,4 @@ public class TaskControllerV2 {
         return service.updateTaskById(id,task);
     }
 
-//    @PatchMapping("/{oldId}/{newId}")
-//    public void transferStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
-//        service.transferTasksStatus(oldId,newId);
-//    }
-
-//    @PatchMapping("/{id}")
-//    public Task updatePartialTask(@PathVariable Integer id ,@RequestBody Map<String, Optional<Object>> task){
-//        return service.updatePartialTaskById(id,task);
-//    }
 }

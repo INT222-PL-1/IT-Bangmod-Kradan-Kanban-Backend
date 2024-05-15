@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.utils.ListMapper;
+import sit.int221.itbkkbackend.v2.dtos.SetStatusMaxTasksDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV1;
@@ -27,6 +28,8 @@ public class StatusServiceV1 {
     private StatusRepositoryV1 statusRepository;
     @Autowired
     private TaskRepositoryV2 taskRepository;
+    @Autowired
+    private ValidatingServiceV2 validatingService;
     @Autowired
     private ListMapper listMapper;
     @Autowired
@@ -51,6 +54,7 @@ public class StatusServiceV1 {
 
     @Transactional
     public StatusV2 addStatus(StatusDTO status){
+        validatingService.validateStatusDTO(status);
         status.setId(null);
         if (findByName(status.getName()) != null){
             throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
@@ -98,6 +102,21 @@ public class StatusServiceV1 {
         transferTasksStatus(oldStatus,newStatus);
         statusRepository.delete(oldStatus);
         return oldStatus;
+
+
+    }
+
+    @Transactional
+    public SetStatusMaxTasksDTO updateStatusMaxTasksById(Integer id,SetStatusMaxTasksDTO status){
+        StatusV2 updateStatus =  findById(id);
+        if(updateStatus.getTasks().size() <= 10){
+//          updateStatus.setLimitMaximumTasks(status.getLimitMaximumTasks());
+            SetStatusMaxTasksDTO updatedStatus = mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
+            updatedStatus.setTasks(null);
+            return updatedStatus;
+        }else{
+            return mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
+        }
 
 
     }
