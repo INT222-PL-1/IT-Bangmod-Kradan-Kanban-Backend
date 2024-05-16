@@ -19,6 +19,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          script: |
+            docker buildx build --cache-to=type=gha .
+            docker buildx build --cache-from=type=gha .
         
       - name: Build and push
         uses: docker/build-push-action@v5
