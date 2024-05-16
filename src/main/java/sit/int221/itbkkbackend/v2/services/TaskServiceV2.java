@@ -61,7 +61,7 @@ public class TaskServiceV2 {
         validatingService.validateSaveTaskDTO(task);
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatus() == null ? task.getStatusId() : task.getStatus());
-        if(!(taskStatus.getTasks().size() + 1 > taskStatus.getMaximum_limit() && taskStatus.getIs_limited_status())){
+        if(taskStatus.getTasks().size() + 1 > taskStatus.getMaximum_limit() && taskStatus.getIs_limited_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
         validatedTask.setStatus(taskStatus);
@@ -87,7 +87,7 @@ public class TaskServiceV2 {
         validatingService.validateTaskDTO(task);
         TaskV2 validatedUpdateTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
-        if(!(taskStatus.getTasks().size() + 1 > taskStatus.getMaximum_limit() && taskStatus.getIs_limited_status())){
+        if(taskStatus.getTasks().size() + 1 > taskStatus.getMaximum_limit() && taskStatus.getIs_limited_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
         validatedUpdateTask.setStatus(taskStatus);
