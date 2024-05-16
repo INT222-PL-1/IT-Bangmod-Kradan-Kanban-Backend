@@ -99,7 +99,7 @@ public class StatusServiceV1 {
         }
         StatusV2 oldStatus = findById(oldId);
         StatusV2 newStatus = findById(newId);
-        if(newStatus.getTasks().size() + 1 > newStatus.getMaximum_limit() && newStatus.getIs_limited_status()){
+        if(newStatus.getTasks().size() + oldStatus.getTasks().size() > newStatus.getMaximum_limit() && newStatus.getIs_limited_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
         if (oldStatus.getTasks().size() == 0){
