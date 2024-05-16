@@ -13,5 +13,5 @@ public class ValidatingServiceV2 {
     void validateTaskDTO(TaskDTO task){};
     void validateSaveTaskDTO(@Valid SaveTaskDTO task){};
 
-    void validateStatusDTO(StatusDTO status){};
+    void validateStatusDTO(@Valid StatusDTO status){};
 }

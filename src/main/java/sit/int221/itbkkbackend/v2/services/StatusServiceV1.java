@@ -60,13 +60,13 @@ public class StatusServiceV1 {
             throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
         }
         return statusRepository.save(mapper.map(status, StatusV2.class));
-
     }
 
     @Transactional
     public StatusV2 updateStatusById(Integer id, StatusDTO status){
         StatusV2 foundedStatus = findById(id);
-        if (foundedStatus.getIs_fixed_status() == 1){
+        validatingService.validateStatusDTO(status);
+        if (foundedStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
         }
         StatusV2 duplicateStatus = findByName(status.getName());
@@ -85,7 +85,7 @@ public class StatusServiceV1 {
     @Transactional
     public StatusV2 deleteStatusById(Integer id){
         StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND));
-        if (oldStatus.getIs_fixed_status() == 1){
+        if (oldStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
         }
         statusRepository.delete(oldStatus);
@@ -94,11 +94,18 @@ public class StatusServiceV1 {
 
     @Transactional
     public StatusV2 transferAndDeleteStatus(Integer oldId, Integer newId){
+        if (Objects.equals(oldId, newId)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer a status that you want to delete.");
+        }
         StatusV2 oldStatus = findById(oldId);
-        if (oldStatus.getIs_fixed_status() == 1){
+        StatusV2 newStatus = findById(newId);
+        if (oldStatus.getTasks().size() == 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer task. The current status does not contain any tasks.");
+        }
+        if (oldStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
         }
-        StatusV2 newStatus = findById(newId);
+
         transferTasksStatus(oldStatus,newStatus);
         statusRepository.delete(oldStatus);
         return oldStatus;
@@ -109,8 +116,8 @@ public class StatusServiceV1 {
     @Transactional
     public SetStatusMaxTasksDTO updateStatusMaxTasksById(Integer id,SetStatusMaxTasksDTO status){
         StatusV2 updateStatus =  findById(id);
-        if(updateStatus.getTasks().size() <= 10){
-//          updateStatus.setLimitMaximumTasks(status.getLimitMaximumTasks());
+        if(updateStatus.getTasks().size() <= updateStatus.getMaximum_limit()){
+          updateStatus.setIs_limited_status(status.getLimitMaximumTasks());
             SetStatusMaxTasksDTO updatedStatus = mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
             updatedStatus.setTasks(null);
             return updatedStatus;

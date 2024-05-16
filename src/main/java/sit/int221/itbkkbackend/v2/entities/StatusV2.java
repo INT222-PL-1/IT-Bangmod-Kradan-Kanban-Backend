@@ -31,10 +31,14 @@ public class StatusV2 {
     @Column(name = "statusColor",nullable = false)
     private String color;
 
-    @JsonIgnore
     @Column(name = "is_fixed_status",insertable = false,updatable = false)
-    private Integer is_fixed_status;
+    private Boolean is_fixed_status;
 
+    @Column(name = "is_limited_status",insertable = false,nullable = false)
+    private Boolean is_limited_status;
+
+    @Column(name = "maximum_limit",insertable = false,nullable = false)
+    private Integer maximum_limit;
     @JsonIgnore
     @OneToMany(mappedBy = "status")
     private List<TaskV2> tasks;

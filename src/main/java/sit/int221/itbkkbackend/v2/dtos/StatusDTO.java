@@ -2,6 +2,7 @@ package sit.int221.itbkkbackend.v2.dtos;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -24,6 +25,12 @@ public class StatusDTO {
     private List<TaskV2> tasks;
 
     private Integer count;
+
+    private Boolean is_fixed_status;
+
+    private Boolean is_limited_status;
+
+    private Integer maximum_limit;
 
     public Integer getCount() {
         return tasks == null ? 0 : tasks.size();
