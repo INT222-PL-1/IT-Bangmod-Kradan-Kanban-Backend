@@ -40,6 +40,8 @@ public class TaskDTO {
 
     @NotNull
     private Integer statusId;
+    @NotNull
+    private Integer boardId;
 
     public Integer getStatusId() {
         return status == null ? statusId :  status.getId();

@@ -34,8 +34,12 @@ public class TaskControllerV2 {
     private TaskServiceV2 service;
 
     @GetMapping("")
-    public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,@RequestParam(defaultValue = "ASC") String sortDirection, @RequestParam(required = false) ArrayList<String> filterStatuses){
-        return service.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses);
+    public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,
+                                           @RequestParam(defaultValue = "ASC") String sortDirection,
+                                           @RequestParam(required = false) ArrayList<String> filterStatuses,
+                                           @RequestParam(required = false) Integer boardId
+    ){
+        return service.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses,boardId);
     }
 
     @GetMapping("/{id}")

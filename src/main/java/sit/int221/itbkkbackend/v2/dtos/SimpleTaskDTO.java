@@ -30,6 +30,7 @@ public class SimpleTaskDTO {
     }
     //    @JsonIgnore
     private StatusV2 status;
+    private Integer boardId;
 //    private Integer statusId;
 //    public Integer getStatusId() {
 //        return status == null ? statusId :  status.getId();

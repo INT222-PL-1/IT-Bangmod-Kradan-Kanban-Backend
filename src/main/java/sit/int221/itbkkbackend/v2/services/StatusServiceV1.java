@@ -13,6 +13,7 @@ import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.SetStatusMaxTasksDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
+import sit.int221.itbkkbackend.v2.entities.BoardV2;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV1;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
@@ -29,6 +30,8 @@ public class StatusServiceV1 {
     @Autowired
     private TaskRepositoryV2 taskRepository;
     @Autowired
+    private BoardServiceV2 boardServiceV2;
+    @Autowired
     private ValidatingServiceV2 validatingService;
     @Autowired
     private ListMapper listMapper;
@@ -40,7 +43,7 @@ public class StatusServiceV1 {
     }
 
     public StatusV2 findById(Integer id){
-        return statusRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return statusRepository.findById(id == null ? findByName("No Status").getId() : id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     }
 
@@ -99,7 +102,8 @@ public class StatusServiceV1 {
         }
         StatusV2 oldStatus = findById(oldId);
         StatusV2 newStatus = findById(newId);
-        if(newStatus.getTasks().size() + oldStatus.getTasks().size() > newStatus.getMaximum_limit() && newStatus.getIs_limited_status()){
+        BoardV2 currentBoard = boardServiceV2.findById(1);
+        if(newStatus.getTasks().size() + oldStatus.getTasks().size() > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
         if (oldStatus.getTasks().size() == 0){
@@ -116,18 +120,18 @@ public class StatusServiceV1 {
 
     }
 
-    @Transactional
-    public SetStatusMaxTasksDTO updateStatusMaxTasksById(Integer id,SetStatusMaxTasksDTO status){
-        StatusV2 updateStatus =  findById(id);
-        if(updateStatus.getTasks().size() <= updateStatus.getMaximum_limit()){
-          updateStatus.setIs_limited_status(status.getLimitMaximumTasks());
-            SetStatusMaxTasksDTO updatedStatus = mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
-            updatedStatus.setTasks(null);
-            return updatedStatus;
-        }else{
-            return mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
-        }
-
-
-    }
+//    @Transactional
+//    public SetStatusMaxTasksDTO updateStatusMaxTasksById(Integer id,SetStatusMaxTasksDTO status){
+//        StatusV2 updateStatus =  findById(id);
+//        if(updateStatus.getTasks().size() <= updateStatus.getMaximum_limit()){
+//          updateStatus.setIs_limited_status(status.getLimitMaximumTasks());
+//            SetStatusMaxTasksDTO updatedStatus = mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
+//            updatedStatus.setTasks(null);
+//            return updatedStatus;
+//        }else{
+//            return mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
+//        }
+//        return mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
+//
+//    }
 }

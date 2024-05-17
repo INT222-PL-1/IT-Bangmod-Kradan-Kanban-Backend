@@ -2,6 +2,7 @@ package sit.int221.itbkkbackend.v2.repositories;
 
 
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface TaskRepositoryV2 extends JpaRepository<TaskV2,Integer> {
 
     List<TaskV2> findAllByStatus(StatusV2 status);
-
+    List<TaskV2> findAllByBoardId(Integer boardId, Sort sort);
 
 
     @Modifying

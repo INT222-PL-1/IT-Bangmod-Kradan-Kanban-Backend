@@ -68,6 +68,8 @@ public class GlobalExceptionHandler {
             for (Path.Node node : error.getPropertyPath()) {
                 field = node.getName();
             }
+            log.info(error.getLeafBean().getClass().getSimpleName());
+//            log.info(error.getPropertyPath().toString());
             resBody.addValidationError(field,error.getMessage());
         }
 

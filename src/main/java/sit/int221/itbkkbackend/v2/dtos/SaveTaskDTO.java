@@ -33,5 +33,6 @@ public class SaveTaskDTO {
 
     private Integer status;
     private Integer statusId;
+    private Integer boardId;
 
 }

@@ -35,6 +35,14 @@ public class TaskV2 {
     @JoinColumn(name = "statusId", referencedColumnName = "statusId", nullable = false)
     private StatusV2 status;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "boardId" , referencedColumnName = "boardId",nullable = false)
+    private BoardV2 board;
+
+    @Column(name = "boardId",insertable = false,updatable = false)
+    private Integer boardId;
+
     @Column(insertable=false, updatable=false)
     private Integer statusId;
 
