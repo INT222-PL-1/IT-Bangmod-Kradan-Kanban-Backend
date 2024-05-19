@@ -45,6 +45,16 @@ public class StatusServiceV2 {
 
     }
 
+    public Boolean isExist(Integer id){
+        try{
+            statusRepository.existsById(id);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
+
+
     public List<StatusDTO> getAllStatus(Integer boardId){
         List <StatusDTO> statusList = listMapper.mapList( statusRepository.findAll(), StatusDTO.class,mapper);
         if (boardId == null){return statusList;}

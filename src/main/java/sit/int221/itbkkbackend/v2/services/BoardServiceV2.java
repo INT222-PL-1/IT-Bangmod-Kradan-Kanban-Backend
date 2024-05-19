@@ -31,6 +31,9 @@ public class BoardServiceV2 {
     @Autowired
     private StatusRepositoryV2 statusRepository;
     public BoardV2 findById(Integer id){
+        if (id == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"boardId does not exist");
+        }
         return boardRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"ไม่เจอกระดานคราฟ")
                 );

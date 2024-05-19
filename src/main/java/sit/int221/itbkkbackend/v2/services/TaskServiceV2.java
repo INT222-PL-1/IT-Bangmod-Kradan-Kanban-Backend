@@ -2,6 +2,8 @@ package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
+import sit.int221.itbkkbackend.exceptions.TaskConstraintViolationException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
@@ -19,8 +22,7 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -61,7 +63,7 @@ public class TaskServiceV2 {
 
     @Transactional
     public TaskDTO addTask(TaskDTO task){
-        validatingService.validateTaskDTO(task);
+        ValidateFieldTask(task);
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
@@ -69,8 +71,8 @@ public class TaskServiceV2 {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
         validatedTask.setStatus(taskStatus);
-        validatedTask.setId(null);
         validatedTask.setBoard(currentBoard);
+        validatedTask.setId(null);
 
         return mapper.map(taskRepository.save(validatedTask),TaskDTO.class);
 
@@ -87,9 +89,8 @@ public class TaskServiceV2 {
 
     @Transactional
     public TaskDTO updateTaskById(Integer id, TaskDTO task){
-        findById(id);
+        ValidateFieldTask(task);
         task.setId(id);
-        validatingService.validateTaskDTO(task);
         TaskV2 validatedUpdateTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
@@ -101,7 +102,18 @@ public class TaskServiceV2 {
         return mapper.map(taskRepository.save(validatedUpdateTask),TaskDTO.class);
     }
 
-
+    public void ValidateFieldTask(TaskDTO task){
+        Boolean isStatusExist = statusService.isExist(task.getStatusId());
+        try{
+            validatingService.validateTaskDTO(task,isStatusExist);
+        }catch (ConstraintViolationException exception){
+            TaskConstraintViolationException taskConstraintViolationException = new TaskConstraintViolationException(exception.getConstraintViolations());
+            if (statusService.isExist(task.getStatusId())){
+                taskConstraintViolationException.getAdditionalErrorFields().put("status","does not exist");
+            }
+            throw taskConstraintViolationException;
+        }
+    }
 
 
 }

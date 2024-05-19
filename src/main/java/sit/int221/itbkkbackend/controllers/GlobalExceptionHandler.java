@@ -20,11 +20,13 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
+import sit.int221.itbkkbackend.exceptions.TaskConstraintViolationException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -70,6 +72,29 @@ public class GlobalExceptionHandler {
             }
             log.info(error.getLeafBean().getClass().getSimpleName());
             resBody.addValidationError(field,error.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TaskConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleTaskValidationException(TaskConstraintViolationException exception, HttpServletRequest request){
+        Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
+        ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),"Validation error. Check 'errors' field for details.", request.getRequestURI());
+        for (ConstraintViolation<?> error : errors){
+            String field = null;
+            for (Path.Node node : error.getPropertyPath()) {
+                field = node.getName();
+            }
+            log.info(error.getLeafBean().getClass().getSimpleName());
+            resBody.addValidationError(field,error.getMessage());
+        }
+        if (!exception.getAdditionalErrorFields().isEmpty()){
+            for (Map.Entry<String,String> entry :
+                 exception.getAdditionalErrorFields().entrySet()) {
+                resBody.addValidationError(entry.getKey(),entry.getValue());
+            }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }
