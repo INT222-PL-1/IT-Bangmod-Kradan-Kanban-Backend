@@ -101,7 +101,7 @@ public class StatusServiceV2 {
         StatusV2 oldStatus = findById(oldId);
         StatusV2 newStatus = findById(newId);
         BoardV2 currentBoard = boardServiceV2.findById(1);
-        if(newStatus.getTasks().size() + oldStatus.getTasks().size() > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks()){
+        if(newStatus.getTasks().size() + oldStatus.getTasks().size() > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !newStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
         if (oldStatus.getTasks().size() == 0){

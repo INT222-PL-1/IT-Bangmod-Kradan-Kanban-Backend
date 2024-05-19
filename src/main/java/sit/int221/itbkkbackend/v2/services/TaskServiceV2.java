@@ -65,7 +65,7 @@ public class TaskServiceV2 {
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
-        if(taskStatus.getTasks().size() + 1 > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks()){
+        if(taskStatus.getTasks().size() + 1 > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() &&  !taskStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
         validatedTask.setStatus(taskStatus);
@@ -93,7 +93,7 @@ public class TaskServiceV2 {
         TaskV2 validatedUpdateTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
-        if(taskStatus.getTasks().size() + 1 > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks()){
+        if(taskStatus.getTasks().size() + 1 > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !taskStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
         validatedUpdateTask.setStatus(taskStatus);
