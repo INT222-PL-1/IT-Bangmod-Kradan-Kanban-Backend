@@ -10,6 +10,7 @@ import lombok.Setter;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class StatusDTO {
     private Boolean is_fixed_status;
 
     public Integer getCount() {
-        return tasks == null ? 0 : tasks.size();
+        return tasks == null ? 0 : boardId == null ? tasks.size() : tasks.stream().filter(task -> Objects.equals(task.getBoardId(), this.boardId)).toList().size();
     }
 
     public void setName(String name) {
