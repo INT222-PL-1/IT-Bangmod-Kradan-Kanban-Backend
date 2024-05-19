@@ -7,12 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.itbkkbackend.v2.dtos.SetStatusMaxTasksDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
-import sit.int221.itbkkbackend.v2.services.StatusServiceV1;
-
-import java.util.Map;
+import sit.int221.itbkkbackend.v2.services.StatusServiceV2;
 
 @CrossOrigin(origins = {
         "http://localhost:5173",
@@ -24,13 +21,12 @@ import java.util.Map;
         "http://ip23pl1.sit.kmutt.ac.th",
         "http://intproj23.sit.kmutt.ac.th"
 })
-
 @RestController
 @RequestMapping("/v2/statuses")
-public class StatusController {
+public class StatusController2 {
 
     @Autowired
-    private StatusServiceV1 service;
+    private StatusServiceV2 service;
 
     @GetMapping("")
     public ResponseEntity<Object> getAllStatus(@RequestParam(defaultValue = "false") Boolean count){

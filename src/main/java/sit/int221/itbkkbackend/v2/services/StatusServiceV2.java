@@ -11,22 +11,20 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.utils.ListMapper;
-import sit.int221.itbkkbackend.v2.dtos.SetStatusMaxTasksDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.BoardV2;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
-import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV1;
+import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
 
 @Slf4j
 @Service
-public class StatusServiceV1 {
+public class StatusServiceV2 {
     @Autowired
-    private StatusRepositoryV1 statusRepository;
+    private StatusRepositoryV2 statusRepository;
     @Autowired
     private TaskRepositoryV2 taskRepository;
     @Autowired
@@ -120,18 +118,4 @@ public class StatusServiceV1 {
 
     }
 
-//    @Transactional
-//    public SetStatusMaxTasksDTO updateStatusMaxTasksById(Integer id,SetStatusMaxTasksDTO status){
-//        StatusV2 updateStatus =  findById(id);
-//        if(updateStatus.getTasks().size() <= updateStatus.getMaximum_limit()){
-//          updateStatus.setIs_limited_status(status.getLimitMaximumTasks());
-//            SetStatusMaxTasksDTO updatedStatus = mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
-//            updatedStatus.setTasks(null);
-//            return updatedStatus;
-//        }else{
-//            return mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
-//        }
-//        return mapper.map(updateStatus,SetStatusMaxTasksDTO.class);
-//
-//    }
 }

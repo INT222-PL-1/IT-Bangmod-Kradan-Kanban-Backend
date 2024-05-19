@@ -69,10 +69,8 @@ public class GlobalExceptionHandler {
                 field = node.getName();
             }
             log.info(error.getLeafBean().getClass().getSimpleName());
-//            log.info(error.getPropertyPath().toString());
             resBody.addValidationError(field,error.getMessage());
         }
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }
 

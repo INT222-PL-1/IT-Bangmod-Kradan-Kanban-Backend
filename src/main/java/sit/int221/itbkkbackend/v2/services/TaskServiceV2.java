@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
-import sit.int221.itbkkbackend.v2.dtos.SaveTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.BoardV2;
@@ -29,7 +28,7 @@ public class TaskServiceV2 {
     @Autowired
     private TaskRepositoryV2 taskRepository;
     @Autowired
-    private StatusServiceV1 statusService;
+    private StatusServiceV2 statusService;
     @Autowired
     private BoardServiceV2 boardService;
     @Autowired
@@ -61,10 +60,10 @@ public class TaskServiceV2 {
     }
 
     @Transactional
-    public TaskDTO addTask(SaveTaskDTO task){
-        validatingService.validateSaveTaskDTO(task);
+    public TaskDTO addTask(TaskDTO task){
+        validatingService.validateTaskDTO(task);
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
-        StatusV2 taskStatus = statusService.findById(task.getStatus() == null ? task.getStatusId() : task.getStatus());
+        StatusV2 taskStatus = statusService.findById(task.getStatusId());
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
         if(taskStatus.getTasks().size() + 1 > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));

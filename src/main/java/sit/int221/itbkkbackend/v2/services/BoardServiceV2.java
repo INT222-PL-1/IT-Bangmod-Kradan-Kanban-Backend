@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import sit.int221.itbkkbackend.v2.repositories.BoardRepositoryV2;
 import java.lang.reflect.Field;
 import java.util.*;
 
+@Slf4j
 @Service
 public class BoardServiceV2 {
     
@@ -25,7 +27,6 @@ public class BoardServiceV2 {
     private ListMapper listMapper;
     
     public BoardV2 findById(Integer id){
-
         return boardRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"ไม่เจอกระดานคราฟ")
                 );
@@ -36,11 +37,12 @@ public class BoardServiceV2 {
     }
 
     @Transactional
-    public BoardDTO updateBoardById(Integer id, Map<String, Optional<String>> updateAttribute){
+    public BoardDTO updateBoardById(Integer id, Map<String, Optional<Object>> updateAttribute){
         BoardV2 updateBoard =  findById(id);
         List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("isLimitTasks","taskLimitPerStatus")).stream().filter(updateAttribute::containsKey).toList();
         for (String attribute : validUpdateInfo) {
             Object value = updateAttribute.get(attribute).isPresent() ? updateAttribute.get(attribute).get() : null;
+            if(value == null) {continue;}
             try {
                 Field updateInfo = BoardV2.class.getDeclaredField(attribute);
                 updateInfo.setAccessible(true);

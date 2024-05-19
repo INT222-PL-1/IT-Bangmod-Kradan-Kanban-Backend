@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.itbkkbackend.v2.dtos.SaveTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
@@ -49,7 +48,7 @@ public class TaskControllerV2 {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public TaskDTO addTask(@RequestBody SaveTaskDTO task){
+    public TaskDTO addTask(@RequestBody TaskDTO task){
         return service.addTask(task);
     }
 

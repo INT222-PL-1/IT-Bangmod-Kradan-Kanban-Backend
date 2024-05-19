@@ -37,10 +37,7 @@ public class TaskDTO {
 
     @JsonIgnore
     private StatusV2 status;
-
-    @NotNull
     private Integer statusId;
-    @NotNull
     private Integer boardId;
 
     public Integer getStatusId() {
