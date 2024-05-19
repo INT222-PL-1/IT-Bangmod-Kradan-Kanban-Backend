@@ -12,9 +12,8 @@ import java.util.List;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BoardDTO {
-
     private Integer id;
     private Boolean isLimitTasks;
     private Integer taskLimitPerStatus;
-    private List<StatusV2> exceedLimitStatus;
+    private List<StatusDTO> exceedLimitStatus;
 }

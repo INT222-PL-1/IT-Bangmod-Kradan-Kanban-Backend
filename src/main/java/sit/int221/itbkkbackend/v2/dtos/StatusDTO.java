@@ -23,14 +23,12 @@ public class StatusDTO {
     private String color;
     @JsonIgnore
     private List<TaskV2> tasks;
+    @JsonIgnore
+    private Integer boardId;
 
     private Integer count;
 
     private Boolean is_fixed_status;
-
-    private Boolean is_limited_status;
-
-    private Integer maximum_limit;
 
     public Integer getCount() {
         return tasks == null ? 0 : tasks.size();

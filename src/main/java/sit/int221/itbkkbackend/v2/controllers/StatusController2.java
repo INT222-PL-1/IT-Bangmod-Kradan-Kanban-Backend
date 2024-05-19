@@ -29,13 +29,13 @@ public class StatusController2 {
     private StatusServiceV2 service;
 
     @GetMapping("")
-    public ResponseEntity<Object> getAllStatus(@RequestParam(defaultValue = "false") Boolean count){
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(count)) ;
+    public ResponseEntity<Object> getAllStatus(@RequestParam(required = false) Integer boardId){
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(boardId)) ;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getStatus(@PathVariable Integer id ,@RequestParam(defaultValue = "false") Boolean count){
-        return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,count));
+    public ResponseEntity<Object> getStatus(@PathVariable Integer id ,@RequestParam(required = false) Integer boardId){
+        return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,boardId));
     }
 
     @ResponseStatus(HttpStatus.CREATED)

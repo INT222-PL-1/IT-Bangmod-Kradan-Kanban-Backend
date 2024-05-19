@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.BoardDTO;
+import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.BoardV2;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.BoardRepositoryV2;
@@ -57,7 +58,8 @@ public class BoardServiceV2 {
 
         }
         BoardDTO board = mapper.map(updateBoard, BoardDTO.class);
-        List<StatusV2> exceedLimitStatus = statusRepository.findStatusWithTasksExceedingLimit(id, updateBoard.getTaskLimitPerStatus());
+        List<StatusDTO> exceedLimitStatus = listMapper.mapList(statusRepository.findStatusWithTasksExceedingLimit(id, updateBoard.getTaskLimitPerStatus()), StatusDTO.class,mapper) ;
+        exceedLimitStatus.forEach(status-> status.setBoardId(id));
         board.setExceedLimitStatus(exceedLimitStatus);
         return board;
     }

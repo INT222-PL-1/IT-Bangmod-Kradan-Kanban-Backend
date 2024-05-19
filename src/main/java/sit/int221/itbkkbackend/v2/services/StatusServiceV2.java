@@ -45,12 +45,22 @@ public class StatusServiceV2 {
 
     }
 
-    public List<?> getAllStatus(Boolean count){
-        return count ?  listMapper.mapList( statusRepository.findAll(), StatusDTO.class,mapper) : statusRepository.findAll();
+    public List<StatusDTO> getAllStatus(Integer boardId){
+        List <StatusDTO> statusList = listMapper.mapList( statusRepository.findAll(), StatusDTO.class,mapper);
+        if (boardId == null){return statusList;}
+        boardServiceV2.findById(boardId);
+        statusList.forEach(task-> task.setBoardId(boardId));
+        return statusList;
+
+
     }
 
-    public Object getStatusById(Integer id , Boolean count){
-        return count ? mapper.map(findById(id),StatusDTO.class) : findById(id);
+    public Object getStatusById(Integer id , Integer boardId){
+        StatusDTO status = mapper.map(findById(id),StatusDTO.class);
+        if(boardId == null){return status;}
+        boardServiceV2.findById(boardId);
+        status.setBoardId(boardId);
+        return status;
     }
 
     @Transactional
