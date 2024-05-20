@@ -59,8 +59,4 @@ public class StatusController2 {
         return service.transferAndDeleteStatus(oldId,newId);
     }
 
-//    @PatchMapping("/{id}/maximum-task")
-//    public SetStatusMaxTasksDTO updateStatusMaximumTasks(@PathVariable Integer id, @RequestBody SetStatusMaxTasksDTO status){
-//        return service.updateStatusMaxTasksById(id,status);
-//    }
 }

@@ -36,8 +36,7 @@ public class TaskControllerV2 {
     public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,
                                            @RequestParam(defaultValue = "ASC") String sortDirection,
                                            @RequestParam(required = false) ArrayList<String> filterStatuses,
-                                           @RequestParam(required = false) Integer boardId
-    ){
+                                           @RequestParam(required = false) Integer boardId){
         return service.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses,boardId);
     }
 

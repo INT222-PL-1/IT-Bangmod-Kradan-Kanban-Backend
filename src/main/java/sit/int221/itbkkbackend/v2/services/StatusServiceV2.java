@@ -45,7 +45,7 @@ public class StatusServiceV2 {
     }
 
     public StatusV2 findById(Integer id){
-        return statusRepository.findById(id == null ? findByName("No Status").getId() : id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return statusRepository.findById(id == null ? findByName("No Status").getId() : id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
 
     }
     public Boolean isExist(Integer id){
@@ -99,7 +99,7 @@ public class StatusServiceV2 {
 
     @Transactional
     public StatusV2 deleteStatusById(Integer id){
-        StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND));
+        StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
         if (oldStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
         }

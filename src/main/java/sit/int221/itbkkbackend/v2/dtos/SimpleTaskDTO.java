@@ -19,22 +19,17 @@ public class SimpleTaskDTO {
     @NotNull
     @Size(max = 100)
     private String title;
-    public void setTitle(String title) {
-        this.title = title.trim();
-    }
 
     @Size(max = 30)
     private String assignees;
+    private StatusV2 status;
+    private Integer boardId;
+
+    public void setTitle(String title) {
+        this.title = title.trim();
+    }
     public void setAssignees(String assignees) {
         this.assignees = assignees == null ? assignees : assignees.trim();
     }
-    //    @JsonIgnore
-    private StatusV2 status;
-    private Integer boardId;
-//    private Integer statusId;
-//    public Integer getStatusId() {
-//        return status == null ? statusId :  status.getId();
-//    }
-
 
 }

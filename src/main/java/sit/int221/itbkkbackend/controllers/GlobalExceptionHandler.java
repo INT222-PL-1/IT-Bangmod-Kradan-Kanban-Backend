@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
-                "NOT FOUND",
+                "The task does not exist",
                 request.getRequestURI()
         );
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
@@ -56,13 +56,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(ConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),"Validation error. Check 'errors' field for details.", request.getRequestURI());
+        String RootEntityErrorName = request.getRequestURI().contains("tasks") ? "task" : "status";
+        ErrorResponse resBody = new ErrorResponse(
+                errorDetails.getStatus(),
+                String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" , RootEntityErrorName),
+                request.getRequestURI());
         for (ConstraintViolation<?> error : errors){
             String field = null;
             for (Path.Node node : error.getPropertyPath()) {
                 field = node.getName();
             }
-            log.info(error.getLeafBean().getClass().getSimpleName());
             resBody.addValidationError(field,error.getMessage());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
@@ -73,13 +76,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTaskValidationException(CustomConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),"Validation error. Check 'errors' field for details.", request.getRequestURI());
+        String RootEntityErrorName = request.getRequestURI().contains("tasks") ? "task" : "status";
+        ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),
+                String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" ,RootEntityErrorName),
+                request.getRequestURI());
         for (ConstraintViolation<?> error : errors){
             String field = null;
             for (Path.Node node : error.getPropertyPath()) {
                 field = node.getName();
             }
-            log.info(error.getLeafBean().getClass().getSimpleName());
             resBody.addValidationError(field,error.getMessage());
         }
         if (!exception.getAdditionalErrorFields().isEmpty()){
