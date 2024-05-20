@@ -1,31 +1,23 @@
 package sit.int221.itbkkbackend.controllers;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mapping.PropertyReferenceException;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
-import sit.int221.itbkkbackend.exceptions.TaskConstraintViolationException;
+import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,8 +69,8 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(TaskConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleTaskValidationException(TaskConstraintViolationException exception, HttpServletRequest request){
+    @ExceptionHandler(CustomConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleTaskValidationException(CustomConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),"Validation error. Check 'errors' field for details.", request.getRequestURI());

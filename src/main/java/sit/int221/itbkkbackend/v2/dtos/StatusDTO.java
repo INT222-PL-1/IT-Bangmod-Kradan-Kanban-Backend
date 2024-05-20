@@ -36,7 +36,7 @@ public class StatusDTO {
     }
 
     public void setName(String name) {
-        this.name = name.trim();
+        this.name = name == null ? null : name.isBlank() ? "" :  name.trim();
     }
     public void setDescription(String description) {
         this.description = description == null || description.isBlank() ? null : description.trim();

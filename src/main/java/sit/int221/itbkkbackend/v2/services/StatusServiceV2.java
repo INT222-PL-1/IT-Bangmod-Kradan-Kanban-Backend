@@ -2,6 +2,7 @@ package sit.int221.itbkkbackend.v2.services;
 
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
+import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.BoardV2;
@@ -17,8 +19,10 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,14 +48,12 @@ public class StatusServiceV2 {
         return statusRepository.findById(id == null ? findByName("No Status").getId() : id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     }
-
     public Boolean isExist(Integer id){
         try{
-            statusRepository.existsById(id);
+            return statusRepository.existsById(id);
         }catch (Exception e){
             return false;
         }
-        return true;
     }
 
 
@@ -75,28 +77,20 @@ public class StatusServiceV2 {
 
     @Transactional
     public StatusV2 addStatus(StatusDTO status){
-        validatingService.validateStatusDTO(status);
         status.setId(null);
-        if (findByName(status.getName()) != null){
-            throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
-        }
+        validateStatusDTOField(status);
         return statusRepository.save(mapper.map(status, StatusV2.class));
     }
 
     @Transactional
     public StatusV2 updateStatusById(Integer id, StatusDTO status){
         StatusV2 foundedStatus = findById(id);
-        validatingService.validateStatusDTO(status);
-        if (foundedStatus.getIs_fixed_status()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
-        }
-        StatusV2 duplicateStatus = findByName(status.getName());
-        if (duplicateStatus != null && !Objects.equals(duplicateStatus.getId(), id)){
-            throw new DuplicateStatusNameException(HttpStatus.BAD_REQUEST,status.getName());
-        }
         status.setId(id);
+        validateStatusDTOField(status);
+        if (foundedStatus.getIs_fixed_status()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't update default status.");
+        }
         return statusRepository.save(mapper.map(status, StatusV2.class));
-
     }
 
     public void transferTasksStatus(StatusV2 oldStatus, StatusV2 newStatus){
@@ -130,12 +124,24 @@ public class StatusServiceV2 {
         if (oldStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
         }
-
         transferTasksStatus(oldStatus,newStatus);
         statusRepository.delete(oldStatus);
         return oldStatus;
+    }
 
+    public void validateStatusDTOField(StatusDTO status){
+        StatusV2 duplicateStatus = findByName(status.getName());
+        Boolean isDuplicate = duplicateStatus != null && !Objects.equals(duplicateStatus.getId(), status.getId());
+        try{
+            validatingService.validateStatusDTO(status,isDuplicate);
+        }catch (ConstraintViolationException exception){
+            CustomConstraintViolationException customConstraintViolationException = new CustomConstraintViolationException(exception.getConstraintViolations());
 
+            if (isDuplicate){
+                customConstraintViolationException.getAdditionalErrorFields().put("name","must be unique");
+            }
+            throw customConstraintViolationException;
+        }
     }
 
 }

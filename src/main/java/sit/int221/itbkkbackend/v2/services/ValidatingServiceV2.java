@@ -15,9 +15,13 @@ import java.util.Collections;
 public class ValidatingServiceV2 {
 
     void validateTaskDTO(@Valid TaskDTO task,Boolean isStatusExist){
-        if (isStatusExist){
+        if (!isStatusExist){
             throw new ConstraintViolationException(Collections.emptySet());
         }
     };
-    void validateStatusDTO(@Valid StatusDTO status){};
+    void validateStatusDTO(@Valid StatusDTO status,Boolean isDuplicate){
+        if(isDuplicate){
+            throw new ConstraintViolationException(Collections.emptySet());
+        }
+    };
 }
