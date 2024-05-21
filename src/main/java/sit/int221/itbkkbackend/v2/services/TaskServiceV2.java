@@ -88,7 +88,6 @@ public class TaskServiceV2 {
 
     public void validateTaskDTOField(TaskDTO task){
         Boolean isStatusExist = statusService.isExist(task.getStatusId());
-        log.info(isStatusExist.toString());
         try{
             validatingService.validateTaskDTO(task,isStatusExist);
         }catch (ConstraintViolationException exception){

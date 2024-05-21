@@ -19,7 +19,7 @@ public class TaskDTO {
     @NotNull
     @NotEmpty
     @NotBlank
-    @Size(min = 1,max = 100 )
+    @Size(max = 100)
     private String title;
     public void setTitle(String title){
         this.title = title == null ? null : title.isBlank() ? "" : title.trim();

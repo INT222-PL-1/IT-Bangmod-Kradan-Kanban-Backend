@@ -4,6 +4,7 @@ package sit.int221.itbkkbackend.v2.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.Objects;
 @Setter
 public class StatusDTO {
     private Integer id;
+    @NotNull
     @NotEmpty
     @Size(max=50)
     private String name;

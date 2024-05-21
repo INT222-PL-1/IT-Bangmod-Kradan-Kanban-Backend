@@ -88,7 +88,7 @@ public class StatusServiceV2 {
         status.setId(id);
         validateStatusDTOField(status);
         if (foundedStatus.getIs_fixed_status()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't update default status.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be modified",foundedStatus.getName()));
         }
         return statusRepository.save(mapper.map(status, StatusV2.class));
     }
@@ -101,7 +101,7 @@ public class StatusServiceV2 {
     public StatusV2 deleteStatusById(Integer id){
         StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
         if (oldStatus.getIs_fixed_status()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
         statusRepository.delete(oldStatus);
         return oldStatus;
@@ -110,10 +110,10 @@ public class StatusServiceV2 {
     @Transactional
     public StatusV2 transferAndDeleteStatus(Integer oldId, Integer newId){
         if (Objects.equals(oldId, newId)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer a status that you want to delete.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"destination status for task transfer must be different from current status");
         }
-        StatusV2 oldStatus = findById(oldId);
-        StatusV2 newStatus = findById(newId);
+        StatusV2 oldStatus = statusRepository.findById(oldId).orElseThrow(()-> new  ResponseStatusException(HttpStatus.BAD_REQUEST, "the specified status for task transfer does not exist"));
+        StatusV2 newStatus = statusRepository.findById(newId).orElseThrow(()-> new  ResponseStatusException(HttpStatus.BAD_REQUEST, "the specified status for task transfer does not exist"));
         BoardV2 currentBoard = boardServiceV2.findById(1);
         if(newStatus.getTasks().size() + oldStatus.getTasks().size() > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !newStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
@@ -122,7 +122,7 @@ public class StatusServiceV2 {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer task. The current status does not contain any tasks.");
         }
         if (oldStatus.getIs_fixed_status()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Can't delete default status.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
         transferTasksStatus(oldStatus,newStatus);
         statusRepository.delete(oldStatus);
