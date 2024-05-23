@@ -48,6 +48,9 @@ public class TaskServiceV2 {
     public List<SimpleTaskDTO> getAllSimpleTasksDTO(String sortBy,String sortDirection, ArrayList<String> filterStatuses,Integer boardId){
         try{
             Sort sort = Sort.by(Sort.Direction.fromString(sortDirection),sortBy);
+            if(sortBy.equals("createdOn")){
+                sort = sort.and(Sort.by(Sort.Direction.ASC,"id"));
+            }
             List<TaskV2> taskV2List = boardId == null ? taskRepository.findAll(sort) : taskRepository.findAllByBoardId(boardId,sort) ;
             List<TaskV2> filteredTaskList = filterStatuses == null || filterStatuses.size() == 0 ? taskV2List : taskV2List.stream().filter(taskV2 -> filterStatuses.contains(taskV2.getStatus().getName())).toList();
             return listMapper.mapList(filteredTaskList, SimpleTaskDTO.class,mapper);

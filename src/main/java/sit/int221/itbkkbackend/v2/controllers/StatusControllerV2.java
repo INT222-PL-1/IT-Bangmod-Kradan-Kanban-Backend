@@ -23,7 +23,7 @@ import sit.int221.itbkkbackend.v2.services.StatusServiceV2;
 })
 @RestController
 @RequestMapping("/v2/statuses")
-public class StatusController2 {
+public class StatusControllerV2 {
 
     @Autowired
     private StatusServiceV2 service;
