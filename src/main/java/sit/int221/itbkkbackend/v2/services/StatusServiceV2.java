@@ -101,6 +101,9 @@ public class StatusServiceV2 {
         if (oldStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
+        if(oldStatus.getTasks().size() > 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted. There are tasks currently associated with this status.",oldStatus.getName()));
+        }
         statusRepository.delete(oldStatus);
         return oldStatus;
     }
