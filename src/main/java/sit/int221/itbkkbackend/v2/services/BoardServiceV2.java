@@ -1,7 +1,6 @@
 package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,14 +10,12 @@ import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.BoardDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.BoardV2;
-import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.BoardRepositoryV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV2;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
-@Slf4j
 @Service
 public class BoardServiceV2 {
     

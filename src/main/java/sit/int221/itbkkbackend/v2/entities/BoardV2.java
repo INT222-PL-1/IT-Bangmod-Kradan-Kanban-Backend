@@ -1,6 +1,5 @@
 package sit.int221.itbkkbackend.v2.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

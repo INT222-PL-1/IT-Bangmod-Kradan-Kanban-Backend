@@ -1,6 +1,5 @@
 package sit.int221.itbkkbackend.v2.services;
 
-
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class StatusServiceV2 {
     @Autowired

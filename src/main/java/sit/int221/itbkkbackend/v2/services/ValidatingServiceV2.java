@@ -2,7 +2,6 @@ package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
@@ -18,10 +17,11 @@ public class ValidatingServiceV2 {
         if (!isStatusExist){
             throw new ConstraintViolationException(Collections.emptySet());
         }
-    };
+    }
+
     void validateStatusDTO(@Valid StatusDTO status,Boolean isDuplicate){
         if(isDuplicate){
             throw new ConstraintViolationException(Collections.emptySet());
         }
-    };
+    }
 }

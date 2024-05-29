@@ -1,18 +1,16 @@
 package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
-
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
 import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
 import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
-import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
@@ -21,9 +19,9 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Slf4j
 @Service
 public class TaskServiceV2 {
     @Autowired
@@ -94,7 +92,6 @@ public class TaskServiceV2 {
         try{
             validatingService.validateTaskDTO(task,isStatusExist);
         }catch (ConstraintViolationException exception){
-            log.info(exception.toString());
             CustomConstraintViolationException taskConstraintViolationException = new CustomConstraintViolationException(exception.getConstraintViolations());
             if (!isStatusExist){
                 taskConstraintViolationException.getAdditionalErrorFields().put("status","does not exist");

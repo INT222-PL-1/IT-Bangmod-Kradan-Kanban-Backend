@@ -28,9 +28,7 @@ public class StatusDTO {
     private List<TaskV2> tasks;
     @JsonIgnore
     private Integer boardId;
-
     private Integer count;
-
     private Boolean is_fixed_status;
 
     public Integer getCount() {
@@ -40,6 +38,7 @@ public class StatusDTO {
     public void setName(String name) {
         this.name = name == null ? null : name.isBlank() ? "" :  name.trim();
     }
+
     public void setDescription(String description) {
         this.description = description == null || description.isBlank() ? null : description.trim();
     }

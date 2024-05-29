@@ -13,7 +13,6 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class TaskDTO {
     private Integer id;
     @NotNull
