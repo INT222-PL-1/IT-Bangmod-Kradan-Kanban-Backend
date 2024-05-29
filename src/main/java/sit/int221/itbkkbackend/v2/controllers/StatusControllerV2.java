@@ -1,7 +1,7 @@
 package sit.int221.itbkkbackend.v2.controllers;
 
 
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.StatusV2;
-import sit.int221.itbkkbackend.v2.services.StatusServiceV1;
+import sit.int221.itbkkbackend.v2.services.StatusServiceV2;
 
 @CrossOrigin(origins = {
         "http://localhost:5173",
@@ -21,36 +21,33 @@ import sit.int221.itbkkbackend.v2.services.StatusServiceV1;
         "http://ip23pl1.sit.kmutt.ac.th",
         "http://intproj23.sit.kmutt.ac.th"
 })
-
 @RestController
 @RequestMapping("/v2/statuses")
-public class StatusController {
+public class StatusControllerV2 {
 
     @Autowired
-    private StatusServiceV1 service;
+    private StatusServiceV2 service;
 
     @GetMapping("")
-    public ResponseEntity<Object> getAllStatus(@RequestParam(defaultValue = "false") Boolean count){
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(count)) ;
+    public ResponseEntity<Object> getAllStatus(@RequestParam(required = false) Integer boardId){
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(boardId)) ;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getStatus(@PathVariable Integer id ,@RequestParam(defaultValue = "false") Boolean count){
-        return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,count));
+    public ResponseEntity<Object> getStatus(@PathVariable Integer id ,@RequestParam(required = false) Integer boardId){
+        return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,boardId));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public StatusV2 addStatus(@Valid @RequestBody StatusDTO status){
+    public StatusV2 addStatus(@RequestBody StatusDTO status){
         return service.addStatus(status);
     }
 
     @PutMapping("/{id}")
-    public StatusV2 updateStatus(@PathVariable Integer id , @Valid @RequestBody StatusDTO status){
+    public StatusV2 updateStatus(@PathVariable Integer id , @RequestBody StatusDTO status){
         return service.updateStatusById(id,status);
     }
-
-
 
     @DeleteMapping("/{id}")
     public StatusV2 deleteStatus(@PathVariable Integer id){
@@ -61,4 +58,5 @@ public class StatusController {
     public StatusV2 transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
         return service.transferAndDeleteStatus(oldId,newId);
     }
+
 }

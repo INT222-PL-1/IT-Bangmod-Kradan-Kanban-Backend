@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
@@ -14,7 +12,6 @@ import java.util.List;
 @Setter
 @Entity
 @DynamicInsert
-@ToString
 @Table(name = "status", schema = "itb-kk")
 public class StatusV2 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +28,8 @@ public class StatusV2 {
     @Column(name = "statusColor",nullable = false)
     private String color;
 
-    @JsonIgnore
     @Column(name = "is_fixed_status",insertable = false,updatable = false)
-    private Integer is_fixed_status;
+    private Boolean is_fixed_status;
 
     @JsonIgnore
     @OneToMany(mappedBy = "status")

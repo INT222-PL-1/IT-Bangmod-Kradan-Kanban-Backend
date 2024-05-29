@@ -6,16 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.itbkkbackend.v2.dtos.SaveTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.services.TaskServiceV2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-@Slf4j
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
@@ -33,8 +32,11 @@ public class TaskControllerV2 {
     private TaskServiceV2 service;
 
     @GetMapping("")
-    public List<SimpleTaskDTO> getAllTasks(){
-        return service.getAllSimpleTasksDTO();
+    public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,
+                                           @RequestParam(defaultValue = "ASC") String sortDirection,
+                                           @RequestParam(required = false) ArrayList<String> filterStatuses,
+                                           @RequestParam(required = false) Integer boardId){
+        return service.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses,boardId);
     }
 
     @GetMapping("/{id}")
@@ -44,7 +46,7 @@ public class TaskControllerV2 {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public TaskDTO addTask(@RequestBody SaveTaskDTO task){
+    public TaskDTO addTask(@RequestBody TaskDTO task){
         return service.addTask(task);
     }
 
@@ -58,13 +60,4 @@ public class TaskControllerV2 {
         return service.updateTaskById(id,task);
     }
 
-//    @PatchMapping("/{oldId}/{newId}")
-//    public void transferStatus(@PathVariable Integer oldId, @PathVariable Integer newId){
-//        service.transferTasksStatus(oldId,newId);
-//    }
-
-//    @PatchMapping("/{id}")
-//    public Task updatePartialTask(@PathVariable Integer id ,@RequestBody Map<String, Optional<Object>> task){
-//        return service.updatePartialTaskById(id,task);
-//    }
 }

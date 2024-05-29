@@ -13,16 +13,15 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class TaskDTO {
     private Integer id;
     @NotNull
     @NotEmpty
     @NotBlank
-    @Size(min = 1,max = 100 )
+    @Size(max = 100)
     private String title;
     public void setTitle(String title){
-        this.title = title.trim();
+        this.title = title == null ? null : title.isBlank() ? "" : title.trim();
     }
     @Size(max = 500 )
     private String description;
@@ -37,9 +36,13 @@ public class TaskDTO {
 
     @JsonIgnore
     private StatusV2 status;
-
-    @NotNull
     private Integer statusId;
+    private Integer boardId;
+
+    public void setBoardId(Integer boardId) {
+        this.boardId = boardId == null ? 1 : boardId;
+    }
+
 
     public Integer getStatusId() {
         return status == null ? statusId :  status.getId();
