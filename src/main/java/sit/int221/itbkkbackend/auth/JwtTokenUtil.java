@@ -47,17 +47,17 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateToken(Users user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole());
         claims.put("oid", user.getOid());
         claims.put("name", user.getName());
         claims.put("email", user.getEmail());
-        claims.put("role", user.getRole());
         return doGenerateToken(claims, user.getUsername());
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setHeaderParam("typ", "JWT").
-                setClaims(claims)
-                .setIssuer(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString())
+        return Jwts.builder().setHeaderParam("typ", "JWT")
+                .setClaims(claims)
+                .setIssuer("https://intproj23.sit.kmutt.ac.th/pl1")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(signatureAlgorithm, SECRET_KEY).compact();
