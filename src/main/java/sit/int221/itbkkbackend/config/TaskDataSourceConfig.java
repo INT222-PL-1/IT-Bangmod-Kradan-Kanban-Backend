@@ -32,7 +32,9 @@ public class TaskDataSourceConfig {
     @Primary
     @Bean
     public DataSource taskDataSource(){
-        return taskDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
+        HikariDataSource dataSource = taskDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
+        dataSource.setPoolName("TaskPool");
+        return dataSource;
     }
     @Primary
     @Bean

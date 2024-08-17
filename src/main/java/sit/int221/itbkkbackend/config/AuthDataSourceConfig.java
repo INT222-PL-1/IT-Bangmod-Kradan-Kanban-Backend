@@ -32,7 +32,9 @@ public class AuthDataSourceConfig {
 
     @Bean
     public DataSource authDataSource(){
-        return authDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
+        HikariDataSource dataSource = authDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
+        dataSource.setPoolName("AuthPool");
+        return dataSource;
     }
 
     @Bean
