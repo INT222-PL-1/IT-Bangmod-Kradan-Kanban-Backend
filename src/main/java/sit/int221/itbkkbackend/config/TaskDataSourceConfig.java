@@ -1,5 +1,6 @@
 package sit.int221.itbkkbackend.config;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,7 +32,7 @@ public class TaskDataSourceConfig {
     @Primary
     @Bean
     public DataSource taskDataSource(){
-        return taskDataSourceProperties().initializeDataSourceBuilder().build();
+        return taskDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
     }
     @Primary
     @Bean

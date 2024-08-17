@@ -19,6 +19,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, userName + " does not exist !!");
         }
+        System.out.println(user.getOid());
         UserDetails userDetails = new
                 AuthUser(userName, user.getPassword());
         return userDetails;
