@@ -26,12 +26,12 @@ public class TaskDTO {
     @Size(max = 500 )
     private String description;
     public void setDescription(String description){
-         this.description = description == null || description.isBlank() ? null : description.trim();
+        this.description = description == null || description.isBlank() ? null : description.trim();
     }
     @Size(max = 30)
     private String assignees;
     public void setAssignees(String assignees) {
-         this.assignees = assignees == null ||  assignees.isBlank() ? null : assignees.trim();
+        this.assignees = assignees == null ||  assignees.isBlank() ? null : assignees.trim();
     }
 
     @JsonIgnore

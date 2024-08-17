@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend;
+package sit.int221.itbkkbackend.config;
 
 
 import org.modelmapper.ModelMapper;

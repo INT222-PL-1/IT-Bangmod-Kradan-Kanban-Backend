@@ -57,9 +57,12 @@ public class StatusServiceV2 {
 
     public List<StatusDTO> getAllStatus(Integer boardId){
         List <StatusDTO> statusList = listMapper.mapList( statusRepository.findAll(), StatusDTO.class,mapper);
-        if (boardId == null){return statusList;}
-        boardServiceV2.findById(boardId);
-        statusList.forEach(task-> task.setBoardId(boardId));
+//        if (boardId == null){return statusList;}
+//        boardServiceV2.findById(boardId);
+        statusList.forEach(status -> {
+            status.setBoardId(boardId);
+            status.setCount(taskRepository.countByStatusId(status.getId()));
+        });
         return statusList;
 
 
@@ -67,9 +70,10 @@ public class StatusServiceV2 {
 
     public Object getStatusById(Integer id , Integer boardId){
         StatusDTO status = mapper.map(findById(id),StatusDTO.class);
-        if(boardId == null){return status;}
-        boardServiceV2.findById(boardId);
+//        if(boardId == null){return status;}
+//        boardServiceV2.findById(boardId);
         status.setBoardId(boardId);
+        status.setCount(taskRepository.countByStatusId(id));
         return status;
     }
 
@@ -98,10 +102,11 @@ public class StatusServiceV2 {
     @Transactional
     public StatusV2 deleteStatusById(Integer id){
         StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
+        Integer taskAmount = taskRepository.countByStatusId(id);
         if (oldStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
-        if(oldStatus.getTasks().size() > 0){
+        if(taskAmount > 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted. There are tasks currently associated with this status.",oldStatus.getName()));
         }
         statusRepository.delete(oldStatus);
@@ -116,10 +121,12 @@ public class StatusServiceV2 {
         StatusV2 oldStatus = statusRepository.findById(oldId).orElseThrow(()-> new  ResponseStatusException(HttpStatus.BAD_REQUEST, "the specified status for task transfer does not exist"));
         StatusV2 newStatus = statusRepository.findById(newId).orElseThrow(()-> new  ResponseStatusException(HttpStatus.BAD_REQUEST, "the specified status for task transfer does not exist"));
         BoardV2 currentBoard = boardServiceV2.findById(1);
-        if(newStatus.getTasks().size() + oldStatus.getTasks().size() > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !newStatus.getIs_fixed_status()){
+        Integer oldStatusTaskAmount = taskRepository.countByStatusId(oldId);
+        Integer newStatusTaskAmount = taskRepository.countByStatusId(newId);
+        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !newStatus.getIs_fixed_status()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
-        if (oldStatus.getTasks().size() == 0){
+        if (oldStatusTaskAmount == 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer task. The current status does not contain any tasks.");
         }
         if (oldStatus.getIs_fixed_status()){

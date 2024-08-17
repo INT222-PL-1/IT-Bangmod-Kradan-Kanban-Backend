@@ -24,16 +24,16 @@ public class StatusDTO {
     @Size(max=200)
     private String description;
     private String color;
-    @JsonIgnore
-    private List<TaskV2> tasks;
+    //    @JsonIgnore
+//    private List<TaskV2> tasks;
     @JsonIgnore
     private Integer boardId;
     private Integer count;
     private Boolean is_fixed_status;
 
-    public Integer getCount() {
-        return tasks == null ? 0 : boardId == null ? tasks.size() : tasks.stream().filter(task -> Objects.equals(task.getBoardId(), this.boardId)).toList().size();
-    }
+//    public Integer getCount() {
+//        return tasks == null ? 0 : boardId == null ? tasks.size() : tasks.stream().filter(task -> Objects.equals(task.getBoardId(), this.boardId)).toList().size();
+//    }
 
     public void setName(String name) {
         this.name = name == null ? null : name.isBlank() ? "" :  name.trim();

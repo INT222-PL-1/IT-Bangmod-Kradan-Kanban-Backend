@@ -12,13 +12,14 @@ import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.entities.BoardV2;
 import sit.int221.itbkkbackend.v2.repositories.BoardRepositoryV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV2;
+import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
 public class BoardServiceV2 {
-    
+
     @Autowired
     private BoardRepositoryV2 boardRepository;
     @Autowired
@@ -27,11 +28,13 @@ public class BoardServiceV2 {
     private ListMapper listMapper;
     @Autowired
     private StatusRepositoryV2 statusRepository;
+    @Autowired
+    private TaskRepositoryV2 taskRepository;
     public BoardV2 findById(Integer id){
         if (id == null){id = 1;}
         return boardRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.BAD_REQUEST,"boardId does not exist")
-                );
+        );
     }
 
     public List<BoardDTO> findAllBoard(){
@@ -56,8 +59,11 @@ public class BoardServiceV2 {
 
         }
         BoardDTO board = mapper.map(updateBoard, BoardDTO.class);
-        List<StatusDTO> exceedLimitStatus = listMapper.mapList(statusRepository.findStatusWithTasksExceedingLimit(id, updateBoard.getTaskLimitPerStatus()), StatusDTO.class,mapper) ;
-        exceedLimitStatus.forEach(status-> status.setBoardId(id));
+        List<StatusDTO> exceedLimitStatus = listMapper.mapList(statusRepository.findStatusWithTasksExceedingLimit(id, updateBoard.getTaskLimitPerStatus()), StatusDTO.class,mapper);
+        exceedLimitStatus.forEach(status -> {
+            status.setBoardId(id);
+            status.setCount(taskRepository.countByStatusId(status.getId()));
+        });
         board.setExceedLimitStatus(exceedLimitStatus);
         return board;
     }
