@@ -1,6 +1,7 @@
 name: Build and Push docker image
 run-name: "@${{ github.actor }} was pushed up a new update. Auto-Redeploy START!"
-on: 
+on:
+  workflow_dispatch: 
   push:
     branches:
     - 'main'

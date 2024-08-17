@@ -65,8 +65,8 @@ public class TaskServiceV2 {
     @Transactional
     public TaskDTO addTask(TaskDTO task){
         validateTaskDTOField(task);
+        task.setId(null);
         TaskV2 validatedTask = initializeTask(task);
-        validatedTask.setId(null);
         return mapper.map(taskRepository.save(validatedTask),TaskDTO.class);
     }
 
@@ -74,16 +74,17 @@ public class TaskServiceV2 {
     public SimpleTaskDTO deleteTaskById(Integer id){
         TaskV2 foundedTask = taskRepository.findById(id).orElseThrow(
                 ()-> new DeleteItemNotFoundException(HttpStatus.NOT_FOUND
-        ));
+                ));
         taskRepository.delete(findById(id));
         return mapper.map(foundedTask,SimpleTaskDTO.class);
     }
 
     @Transactional
     public TaskDTO updateTaskById(Integer id, TaskDTO task){
+        findById(id);
         validateTaskDTOField(task);
+        task.setId(id);
         TaskV2 validatedTask = initializeTask(task);
-        validatedTask.setId(id);
         return mapper.map(taskRepository.save(validatedTask),TaskDTO.class);
     }
 
@@ -104,7 +105,17 @@ public class TaskServiceV2 {
         TaskV2 validatedTask = mapper.map(task, TaskV2.class);
         StatusV2 taskStatus = statusService.findById(task.getStatusId());
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
-        if(taskStatus.getTasks().size() + 1 > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !taskStatus.getIs_fixed_status()){
+        Integer taskAmount = taskRepository.countByStatusId(task.getStatusId());
+        Boolean isExceedLimit;
+        if(task.getId() == null || task.getStatusId() != findById(task.getId()).getStatusId()){
+            isExceedLimit = taskAmount + 1 > currentBoard.getTaskLimitPerStatus();
+        }else {
+            isExceedLimit = false;
+        }
+        if(!taskStatus.getIs_fixed_status() &&
+                currentBoard.getIsLimitTasks() &&
+                isExceedLimit
+        ){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
         validatedTask.setStatus(taskStatus);
