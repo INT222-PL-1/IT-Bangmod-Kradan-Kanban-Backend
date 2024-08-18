@@ -42,7 +42,6 @@ public class AuthController {
         try{
             validatingService.validateLoginRequestDTO(jwtRequestUser);
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Users user = repository.findByUsername(jwtRequestUser.getUserName());
             String token = jwtTokenUtil.generateToken(user);
             return ResponseEntity.ok().body(new Token(token));
@@ -51,6 +50,9 @@ public class AuthController {
         }
         catch (AuthenticationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username or Password is incorrect");
+        }
+        catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"There is a problem. Please try again later.");
         }
     }
 
