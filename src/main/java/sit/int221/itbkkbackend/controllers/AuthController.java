@@ -15,7 +15,7 @@ import sit.int221.itbkkbackend.auth.*;
 import sit.int221.itbkkbackend.v2.services.ValidatingServiceV2;
 
 @RestController
-@RequestMapping("/v2/login")
+@RequestMapping("/login")
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
