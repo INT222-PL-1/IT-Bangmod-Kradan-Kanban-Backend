@@ -35,18 +35,18 @@ public class AuthController {
     ValidatingServiceV2 validatingService;
     @Autowired
     UsersRepository repository;
+
     @PostMapping("")
     public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
+        validatingService.validateLoginRequestDTO(jwtRequestUser);
         try{
-            validatingService.validateLoginRequestDTO(jwtRequestUser);
+
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             Users user = repository.findByUsername(jwtRequestUser.getUserName());
             String token = jwtTokenUtil.generateToken(user);
             return ResponseEntity.ok().body(new Token(token));
-        }catch (ConstraintViolationException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username or Password is incorrect");
         }
         catch (AuthenticationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username or Password is incorrect");
