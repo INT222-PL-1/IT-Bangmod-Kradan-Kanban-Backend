@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(ConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        String RootEntityErrorName = request.getRequestURI().contains("tasks") ? "task" : "status";
+        String RootEntityErrorName = exception.getConstraintViolations().iterator().next().getLeafBean().getClass().getSimpleName();
         ErrorResponse resBody = new ErrorResponse(
                 errorDetails.getStatus(),
                 String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" , RootEntityErrorName),
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTaskValidationException(CustomConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        String RootEntityErrorName = request.getRequestURI().contains("tasks") ? "task" : "status";
+        String RootEntityErrorName = exception.getConstraintViolations().iterator().next().getLeafBean().getClass().getSimpleName();
         ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),
                 String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" ,RootEntityErrorName),
                 request.getRequestURI());

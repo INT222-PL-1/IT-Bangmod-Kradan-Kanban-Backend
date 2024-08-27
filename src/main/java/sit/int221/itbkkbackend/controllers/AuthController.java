@@ -8,13 +8,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.auth.LoginRequestDTO;
+import sit.int221.itbkkbackend.auth.*;
 import sit.int221.itbkkbackend.v2.services.ValidatingServiceV2;
 
 @RestController
-@RequestMapping("/v2/login")
+@RequestMapping("/login")
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
@@ -26,25 +27,33 @@ import sit.int221.itbkkbackend.v2.services.ValidatingServiceV2;
         "http://intproj23.sit.kmutt.ac.th"
 })
 public class AuthController {
-
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
     ValidatingServiceV2 validatingService;
+    @Autowired
+    UsersRepository repository;
+
     @PostMapping("")
     public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
+        validatingService.validateLoginRequestDTO(jwtRequestUser);
         try{
-            validatingService.validateLoginRequestDTO(jwtRequestUser);
+
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        }catch (ConstraintViolationException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Username or Password is incorrect");
+            Users user = repository.findByUsername(jwtRequestUser.getUserName());
+            String token = jwtTokenUtil.generateToken(user);
+            return ResponseEntity.ok().body(new Token(token));
         }
         catch (AuthenticationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username or Password is incorrect");
         }
-        return ResponseEntity.ok("");
+        catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"There is a problem. Please try again later.");
+        }
     }
 
 
