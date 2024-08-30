@@ -32,14 +32,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         String errorMessage  = (String) request.getAttribute("errorType");
         if(errorMessage == null){
             errorMessage = "Authentication Failed , Please Try Again";
         }
         ErrorResponse error = new ErrorResponse(
-
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
                  errorMessage,
