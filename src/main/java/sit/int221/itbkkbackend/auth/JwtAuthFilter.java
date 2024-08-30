@@ -31,11 +31,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UsersRepository usersRepository;
-    private final HandlerExceptionResolver exceptionResolver;
-
-    public JwtAuthFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver){
-        this.exceptionResolver = exceptionResolver;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -52,13 +47,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 } catch (IllegalArgumentException e) {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
                 } catch (ExpiredJwtException e) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+                    request.setAttribute("errorType","JWT Token expired");
                 }
             } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "JWT Token does not begin with Bearer String");
+                request.setAttribute("errorType","JWT Token does not begin with Bearer String");
             }
-        } else {
-            exceptionResolver.resolveException(request,response,null,new AuthorizationFilterException());
+        }else {
+            request.setAttribute("errorType", "Access Token Required");
         }
         if (oid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String username = usersRepository.findByOid(oid).getUsername();

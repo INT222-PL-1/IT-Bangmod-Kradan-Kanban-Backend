@@ -94,16 +94,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }
 
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AuthorizationFilterException.class)
-    public ResponseEntity<ErrorResponse> handleUnAuthorization(Exception e, HttpServletRequest request){
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<ErrorResponse> handleTest(Exception e, HttpServletRequest request){
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         ErrorResponse error = new ErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
-                "Invalid Token",
+                errorDetails.getTitle(),
+                String.format("cannot %s","authen"),
                 request.getRequestURI()
         );
+
         return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
     }
 
