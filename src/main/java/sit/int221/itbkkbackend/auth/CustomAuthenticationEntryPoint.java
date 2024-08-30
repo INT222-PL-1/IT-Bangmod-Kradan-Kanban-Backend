@@ -19,6 +19,8 @@ import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -30,7 +32,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
 
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         String errorMessage  = (String) request.getAttribute("errorType");
         if(errorMessage == null){
@@ -47,9 +49,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setStatus(401);
         objectMapper.writeValue(response.getWriter(), error);
 
-//        request.setAttribute(RequestDispatcher.ERROR_EXCEPTION,
-//                new AuthorizationFilterException());
-//        request.getRequestDispatcher("/error").forward(request, response);
 
     }
 }
