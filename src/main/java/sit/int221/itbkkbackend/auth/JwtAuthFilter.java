@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.auth;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 jwtToken = requestTokenHeader.substring(7);
                 try {
                     oid = jwtTokenUtil.getOidFromToken(jwtToken);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException | MalformedJwtException e) {
                     request.setAttribute("errorType","JWT Token is not well formed");
                 } catch (ExpiredJwtException e) {
                     request.setAttribute("errorType","JWT Token expired");

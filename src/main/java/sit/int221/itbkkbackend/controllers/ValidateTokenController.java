@@ -22,6 +22,6 @@ public class ValidateTokenController {
 
     @GetMapping("")
     public ResponseEntity<Object> validateToken() {
-        return ResponseEntity.ok().body("");
+        return ResponseEntity.ok().body(null);
     }
 }
