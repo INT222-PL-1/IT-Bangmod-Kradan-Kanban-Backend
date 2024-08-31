@@ -12,11 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
-import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
-import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
-import sit.int221.itbkkbackend.exceptions.ErrorResponse;
+import org.springframework.web.server.ResponseStatusException;
+import sit.int221.itbkkbackend.exceptions.*;
 
+import javax.naming.AuthenticationException;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -93,6 +92,22 @@ public class GlobalExceptionHandler {
             }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
+    }
+
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<ErrorResponse> handleTest(Exception e, HttpServletRequest request){
+        ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        ErrorResponse error = new ErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                errorDetails.getStatus(),
+                errorDetails.getTitle(),
+                String.format("cannot %s","authen"),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
     }
 
 
