@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ResponseStatusException.class)
+    @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTaskValidationException(CustomConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        String RootEntityErrorName = exception.getConstraintViolations().iterator().next().getLeafBean().getClass().getSimpleName();
+        String RootEntityErrorName = exception.getRootEntityName();
         ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),
                 String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" ,RootEntityErrorName),
                 request.getRequestURI());
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
         }
         if (!exception.getAdditionalErrorFields().isEmpty()){
             for (Map.Entry<String,String> entry :
-                 exception.getAdditionalErrorFields().entrySet()) {
+                    exception.getAdditionalErrorFields().entrySet()) {
                 resBody.addValidationError(entry.getKey(),entry.getValue());
             }
         }

@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 @Setter
 @Entity
 @ToString
-@Table(name = "tasksV2", schema = "itb-kk")
+@Table(name = "taskV2", schema = "itb-kk")
 public class TaskV2 {
     @Id
     @Column(name = "taskId",nullable = false)

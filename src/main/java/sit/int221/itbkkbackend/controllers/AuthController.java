@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.auth.*;
-import sit.int221.itbkkbackend.v2.services.ValidatingServiceV2;
+import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
 
 @RestController
 @RequestMapping("/login")
@@ -32,7 +32,7 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    ValidatingServiceV2 validatingService;
+    ValidatingServiceV3 validatingService;
     @Autowired
     UsersRepository repository;
 
@@ -55,6 +55,5 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"There is a problem. Please try again later.");
         }
     }
-
 
 }

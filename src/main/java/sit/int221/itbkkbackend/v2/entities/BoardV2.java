@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Table(name = "board",schema = "itb-kk")
+@Table(name = "boardV2",schema = "itb-kk")
 @Entity
 public class BoardV2 {
 

@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @Configuration
 @EnableJpaRepositories(
-        basePackages = { "sit.int221.itbkkbackend.v2.repositories" , "sit.int221.itbkkbackend.v1.repositories"}  ,
+        basePackages = {"sit.int221.itbkkbackend.v3.repositories","sit.int221.itbkkbackend.v2.repositories" , "sit.int221.itbkkbackend.v1.repositories"}  ,
         entityManagerFactoryRef = "taskEntityManagerFactoryBean",
         transactionManagerRef = "taskTransactionManager"
 )
@@ -41,7 +41,7 @@ public class TaskDataSourceConfig {
     LocalContainerEntityManagerFactoryBean taskEntityManagerFactoryBean(EntityManagerFactoryBuilder entityManagerFactoryBuilder, @Qualifier("taskDataSource") DataSource dataSource){
         return entityManagerFactoryBuilder
                 .dataSource(dataSource)
-                .packages("sit.int221.itbkkbackend.v2.entities","sit.int221.itbkkbackend.v1.entities")
+                .packages("sit.int221.itbkkbackend.v3.entities","sit.int221.itbkkbackend.v2.entities","sit.int221.itbkkbackend.v1.entities")
                 .build();
     }
     @Primary
