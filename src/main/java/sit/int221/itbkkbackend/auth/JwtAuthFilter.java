@@ -60,12 +60,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             request.setAttribute("errorType", "Access Token Required");
         }
         if (oid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = usersRepository.findByOid(oid).getUsername();
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-                if (jwtTokenUtil.validateToken(jwtToken)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+            Users user = usersRepository.findByOid(oid);
+            if(user == null){
+                request.setAttribute("errorType", "User not found");
+            } else {
+                String username = user.getUsername();
+                UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+                    if (jwtTokenUtil.validateToken(jwtToken)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    }
+            }
 
         }
 
