@@ -52,6 +52,7 @@ public class BoardControllerV3 {
         return mapper.map(boardService.findById(id), BoardDTO.class);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public BoardDTO addBoard(@RequestBody BoardDTO board) {
         return boardService.addBoard(board);
