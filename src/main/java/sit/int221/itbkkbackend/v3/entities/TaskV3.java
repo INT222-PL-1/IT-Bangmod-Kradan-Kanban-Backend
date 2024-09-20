@@ -42,7 +42,7 @@ public class TaskV3 {
     @Column(name = "board_id", insertable = false,updatable = false)
     private String boardId;
 
-    @Column(insertable=false, updatable=false)
+    @Column(name = "status_id", insertable=false, updatable=false)
     private Integer statusId;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
