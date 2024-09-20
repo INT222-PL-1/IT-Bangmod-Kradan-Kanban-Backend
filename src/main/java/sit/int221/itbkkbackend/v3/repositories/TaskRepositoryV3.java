@@ -20,5 +20,5 @@ public interface TaskRepositoryV3 extends JpaRepository<TaskV3, Integer> {
 
     Integer countByStatusIdAndBoardId(Integer statusId, String boardId);
 
-    TaskV3 findByIdAndAndBoardId(Integer id, String boardId);
+    TaskV3 findByIdAndBoardId(Integer id, String boardId);
 }

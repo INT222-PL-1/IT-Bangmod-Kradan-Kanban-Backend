@@ -102,7 +102,7 @@ public class TaskServiceV3 {
 
     public TaskV3 getTaskById(Integer id,String boardId){
         boardService.isExist(boardId);
-        TaskV3 task =  taskRepository.findByIdAndAndBoardId(id,boardId) ;
+        TaskV3 task =  taskRepository.findByIdAndBoardId(id,boardId) ;
         if(task == null){
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
@@ -122,7 +122,7 @@ public class TaskServiceV3 {
     @Transactional
     public SimpleTaskDTO deleteTaskById(Integer id,String boardId){
         boardService.isExist(boardId);
-        TaskV3 task =  taskRepository.findByIdAndAndBoardId(id,boardId) ;
+        TaskV3 task =  taskRepository.findByIdAndBoardId(id,boardId) ;
         if(task == null){
             throw new DeleteItemNotFoundException(HttpStatus.NOT_FOUND);
         }
@@ -133,7 +133,7 @@ public class TaskServiceV3 {
     @Transactional
     public TaskDTO updateTaskById(Integer id, TaskDTO task,String boardId){
         boardService.isExist(boardId);
-        TaskV3 foundedTask =  taskRepository.findByIdAndAndBoardId(id,boardId);
+        TaskV3 foundedTask =  taskRepository.findByIdAndBoardId(id,boardId);
         if(foundedTask == null){
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }

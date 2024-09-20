@@ -22,6 +22,6 @@ public interface StatusRepositoryV3 extends JpaRepository<StatusV3,Integer> {
     @Query("select s from StatusV3 s where s.boardId is NULL and s.isPredefined = false")
     List<StatusV3> findEditableDefaultStatus();
 
-    @Query(value = "SELECT rowIndex FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY `statusId`) AS rowIndex FROM `statusV3` WHERE `boardId` IS NULL AND is_fixed_status = FALSE) AS temp WHERE temp.`statusId` = :statusId", nativeQuery = true)
+    @Query(value = "SELECT rowIndex FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY `status_id`) AS rowIndex FROM `status_v3` WHERE `board_id` IS NULL AND is_predefined = FALSE) AS temp WHERE temp.`status_id` = :statusId", nativeQuery = true)
     Integer findRowIndexOfEditableDefaultStatusByStatusId(@Param("statusId") Integer statusId);
 }
