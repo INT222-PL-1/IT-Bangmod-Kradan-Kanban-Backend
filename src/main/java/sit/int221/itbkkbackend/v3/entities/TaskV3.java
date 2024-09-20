@@ -14,43 +14,43 @@ import java.time.ZonedDateTime;
 @Setter
 @Entity
 @ToString
-@Table(name = "taskV3", schema = "itb-kk")
+@Table(name = "task_v3", schema = "itb-kk")
 public class TaskV3 {
     @Id
-    @Column(name = "taskId",nullable = false)
+    @Column(name = "task_id",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "taskTitle")
+    @Column(name = "task_title")
     private String title;
 
-    @Column(name = "taskDescription")
+    @Column(name = "task_description")
     private String description;
 
-    @Column(name = "taskAssignees")
+    @Column(name = "task_assignees")
     private String assignees;
 
     @ManyToOne
-    @JoinColumn(name = "statusId", referencedColumnName = "statusId", nullable = false)
+    @JoinColumn(name = "status_id", referencedColumnName = "status_id", nullable = false)
     private StatusV3 status;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "boardId" , referencedColumnName = "boardId",nullable = false)
+    @JoinColumn(name = "board_id" , referencedColumnName = "board_id",nullable = false)
     private BoardV3 board;
 
-    @Column(name = "boardId", insertable = false,updatable = false)
+    @Column(name = "board_id", insertable = false,updatable = false)
     private String boardId;
 
     @Column(insertable=false, updatable=false)
     private Integer statusId;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    @Column(name = "createdOn", insertable = false ,updatable = false)
+    @Column(name = "created_on", insertable = false ,updatable = false)
     private ZonedDateTime createdOn;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    @Column(name = "updatedOn", insertable = false ,updatable = false)
+    @Column(name = "updated_on", insertable = false ,updatable = false)
     private ZonedDateTime updatedOn;
 
 

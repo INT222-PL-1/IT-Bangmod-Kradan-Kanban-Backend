@@ -52,7 +52,7 @@ public class StatusServiceV3 {
             return statusRepository.findByName("No Status");
         }
         StatusV3 status = statusRepository.findById(id).orElseThrow(()->  new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
-        if(status.getBoardId() == null && status.getIs_fixed_status() == false){
+        if(status.getBoardId() == null && status.getIsPredefined() == false){
             checkDefaultStatusConfig(id,boardId);
         }
         if(status.getBoardId() != null && !Objects.equals(status.getBoardId(), boardId)){
@@ -63,7 +63,7 @@ public class StatusServiceV3 {
 
     public void checkDefaultStatusConfig (Integer statusId , String boardId){
         int configIndex = statusRepository.findRowIndexOfEditableDefaultStatusByStatusId(statusId);
-        char[] config = boardServiceV3.findById(boardId).getDefaultStatusesConfig().toCharArray();
+        char[] config = boardServiceV3.findById(boardId).getDefaultStatusConfig().toCharArray();
         if(config[configIndex - 1] == '0'){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist");
         }
@@ -73,9 +73,9 @@ public class StatusServiceV3 {
         List<StatusV3> duplicateStatuses = statusRepository.findByNameAndBoardIdIsNotNull(status.getName(), status.getBoardId());
         StatusV3 duplicateStatus = duplicateStatuses.size() == 0 ? null :  duplicateStatuses.get(duplicateStatuses.size() - 1);
         // check if duplicate status is default status can be edit
-        if(duplicateStatus != null && duplicateStatus.getBoardId() == null && duplicateStatus.getIs_fixed_status() == false){
+        if(duplicateStatus != null && duplicateStatus.getBoardId() == null && duplicateStatus.getIsPredefined() == false){
             int configIndex = statusRepository.findRowIndexOfEditableDefaultStatusByStatusId(duplicateStatus.getId());
-            char[] config = boardServiceV3.findById(status.getBoardId()).getDefaultStatusesConfig().toCharArray();
+            char[] config = boardServiceV3.findById(status.getBoardId()).getDefaultStatusConfig().toCharArray();
             if(config[configIndex - 1] == '0'){
                 duplicateStatus = null;
             }
@@ -87,7 +87,7 @@ public class StatusServiceV3 {
         Integer configIndex = statusRepository.findRowIndexOfEditableDefaultStatusByStatusId(oldStatus.getId());
         if (configIndex != null) configIndex = configIndex - 1;
         else return;
-        char[] config = boardServiceV3.findById(boardId).getDefaultStatusesConfig().toCharArray();
+        char[] config = boardServiceV3.findById(boardId).getDefaultStatusConfig().toCharArray();
         config[configIndex] = '0';
         Map<String, Optional<Object>> updateDefaultStatusConfig = new HashMap<>();
         updateDefaultStatusConfig.put("defaultStatusesConfig",Optional.of(String.valueOf(config)));
@@ -118,7 +118,7 @@ public class StatusServiceV3 {
         List <StatusV3> editableDefaultStatus = statusRepository.findEditableDefaultStatus();
         for (StatusV3 editableStatus : editableDefaultStatus) {
             int configIndex = statusRepository.findRowIndexOfEditableDefaultStatusByStatusId(editableStatus.getId());
-            char[] config = boardServiceV3.findById(boardId).getDefaultStatusesConfig().toCharArray();
+            char[] config = boardServiceV3.findById(boardId).getDefaultStatusConfig().toCharArray();
             if (config[configIndex - 1] == '0') {
                 statusList.removeIf(statusDTO -> statusDTO.getId() == editableStatus.getId());
             }
@@ -151,7 +151,7 @@ public class StatusServiceV3 {
     public StatusV3 updateStatusById(Integer id, StatusDTO status,String boardId){
         boardServiceV3.isExist(boardId);
         StatusV3 updateStatus = findByIdAndBoardId(id,boardId);
-        if (updateStatus.getIs_fixed_status()){
+        if (updateStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be modified",updateStatus.getName()));
         }
         if(updateStatus.getBoardId() == null){
@@ -174,7 +174,7 @@ public class StatusServiceV3 {
         boardServiceV3.isExist(boardId);
         StatusV3 deleteStatus = findByIdAndBoardId(id,boardId);
         Integer taskAmount = taskRepository.countByStatusIdAndBoardId(id,boardId);
-        if (deleteStatus.getIs_fixed_status()){
+        if (deleteStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",deleteStatus.getName()));
         }
         if(taskAmount > 0){
@@ -199,13 +199,13 @@ public class StatusServiceV3 {
         BoardV3 currentBoard = boardServiceV3.findById(boardId);
         Integer oldStatusTaskAmount = taskRepository.countByStatusIdAndBoardId(oldId,boardId);
         Integer newStatusTaskAmount = taskRepository.countByStatusIdAndBoardId(newId,boardId);
-        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !newStatus.getIs_fixed_status()){
+        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsTaskLimitEnabled() && !newStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
         if (oldStatusTaskAmount == 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer task. The current status does not contain any tasks.");
         }
-        if (oldStatus.getIs_fixed_status()){
+        if (oldStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
         transferTasksStatus(oldStatus, newStatus, boardId);

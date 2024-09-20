@@ -12,24 +12,24 @@ import java.util.List;
 @Setter
 @Entity
 @DynamicInsert
-@Table(name = "statusV2", schema = "itb-kk")
+@Table(name = "status_v2", schema = "itb-kk")
 public class StatusV2 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "statusId")
+    @Column(name = "status_id")
     private Integer id;
 
-    @Column(name = "statusName")
+    @Column(name = "status_name")
     private String name;
 
-    @Column(name = "statusDescription")
+    @Column(name = "status_description")
     private String description;
 
-    @Column(name = "statusColor",nullable = false)
+    @Column(name = "status_color",nullable = false)
     private String color;
 
-    @Column(name = "is_fixed_status",insertable = false,updatable = false)
-    private Boolean is_fixed_status;
+    @Column(name = "is_predefined",insertable = false,updatable = false)
+    private Boolean isPredefined;
 
     @JsonIgnore
     @OneToMany(mappedBy = "status")

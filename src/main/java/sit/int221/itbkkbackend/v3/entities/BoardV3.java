@@ -9,22 +9,22 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "boardV3", schema = "itb-kk")
+@Table(name = "board_v3", schema = "itb-kk")
 public class BoardV3 {
     @Id
-    @Column(name = "boardId")
+    @Column(name = "board_id")
     private String id;
     @Column(name = "owner_oid")
     private String ownerOid;
-    @Column(name = "name")
+    @Column(name = "board_name")
     private String name;
-    @Column(name = "is_limit_tasks", insertable = false)
-    private Boolean isLimitTasks;
+    @Column(name = "is_task_limit_enabled", insertable = false)
+    private Boolean isTaskLimitEnabled;
     @Column(name = "task_limit_per_status", insertable = false)
     private Integer taskLimitPerStatus;
-    @Column(name = "default_statuses_config", insertable = false)
-    private String defaultStatusesConfig;
+    @Column(name = "default_status_config", insertable = false)
+    private String defaultStatusConfig;
     @OneToMany
-    @JoinColumn(name = "boardId", referencedColumnName = "boardId")
+    @JoinColumn(name = "board_id", referencedColumnName = "board_id")
     private List<TaskV3> tasks;
 }

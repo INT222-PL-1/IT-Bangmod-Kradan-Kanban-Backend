@@ -70,8 +70,8 @@ public class TaskServiceV3 {
         }else {
             isExceedLimit = false;
         }
-        if(!taskStatus.getIs_fixed_status() &&
-                currentBoard.getIsLimitTasks() &&
+        if(!taskStatus.getIsPredefined() &&
+                currentBoard.getIsTaskLimitEnabled() &&
                 isExceedLimit
         ){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));

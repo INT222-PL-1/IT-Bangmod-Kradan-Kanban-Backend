@@ -2,14 +2,11 @@ package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.exceptions.DeleteItemNotFoundException;
-import sit.int221.itbkkbackend.exceptions.DuplicateStatusNameException;
 import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
@@ -18,10 +15,8 @@ import sit.int221.itbkkbackend.v2.entities.StatusV2;
 import sit.int221.itbkkbackend.v2.repositories.StatusRepositoryV2;
 import sit.int221.itbkkbackend.v2.repositories.TaskRepositoryV2;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class StatusServiceV2 {
@@ -89,7 +84,7 @@ public class StatusServiceV2 {
         StatusV2 foundedStatus = findById(id);
         status.setId(id);
         validateStatusDTOField(status);
-        if (foundedStatus.getIs_fixed_status()){
+        if (foundedStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be modified",foundedStatus.getName()));
         }
         return statusRepository.save(mapper.map(status, StatusV2.class));
@@ -103,7 +98,7 @@ public class StatusServiceV2 {
     public StatusV2 deleteStatusById(Integer id){
         StatusV2 oldStatus = statusRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
         Integer taskAmount = taskRepository.countByStatusId(id);
-        if (oldStatus.getIs_fixed_status()){
+        if (oldStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
         if(taskAmount > 0){
@@ -123,13 +118,13 @@ public class StatusServiceV2 {
         BoardV2 currentBoard = boardServiceV2.findById(1);
         Integer oldStatusTaskAmount = taskRepository.countByStatusId(oldId);
         Integer newStatusTaskAmount = taskRepository.countByStatusId(newId);
-        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsLimitTasks() && !newStatus.getIs_fixed_status()){
+        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsTaskLimitEnabled() && !newStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
         if (oldStatusTaskAmount == 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer task. The current status does not contain any tasks.");
         }
-        if (oldStatus.getIs_fixed_status()){
+        if (oldStatus.getIsPredefined()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
         transferTasksStatus(oldStatus,newStatus);
