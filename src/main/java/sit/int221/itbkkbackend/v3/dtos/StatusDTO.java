@@ -25,7 +25,7 @@ public class StatusDTO {
     @JsonIgnore
     private String boardId;
     private Integer count;
-    private Boolean is_fixed_status;
+    private Boolean isPredefined;
 
     public void setName(String name) {
         this.name = name == null ? null : name.isBlank() ? "" :  name.trim();
