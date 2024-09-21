@@ -19,23 +19,25 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @Configuration
 @EnableJpaRepositories(
-        basePackages = {"sit.int221.itbkkbackend.v3.repositories","sit.int221.itbkkbackend.v2.repositories" , "sit.int221.itbkkbackend.v1.repositories"}  ,
+        basePackages = {"sit.int221.itbkkbackend.v3.repositories", "sit.int221.itbkkbackend.v2.repositories", "sit.int221.itbkkbackend.v1.repositories"}  ,
         entityManagerFactoryRef = "taskEntityManagerFactoryBean",
         transactionManagerRef = "taskTransactionManager"
 )
 public class TaskDataSourceConfig {
     @ConfigurationProperties("spring.datasource.data")
     @Bean
-    public DataSourceProperties taskDataSourceProperties(){
+    public DataSourceProperties taskDataSourceProperties() {
         return new DataSourceProperties();
-    };
+    }
+        
     @Primary
     @Bean
-    public DataSource taskDataSource(){
+    public DataSource taskDataSource() {
         HikariDataSource dataSource = taskDataSourceProperties().initializeDataSourceBuilder().type(HikariDataSource.class).build();
         dataSource.setPoolName("TaskPool");
         return dataSource;
     }
+        
     @Primary
     @Bean
     LocalContainerEntityManagerFactoryBean taskEntityManagerFactoryBean(EntityManagerFactoryBuilder entityManagerFactoryBuilder, @Qualifier("taskDataSource") DataSource dataSource){
@@ -44,9 +46,10 @@ public class TaskDataSourceConfig {
                 .packages("sit.int221.itbkkbackend.v3.entities","sit.int221.itbkkbackend.v2.entities","sit.int221.itbkkbackend.v1.entities")
                 .build();
     }
+        
     @Primary
     @Bean
-    PlatformTransactionManager taskTransactionManager(@Qualifier("taskEntityManagerFactoryBean") LocalContainerEntityManagerFactoryBean emfb){
+    PlatformTransactionManager taskTransactionManager(@Qualifier("taskEntityManagerFactoryBean") LocalContainerEntityManagerFactoryBean emfb) {
         return new JpaTransactionManager(emfb.getObject());
     }
 }
