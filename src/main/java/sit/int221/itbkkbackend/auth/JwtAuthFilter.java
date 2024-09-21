@@ -52,16 +52,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     oid = jwtTokenUtil.getOidFromToken(jwtToken);
                 } catch (IllegalArgumentException | MalformedJwtException e) {
-                    request.setAttribute("errorType","JWT Token is not well formed");
+                    request.setAttribute("errorType", "JWT Token is not well formed");
                 } catch (ExpiredJwtException e) {
-                    request.setAttribute("errorType","JWT Token expired");
+                    request.setAttribute("errorType", "JWT Token expired");
                 } catch (SignatureException e){
-                    request.setAttribute("errorType","JWT token has been tampered with");
+                    request.setAttribute("errorType", "JWT token has been tampered with");
                 }
             } else {
-                request.setAttribute("errorType","JWT Token does not begin with Bearer String");
+                request.setAttribute("errorType", "JWT Token does not begin with Bearer String");
             }
-        }else{
+        } else {
             request.setAttribute("errorType", "Access Token Required");
         }
         if (oid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
