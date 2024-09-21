@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @Getter
 public class CustomConstraintViolationException extends ConstraintViolationException {
+    private String rootEntityName;
     private Map<String,String> additionalErrorFields = new HashMap<>();
 
     public CustomConstraintViolationException(Set<? extends ConstraintViolation<?>> constraintViolations) {

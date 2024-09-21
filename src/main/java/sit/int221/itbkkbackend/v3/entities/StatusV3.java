@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.v2.entities;
+package sit.int221.itbkkbackend.v3.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,8 +12,8 @@ import java.util.List;
 @Setter
 @Entity
 @DynamicInsert
-@Table(name = "status_v2", schema = "itb-kk")
-public class StatusV2 {
+@Table(name = "status_v3", schema = "itb-kk")
+public class StatusV3 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "status_id")
@@ -25,13 +25,16 @@ public class StatusV2 {
     @Column(name = "status_description")
     private String description;
 
-    @Column(name = "status_color",nullable = false)
+    @Column(name = "status_color", nullable = false)
     private String color;
 
-    @Column(name = "is_predefined",insertable = false,updatable = false)
+    @Column(name = "is_predefined", insertable = false, updatable = false)
     private Boolean isPredefined;
 
     @JsonIgnore
     @OneToMany(mappedBy = "status")
-    private List<TaskV2> tasks;
+    private List<TaskV3> tasks;
+
+    @Column(name = "board_id", updatable = false)
+    private String boardId;
 }

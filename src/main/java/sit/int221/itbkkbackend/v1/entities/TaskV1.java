@@ -12,34 +12,34 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "tasks", schema = "itb-kk")
+@Table(name = "task_v1", schema = "itb-kk")
 public class TaskV1 {
     @Id
-    @Column(name = "taskId",nullable = false)
+    @Column(name = "task_id",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Column(name = "taskTitle")
+    @Column(name = "task_title")
     private String title;
 
-    @Column(name = "taskDescription")
+    @Column(name = "task_description")
     private String description;
     
-    @Column(name = "taskAssignees")
+    @Column(name = "task_assignees")
     private String assignees;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "taskStatus")
+    @Column(name = "task_status")
     private StatusV1 status;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonIgnore
-    @Column(name = "createdOn", insertable = false ,updatable = false)
+    @Column(name = "created_on", insertable = false ,updatable = false)
     private ZonedDateTime createdOn;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @JsonIgnore
-    @Column(name = "updatedOn", insertable = false ,updatable = false)
+    @Column(name = "updated_on", insertable = false ,updatable = false)
     private ZonedDateTime updatedOn;
 
 }

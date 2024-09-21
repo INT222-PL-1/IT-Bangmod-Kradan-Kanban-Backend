@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.v2.entities;
+package sit.int221.itbkkbackend.v3.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,8 +14,8 @@ import java.time.ZonedDateTime;
 @Setter
 @Entity
 @ToString
-@Table(name = "task_v2", schema = "itb-kk")
-public class TaskV2 {
+@Table(name = "task_v3", schema = "itb-kk")
+public class TaskV3 {
     @Id
     @Column(name = "task_id",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,17 +32,17 @@ public class TaskV2 {
 
     @ManyToOne
     @JoinColumn(name = "status_id", referencedColumnName = "status_id", nullable = false)
-    private StatusV2 status;
+    private StatusV3 status;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "board_id" , referencedColumnName = "board_id",nullable = false)
-    private BoardV2 board;
+    private BoardV3 board;
 
-    @Column(name = "board_id",insertable = false,updatable = false)
-    private Integer boardId;
+    @Column(name = "board_id", insertable = false,updatable = false)
+    private String boardId;
 
-    @Column(insertable=false, updatable=false)
+    @Column(name = "status_id", insertable=false, updatable=false)
     private Integer statusId;
 
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")

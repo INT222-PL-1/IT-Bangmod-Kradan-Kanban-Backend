@@ -30,7 +30,7 @@ public class StatusControllerV2 {
 
     @GetMapping("")
     public ResponseEntity<Object> getAllStatus(@RequestParam(required = false) Integer boardId){
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(boardId)) ;
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(boardId));
     }
 
     @GetMapping("/{id}")

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -23,7 +24,10 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import sit.int221.itbkkbackend.exceptions.AuthorizationFilterException;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -38,6 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
         final String requestTokenHeader = request.getHeader("Authorization");
         String oid = null;
         String jwtToken = null;
@@ -47,27 +52,35 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     oid = jwtTokenUtil.getOidFromToken(jwtToken);
                 } catch (IllegalArgumentException | MalformedJwtException e) {
-                    request.setAttribute("errorType","JWT Token is not well formed");
+                    request.setAttribute("errorType", "JWT Token is not well formed");
                 } catch (ExpiredJwtException e) {
-                    request.setAttribute("errorType","JWT Token expired");
+                    request.setAttribute("errorType", "JWT Token expired");
                 } catch (SignatureException e){
-                    request.setAttribute("errorType","JWT token has been tampered with");
+                    request.setAttribute("errorType", "JWT token has been tampered with");
                 }
             } else {
-                request.setAttribute("errorType","JWT Token does not begin with Bearer String");
+                request.setAttribute("errorType", "JWT Token does not begin with Bearer String");
             }
-        }else {
+        } else {
             request.setAttribute("errorType", "Access Token Required");
         }
         if (oid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = usersRepository.findByOid(oid).getUsername();
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-                if (jwtTokenUtil.validateToken(jwtToken)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
+            Users user = usersRepository.findByOid(oid);
+            if(user == null){
+                request.setAttribute("errorType", "User not found");
+            } else {
+                String username = user.getUsername();
+                UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+                    if (jwtTokenUtil.validateToken(jwtToken)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+                    }
+            }
 
         }
+//        UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername("itbkk.pichet");
+//        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("asf","asf",userDetails.getAuthorities()));
 
         chain.doFilter(request, response);
     }

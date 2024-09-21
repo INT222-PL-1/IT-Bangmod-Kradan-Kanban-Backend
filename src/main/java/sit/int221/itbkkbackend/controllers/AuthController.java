@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.controllers;
 
 import jakarta.validation.ConstraintViolationException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.auth.*;
-import sit.int221.itbkkbackend.v2.services.ValidatingServiceV2;
+import sit.int221.itbkkbackend.v3.entities.UserV3;
+import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
+import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
 
 @RestController
 @RequestMapping("/login")
@@ -32,9 +35,13 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    ValidatingServiceV2 validatingService;
+    ValidatingServiceV3 validatingService;
     @Autowired
-    UsersRepository repository;
+    UsersRepository usersRepository;
+    @Autowired
+    ModelMapper mapper;
+    @Autowired
+    UserRepositoryV3 userRepositoryV3;
 
     @PostMapping("")
     public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser) {
@@ -44,8 +51,12 @@ public class AuthController {
         try{
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            Users user = repository.findByUsername(jwtRequestUser.getUserName());
+            Users user = usersRepository.findByUsername(jwtRequestUser.getUserName());
             String token = jwtTokenUtil.generateToken(user);
+            if(userRepositoryV3.existsById(user.getOid()) == false){
+                UserV3 regisUser = mapper.map(user, UserV3.class);
+                userRepositoryV3.save(regisUser);
+            }
             return ResponseEntity.ok().body(new Token(token));
         }
         catch (AuthenticationException e){
@@ -55,6 +66,5 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"There is a problem. Please try again later.");
         }
     }
-
 
 }
