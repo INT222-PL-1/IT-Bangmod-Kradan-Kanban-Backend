@@ -90,7 +90,7 @@ public class StatusServiceV3 {
         char[] config = boardServiceV3.findById(boardId).getDefaultStatusConfig().toCharArray();
         config[configIndex] = '0';
         Map<String, Optional<Object>> updateDefaultStatusConfig = new HashMap<>();
-        updateDefaultStatusConfig.put("defaultStatusesConfig",Optional.of(String.valueOf(config)));
+        updateDefaultStatusConfig.put("defaultStatusConfig",Optional.of(String.valueOf(config)));;
         boardServiceV3.updateBoardById(boardId, updateDefaultStatusConfig);
     }
 

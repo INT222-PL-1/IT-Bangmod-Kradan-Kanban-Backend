@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BoardRepositoryV3 extends JpaRepository<BoardV3, String> {
     List<BoardV3> findAllByOwnerOid(String ownerOid);
+
+//    List<BoardV3> findAllByOwnerOidOrVisibility(String Visibility,String ownerid);
 }

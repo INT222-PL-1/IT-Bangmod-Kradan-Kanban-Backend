@@ -66,7 +66,7 @@ public class BoardServiceV3 {
     @Transactional
     public BoardDTO updateBoardById(String id, Map<String, Optional<Object>> updateAttribute){
         BoardV3 updateBoard =  findById(id);
-        List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("isLimitTasks","taskLimitPerStatus","defaultStatusesConfig")).stream().filter(updateAttribute::containsKey).toList();
+        List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("isTaskLimitEnabled","taskLimitPerStatus","defaultStatusConfig")).stream().filter(updateAttribute::containsKey).toList();
         for (String attribute : validUpdateInfo) {
             Object value = updateAttribute.get(attribute).isPresent() ? updateAttribute.get(attribute).get() : null;
             if(value == null) {continue;}

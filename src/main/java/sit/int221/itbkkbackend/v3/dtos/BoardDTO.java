@@ -21,7 +21,7 @@ public class BoardDTO {
     @NotEmpty
     @Size(max = 120)
     private String name;
-    private Boolean isLimitTasks;
+    private Boolean isTaskLimitEnabled;
     private Integer taskLimitPerStatus;
     private List<StatusDTO> exceedLimitStatus;
     private UsersDTO owner;
