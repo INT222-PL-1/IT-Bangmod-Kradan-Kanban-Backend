@@ -60,13 +60,13 @@ public class BoardServiceV3 {
 
     public List<BoardDTO> findAllBoards(){
         Users user = usersRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        return listMapper.mapList(boardRepository.findAllByOwnerOid(user.getOid()),BoardDTO.class,mapper);
+        return listMapper.mapList(user == null ? boardRepository.findAllByVisibilityIsPublic() : boardRepository.findAllByOwnerOid(user.getOid()) ,BoardDTO.class,mapper);
     }
 
     @Transactional
     public BoardDTO updateBoardById(String id, Map<String, Optional<Object>> updateAttribute){
         BoardV3 updateBoard =  findById(id);
-        List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("isTaskLimitEnabled","taskLimitPerStatus","defaultStatusConfig")).stream().filter(updateAttribute::containsKey).toList();
+        List<String> validUpdateInfo = new ArrayList<>(Arrays.asList("isTaskLimitEnabled","taskLimitPerStatus","defaultStatusConfig","visibility")).stream().filter(updateAttribute::containsKey).toList();
         for (String attribute : validUpdateInfo) {
             Object value = updateAttribute.get(attribute).isPresent() ? updateAttribute.get(attribute).get() : null;
             if(value == null) {continue;}
@@ -81,6 +81,8 @@ public class BoardServiceV3 {
 
         }
         BoardDTO board = mapper.map(updateBoard, BoardDTO.class);
+        validatingService.validateBoardDTO(board);
+        log.info(board.getVisibility());
         List<StatusDTO> exceedLimitStatus = listMapper.mapList(statusRepository.findStatusWithTasksExceedingLimit(id, updateBoard.getTaskLimitPerStatus()), StatusDTO.class,mapper);
         exceedLimitStatus.forEach(status -> {
             status.setBoardId(id);

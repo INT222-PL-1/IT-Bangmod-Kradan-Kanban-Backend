@@ -33,14 +33,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException, ServletException {
 
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        String errorMessage  = (String) request.getAttribute("errorType");
-        if(errorMessage == null){
-            errorMessage = "Authentication Failed , Please Try Again";
+        ErrorType errorType  = (ErrorType) request.getAttribute("errorType");
+        if(errorType == null){
+            errorType = ErrorType.AUTHENTICATION_FAILED;
         }
         ErrorResponse error = new ErrorResponse(
+                errorType,
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
-                 errorMessage,
+                errorType.getMessage(),
                 request.getRequestURI()
         );
         response.setContentType("application/json");

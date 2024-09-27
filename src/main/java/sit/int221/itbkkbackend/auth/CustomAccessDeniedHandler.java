@@ -21,14 +21,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        String errorMessage  = (String) request.getAttribute("errorType");
+        ErrorType errorMessage  = (ErrorType) request.getAttribute("errorType");
         if(errorMessage == null){
-            errorMessage = "Authorization Failed , Please Try Again";
+            errorMessage = ErrorType.AUTHORIZATION_FAILED;
         }
         ErrorResponse error = new ErrorResponse(
+                errorMessage,
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
-                errorMessage,
+                errorMessage.getMessage(),
                 request.getRequestURI()
         );
         response.setContentType("application/json");

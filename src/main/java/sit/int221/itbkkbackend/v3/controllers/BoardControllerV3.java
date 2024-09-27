@@ -58,7 +58,7 @@ public class BoardControllerV3 {
         return boardService.addBoard(board);
     }
 
-    @PatchMapping("/{id}/maximum-task")
+    @PatchMapping("/{id}")
     public BoardDTO updateBoardMaximumTasks(@PathVariable String id, @RequestBody Map<String, Optional<Object>> board) {
         return boardService.updateBoardById(id, board);
     }

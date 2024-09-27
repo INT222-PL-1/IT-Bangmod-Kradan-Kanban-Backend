@@ -52,12 +52,13 @@ public class AuthController {
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             Users user = usersRepository.findByUsername(jwtRequestUser.getUserName());
-            String token = jwtTokenUtil.generateToken(user);
+            String token = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.ACCESS);
+            String refreshToken = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.REFRESH);
             if(userRepositoryV3.existsById(user.getOid()) == false){
                 UserV3 regisUser = mapper.map(user, UserV3.class);
                 userRepositoryV3.save(regisUser);
             }
-            return ResponseEntity.ok().body(new Token(token));
+            return ResponseEntity.ok().body(new Token(token,refreshToken));
         }
         catch (AuthenticationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username or Password is incorrect");
