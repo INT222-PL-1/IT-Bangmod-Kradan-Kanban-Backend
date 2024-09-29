@@ -37,7 +37,7 @@ import java.util.Optional;
         "https://ip23pl1.sit.kmutt.ac.th:4173",
         "https://ip23pl1.sit.kmutt.ac.th",
         "https://intproj23.sit.kmutt.ac.th"
-})
+},allowCredentials = "true")
 @RestController
 @RequestMapping("/v3/boards")
 public class BoardControllerV3 {
@@ -54,7 +54,8 @@ public class BoardControllerV3 {
 
     @GetMapping("/{id}")
     public BoardDTO getBoard(@PathVariable String id) {
-        return mapper.map(boardService.findById(id), BoardDTO.class);
+        // deai ma kae kub
+        return boardService.findByIdAndOwnerId(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -63,6 +63,15 @@ public class BoardServiceV3 {
         return listMapper.mapList(user == null ? boardRepository.findAllByVisibilityIsPublic() : boardRepository.findAllByOwnerOid(user.getOid()) ,BoardDTO.class,mapper);
     }
 
+    public BoardDTO findByIdAndOwnerId(String id){
+        BoardV3 board = findById(id);
+        BoardDTO foundedBoard = mapper.map(board,BoardDTO.class);
+        Users user = usersRepository.findByOid(board.getOwnerOid());
+        UsersDTO owner = new UsersDTO(user.getOid(), user.getUsername());
+        foundedBoard.setOwner(owner);
+        return foundedBoard;
+    }
+
     @Transactional
     public BoardDTO updateBoardById(String id, Map<String, Optional<Object>> updateAttribute){
         BoardV3 updateBoard =  findById(id);

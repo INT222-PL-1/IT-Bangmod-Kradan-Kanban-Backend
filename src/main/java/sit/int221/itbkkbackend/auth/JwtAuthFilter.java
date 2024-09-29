@@ -74,7 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     oid = jwtTokenUtil.getOidFromToken(jwtToken, JwtTokenUtil.TokenType.ACCESS);
                 } catch (IllegalArgumentException | MalformedJwtException e) {
-                    request.setAttribute("errorType", ErrorType.TOKEN_NOT_WELL_FORMED);
+                    request.setAttribute("errorType", ErrorType.TOKEN_MALFORMED);
                 } catch (ExpiredJwtException e) {
                     request.setAttribute("errorType", ErrorType.TOKEN_EXPIRED);
                 } catch (SignatureException e){
@@ -88,7 +88,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (oid != null) {
             Users user = usersRepository.findByOid(oid);
             if(user == null){
-                request.setAttribute("errorType", "User not found");
+                request.setAttribute("errorType", ErrorType.USER_NOT_FOUND);
             } else {
                 String username = user.getUsername();
                 UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username,boardId == null ? null :  request.getAttribute("boardId").toString());

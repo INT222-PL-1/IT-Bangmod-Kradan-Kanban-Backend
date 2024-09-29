@@ -41,6 +41,7 @@ public class WebSecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(
                         authorize -> authorize.requestMatchers("/login","/error").permitAll()
+                                      .requestMatchers("/token").permitAll()
                                      .requestMatchers(HttpMethod.GET).hasAnyAuthority("public_access","owner")
                                      .anyRequest().hasAuthority("owner")
                 )

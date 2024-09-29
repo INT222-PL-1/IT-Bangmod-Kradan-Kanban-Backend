@@ -1,8 +1,11 @@
 package sit.int221.itbkkbackend.controllers;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +19,8 @@ import sit.int221.itbkkbackend.auth.*;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
 import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
+
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/login")
@@ -33,7 +38,7 @@ import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
         "https://ip23pl1.sit.kmutt.ac.th:4173",
         "https://ip23pl1.sit.kmutt.ac.th",
         "https://intproj23.sit.kmutt.ac.th"
-})
+},allowCredentials = "true")
 public class AuthController {
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -49,7 +54,7 @@ public class AuthController {
     UserRepositoryV3 userRepositoryV3;
 
     @PostMapping("")
-    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
         validatingService.validateLoginRequestDTO(jwtRequestUser);
