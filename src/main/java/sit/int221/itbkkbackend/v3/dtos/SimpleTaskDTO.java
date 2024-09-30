@@ -27,7 +27,6 @@ public class SimpleTaskDTO {
     private StatusV3 status;
     private String boardId;
 
-    private ZonedDateTime createdOn;
     private ZonedDateTime updatedOn;
 
     public void setTitle(String title) {
