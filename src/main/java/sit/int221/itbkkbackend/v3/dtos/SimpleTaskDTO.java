@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 
+import java.time.ZonedDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,6 +26,9 @@ public class SimpleTaskDTO {
     private String assignees;
     private StatusV3 status;
     private String boardId;
+
+    private ZonedDateTime createdOn;
+    private ZonedDateTime updatedOn;
 
     public void setTitle(String title) {
         this.title = title.trim();
