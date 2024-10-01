@@ -24,7 +24,7 @@ import javax.sql.DataSource;
         transactionManagerRef = "taskTransactionManager"
 )
 public class TaskDataSourceConfig {
-    @ConfigurationProperties("spring.datasource.data")
+    @ConfigurationProperties("spring.datasource.resource")
     @Bean
     public DataSourceProperties taskDataSourceProperties() {
         return new DataSourceProperties();

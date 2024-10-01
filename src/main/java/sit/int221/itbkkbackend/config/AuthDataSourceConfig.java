@@ -23,7 +23,7 @@ import javax.sql.DataSource;
         transactionManagerRef = "authTransactionManager"
 )
 public class AuthDataSourceConfig {
-    @ConfigurationProperties("spring.datasource.auth")
+    @ConfigurationProperties("spring.datasource.authen")
     @Bean
     public DataSourceProperties authDataSourceProperties(){
         return new DataSourceProperties();
