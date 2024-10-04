@@ -1,14 +1,14 @@
 package sit.int221.itbkkbackend.config;
 
 
-import io.swagger.v3.oas.models.PathItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -17,12 +17,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import sit.int221.itbkkbackend.auth.CustomAuthenticationEntryPoint;
-import sit.int221.itbkkbackend.auth.JwtAuthFilter;
-import sit.int221.itbkkbackend.auth.JwtUserDetailsService;
+import sit.int221.itbkkbackend.auth.*;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -34,6 +32,8 @@ public class WebSecurityConfig {
     private JwtUserDetailsService jwtUserDetailsService;
     @Autowired
     JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    AnonymousAuthFilter anonymousAuthFilter;
 
 
     @Bean
@@ -41,13 +41,15 @@ public class WebSecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(
                         authorize -> authorize.requestMatchers("/login","/error").permitAll()
-//                                     .requestMatchers(HttpMethod.GET).hasRole("ANONYMOUS")
-                                     .anyRequest().authenticated()
+                                      .requestMatchers("/token").permitAll()
+                                     .requestMatchers(HttpMethod.GET).hasAnyAuthority("public_access","owner")
+                                     .anyRequest().hasAuthority("owner")
                 )
-                .addFilterAfter(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(anonymousAuthFilter , JwtAuthFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-//                      .accessDeniedHandler(new CustomAccessDeniedHandler())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+                       .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 )
                 .httpBasic(withDefaults());
         return httpSecurity.build();
@@ -69,5 +71,8 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+
+
 
 }

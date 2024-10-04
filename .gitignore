@@ -33,3 +33,5 @@ build/
 .vscode/
 
 database/mysql-datalib/*
+
+**/application-dev.properties

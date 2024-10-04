@@ -2,6 +2,7 @@ package sit.int221.itbkkbackend.v3.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class BoardDTO {
     private String name;
     private Boolean isTaskLimitEnabled;
     private Integer taskLimitPerStatus;
+    @Pattern(regexp = "PUBLIC|PRIVATE" ,message = "must be either PUBLIC or PRIVATE")
+    private String visibility;
     private List<StatusDTO> exceedLimitStatus;
     private UsersDTO owner;
 }

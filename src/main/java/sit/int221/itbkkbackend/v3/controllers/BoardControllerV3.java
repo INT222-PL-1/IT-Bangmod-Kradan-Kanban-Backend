@@ -31,8 +31,13 @@ import java.util.Optional;
         "http://ip23pl1.sit.kmutt.ac.th:3000",
         "http://ip23pl1.sit.kmutt.ac.th:4173",
         "http://ip23pl1.sit.kmutt.ac.th",
-        "http://intproj23.sit.kmutt.ac.th"
-})
+        "http://intproj23.sit.kmutt.ac.th",
+        "https://ip23pl1.sit.kmutt.ac.th:5173",
+        "https://ip23pl1.sit.kmutt.ac.th:3000",
+        "https://ip23pl1.sit.kmutt.ac.th:4173",
+        "https://ip23pl1.sit.kmutt.ac.th",
+        "https://intproj23.sit.kmutt.ac.th"
+},allowCredentials = "true")
 @RestController
 @RequestMapping("/v3/boards")
 public class BoardControllerV3 {
@@ -49,7 +54,8 @@ public class BoardControllerV3 {
 
     @GetMapping("/{id}")
     public BoardDTO getBoard(@PathVariable String id) {
-        return mapper.map(boardService.findById(id), BoardDTO.class);
+        // deai ma kae kub
+        return boardService.findByIdAndOwnerId(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,7 +64,7 @@ public class BoardControllerV3 {
         return boardService.addBoard(board);
     }
 
-    @PatchMapping("/{id}/maximum-task")
+    @PatchMapping("/{id}")
     public BoardDTO updateBoardMaximumTasks(@PathVariable String id, @RequestBody Map<String, Optional<Object>> board) {
         return boardService.updateBoardById(id, board);
     }

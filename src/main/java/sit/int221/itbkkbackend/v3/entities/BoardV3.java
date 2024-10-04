@@ -24,7 +24,7 @@ public class BoardV3 {
     private Integer taskLimitPerStatus;
     @Column(name = "default_status_config", insertable = false)
     private String defaultStatusConfig;
-    @Column(name = "board_visibility")
+    @Column(name = "board_visibility",insertable = false)
     private String visibility;
     @OneToMany
     @JoinColumn(name = "board_id", referencedColumnName = "board_id")

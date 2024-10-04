@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import sit.int221.itbkkbackend.auth.ErrorType;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
+    private ErrorType type;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZ")
     private Timestamp timestamp;
     private Integer status;
@@ -35,6 +37,13 @@ public class ErrorResponse {
     }
 
     public ErrorResponse(Timestamp timestamp, Integer status, String message, String instance) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.message = message;
+        this.instance = instance;
+    }
+    public ErrorResponse(ErrorType errorType,Timestamp timestamp, Integer status, String message, String instance) {
+        this.type = errorType;
         this.timestamp = timestamp;
         this.status = status;
         this.message = message;

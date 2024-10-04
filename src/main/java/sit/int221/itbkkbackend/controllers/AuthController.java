@@ -1,8 +1,11 @@
 package sit.int221.itbkkbackend.controllers;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +20,8 @@ import sit.int221.itbkkbackend.v3.entities.UserV3;
 import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
 
+import java.time.Duration;
+
 @RestController
 @RequestMapping("/login")
 @CrossOrigin(origins = {
@@ -27,8 +32,13 @@ import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
         "http://ip23pl1.sit.kmutt.ac.th:3000",
         "http://ip23pl1.sit.kmutt.ac.th:4173",
         "http://ip23pl1.sit.kmutt.ac.th",
-        "http://intproj23.sit.kmutt.ac.th"
-})
+        "http://intproj23.sit.kmutt.ac.th",
+        "https://ip23pl1.sit.kmutt.ac.th:5173",
+        "https://ip23pl1.sit.kmutt.ac.th:3000",
+        "https://ip23pl1.sit.kmutt.ac.th:4173",
+        "https://ip23pl1.sit.kmutt.ac.th",
+        "https://intproj23.sit.kmutt.ac.th"
+},allowCredentials = "true")
 public class AuthController {
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -44,7 +54,7 @@ public class AuthController {
     UserRepositoryV3 userRepositoryV3;
 
     @PostMapping("")
-    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
         validatingService.validateLoginRequestDTO(jwtRequestUser);
@@ -52,12 +62,13 @@ public class AuthController {
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             Users user = usersRepository.findByUsername(jwtRequestUser.getUserName());
-            String token = jwtTokenUtil.generateToken(user);
+            String token = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.ACCESS);
+            String refreshToken = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.REFRESH);
             if(userRepositoryV3.existsById(user.getOid()) == false){
                 UserV3 regisUser = mapper.map(user, UserV3.class);
                 userRepositoryV3.save(regisUser);
             }
-            return ResponseEntity.ok().body(new Token(token));
+            return ResponseEntity.ok().body(new Token(token,refreshToken));
         }
         catch (AuthenticationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username or Password is incorrect");

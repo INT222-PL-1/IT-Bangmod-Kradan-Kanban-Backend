@@ -19,7 +19,12 @@ import java.util.Optional;
         "http://ip23pl1.sit.kmutt.ac.th:3000",
         "http://ip23pl1.sit.kmutt.ac.th:4173",
         "http://ip23pl1.sit.kmutt.ac.th",
-        "http://intproj23.sit.kmutt.ac.th"
+        "http://intproj23.sit.kmutt.ac.th",
+        "https://ip23pl1.sit.kmutt.ac.th:5173",
+        "https://ip23pl1.sit.kmutt.ac.th:3000",
+        "https://ip23pl1.sit.kmutt.ac.th:4173",
+        "https://ip23pl1.sit.kmutt.ac.th",
+        "https://intproj23.sit.kmutt.ac.th"
 })
 @RestController
 @RequestMapping("/v2/boards")
