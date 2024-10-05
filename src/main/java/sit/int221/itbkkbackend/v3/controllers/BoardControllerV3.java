@@ -137,4 +137,22 @@ public class BoardControllerV3 {
     public StatusV3 transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId,@PathVariable String boardId){
         return service.transferAndDeleteStatus(oldId,newId,boardId);
     }
+
+    // Collaborators
+    @GetMapping("/{boardId}/collabs")
+    public void getAllCollaborators(){}
+
+    @GetMapping("/{boardId}/collabs/{oid}")
+    public void getCollaborator(){}
+
+    @PostMapping("/{boardId}/collabs")
+    public void addCollaborator(){}
+
+    @PatchMapping("/{boardId}/collabs/{oid}")
+    public void updateCollaborator(){}
+
+    @DeleteMapping("/{boardId}/collabs/{oid}")
+    public void removeCollaborator(){}
+
+
 }

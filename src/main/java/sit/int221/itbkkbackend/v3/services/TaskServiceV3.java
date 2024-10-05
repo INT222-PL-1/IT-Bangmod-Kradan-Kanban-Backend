@@ -63,7 +63,10 @@ public class TaskServiceV3 {
         TaskV3 validatedTask = mapper.map(task, TaskV3.class);
         StatusV3 taskStatus = statusService.findByIdAndBoardId(task.getStatusId(), task.getBoardId());
         BoardV3 currentBoard = boardService.findById(task.getBoardId());
-        Integer taskAmount = taskRepository.countByStatusIdAndBoardId(task.getStatusId(), taskStatus.getBoardId());
+        Integer taskAmount = taskRepository.countByStatusIdAndBoardId(task.getStatusId(), task.getBoardId());
+        log.info(task.getBoardId());
+        log.info(task.getStatusId().toString());
+        log.info(taskAmount.toString());
         Boolean isExceedLimit;
         if(task.getId() == null || task.getStatusId() != findById(task.getId()).getStatusId()){
             isExceedLimit = taskAmount + 1 > currentBoard.getTaskLimitPerStatus();

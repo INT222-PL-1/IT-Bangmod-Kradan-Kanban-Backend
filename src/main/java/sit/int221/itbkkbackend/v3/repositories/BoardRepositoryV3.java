@@ -2,7 +2,6 @@ package sit.int221.itbkkbackend.v3.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
 
 import java.util.List;
