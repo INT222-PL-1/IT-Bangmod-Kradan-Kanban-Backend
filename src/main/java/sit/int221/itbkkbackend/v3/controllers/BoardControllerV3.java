@@ -6,14 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.itbkkbackend.v3.dtos.BoardDTO;
-import sit.int221.itbkkbackend.v3.dtos.SimpleTaskDTO;
-import sit.int221.itbkkbackend.v3.dtos.StatusDTO;
-import sit.int221.itbkkbackend.v3.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v3.dtos.*;
+import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 import sit.int221.itbkkbackend.v3.entities.TaskV3;
+import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
+import sit.int221.itbkkbackend.v3.services.BoardPermissionServiceV3;
 import sit.int221.itbkkbackend.v3.services.StatusServiceV3;
 import sit.int221.itbkkbackend.v3.services.TaskServiceV3;
 import sit.int221.itbkkbackend.v3.services.BoardServiceV3;
@@ -86,17 +87,20 @@ public class BoardControllerV3 {
         return taskService.getTaskById(id,boardId);
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/tasks")
     public TaskDTO addTask(@RequestBody TaskDTO task,@PathVariable String boardId){
         return taskService.addTask(task,boardId);
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @DeleteMapping("/{boardId}/tasks/{id}")
     public SimpleTaskDTO deleteTask(@PathVariable Integer id,@PathVariable String boardId){
         return taskService.deleteTaskById(id,boardId);
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @PutMapping("/{boardId}/tasks/{id}")
     public TaskDTO updateTask(@PathVariable Integer id , @RequestBody TaskDTO task,@PathVariable String boardId){
         return taskService.updateTaskById(id,task,boardId);
@@ -117,42 +121,63 @@ public class BoardControllerV3 {
         return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,boardId));
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/statuses")
     public StatusV3 addStatus(@RequestBody StatusDTO status,@PathVariable String boardId){
         return service.addStatus(status,boardId);
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @PutMapping("/{boardId}/statuses/{id}")
     public StatusV3 updateStatus(@PathVariable Integer id , @RequestBody StatusDTO status,@PathVariable String boardId){
         return service.updateStatusById(id,status,boardId);
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @DeleteMapping("/{boardId}/statuses/{id}")
     public StatusV3 deleteStatus(@PathVariable Integer id,@PathVariable String boardId){
         return service.deleteStatusById(id,boardId);
     }
 
+    @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @DeleteMapping("/{boardId}/statuses/{oldId}/{newId}")
     public StatusV3 transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId,@PathVariable String boardId){
         return service.transferAndDeleteStatus(oldId,newId,boardId);
     }
 
+    @Autowired
+    BoardPermissionServiceV3 boardPermissionService;
+
     // Collaborators
     @GetMapping("/{boardId}/collabs")
-    public void getAllCollaborators(){}
+    public List<CollaboratorDTO> getAllCollaborators(@PathVariable String boardId){
+        return boardPermissionService.findAllCollaborator(boardId);
+    }
 
     @GetMapping("/{boardId}/collabs/{oid}")
-    public void getCollaborator(){}
-
+    public CollaboratorDTO getCollaborator(@PathVariable String boardId, @PathVariable String oid){
+        return boardPermissionService.findCollaboratorByOid(boardId,oid);
+    }
+    @PreAuthorize("hasAuthority('OWNER')")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
-    public void addCollaborator(){}
+    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody CollaboratorDTO collaborator){
+        return boardPermissionService.addPermissionOnBoard(boardId,collaborator);
+    }
 
+    @PreAuthorize("hasAuthority('OWNER')")
     @PatchMapping("/{boardId}/collabs/{oid}")
-    public void updateCollaborator(){}
+    public CollaboratorDTO updateCollaborator(@PathVariable String boardId, @PathVariable String oid, @RequestBody CollaboratorDTO collaboratorDTO){
+        return boardPermissionService.updateAccessRight(boardId,oid,collaboratorDTO);
+    }
 
+
+    @PreAuthorize("hasAuthority('OWNER') or #oid == authentication.principal.oid")
     @DeleteMapping("/{boardId}/collabs/{oid}")
-    public void removeCollaborator(){}
+    public void removeCollaborator(@PathVariable String boardId, @PathVariable String oid){
+        boardPermissionService.removeAccessRight(boardId,oid);
+    }
 
 
 }

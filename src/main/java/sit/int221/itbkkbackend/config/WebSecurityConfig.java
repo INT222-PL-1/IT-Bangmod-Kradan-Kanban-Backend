@@ -41,9 +41,11 @@ public class WebSecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(
                         authorize -> authorize.requestMatchers("/login","/error","/token").permitAll()
-                                     .requestMatchers("v3/boards/*/collabs","v3/boards/*/collabs/**").permitAll()
-                                     .requestMatchers(HttpMethod.GET).hasAnyAuthority("public_access","owner")
-                                     .anyRequest().hasAuthority("owner")
+                                     .requestMatchers(HttpMethod.GET).hasAnyAuthority("PUBLIC_ACCESS","OWNER","COLLABORATOR")
+                                     .requestMatchers("/v3/boards/*/collabs","/v3/boards/*/collabs/*").hasAnyAuthority("OWNER","COLLABORATOR")
+                                     .requestMatchers("/v3/boards").authenticated()
+                                     .requestMatchers("/v3/boards/*").hasAuthority("OWNER")
+                                     .requestMatchers("/v3/boards/**").hasAnyAuthority("OWNER","COLLABORATOR")
                 )
                 .addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(anonymousAuthFilter , JwtAuthFilter.class)
@@ -71,8 +73,6 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 
 
 }

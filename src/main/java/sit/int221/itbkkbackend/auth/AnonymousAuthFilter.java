@@ -39,7 +39,7 @@ public class AnonymousAuthFilter extends OncePerRequestFilter {
             List<GrantedAuthority> authorities = new LinkedList<>();
             String boardId = (String) request.getAttribute("boardId");
             if(boardRepository.existsBoardV3sByIdAndVisibility(boardId,"PUBLIC")){
-                authorities.add(new SimpleGrantedAuthority("public_access"));
+                authorities.add(new SimpleGrantedAuthority("PUBLIC_ACCESS"));
             } else {
                 authorities.add(new SimpleGrantedAuthority("anonymous"));
                 request.setAttribute("errorType",ErrorType.UNAUTHORIZED_PRIVATE_ACCESS);

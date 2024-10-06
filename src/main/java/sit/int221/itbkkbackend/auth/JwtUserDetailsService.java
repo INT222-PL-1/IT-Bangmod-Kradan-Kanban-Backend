@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
+import sit.int221.itbkkbackend.v3.services.BoardPermissionServiceV3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,9 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     private UsersRepository usersRepository;
     @Autowired
-    private BoardRepositoryV3 boardRepositoryV3;
+    private BoardRepositoryV3 boardRepository;
+    @Autowired
+    private BoardPermissionRepositoryV3 boardPermissionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
@@ -30,36 +34,28 @@ public class JwtUserDetailsService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, userName + " does not exist !!");
         }
         List<GrantedAuthority> roles = new ArrayList<>();
-        GrantedAuthority grantedAuthority = new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return user.getRole();
-            }
-        };
-        roles.add(grantedAuthority);
         return new User(userName,user.getPassword(),roles);
     }
 
-    public UserDetails loadUserByUsername(String userName,String boardId) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String userName,String boardId) throws UsernameNotFoundException {
         Users user = usersRepository.findByUsername(userName);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, userName + " does not exist !!");
         }
         List<GrantedAuthority> roles = new ArrayList<>();
-        GrantedAuthority grantedAuthority = new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return user.getRole();
-            }
-        };
-        if(boardId == null || boardRepositoryV3.existsBoardV3sByIdAndVisibility(boardId ,"PUBLIC")){
-            roles.add(new SimpleGrantedAuthority("public_access"));
+        if (boardId == null || boardRepository.existsBoardV3sByIdAndVisibility(boardId, "PUBLIC")) {
+            roles.add(new SimpleGrantedAuthority("PUBLIC_ACCESS"));
         }
-        if(boardId == null || boardRepositoryV3.existsBoardV3sByIdAndOwnerOid(boardId,user.getOid())){
-            roles.add(new SimpleGrantedAuthority("owner"));
+        String permission = (boardId != null) ? boardPermissionRepository.getAccessRightByBoardIdAndOid(boardId, user.getOid()) : null;
+        if (permission == null){
+        } else if(permission.equals("OWNER")){
+            roles.add(new SimpleGrantedAuthority(permission));
+        } else if (permission.equals("READ") || permission.equals("WRITE")){
+            roles.add(new SimpleGrantedAuthority("COLLABORATOR"));
+            roles.add(new SimpleGrantedAuthority(permission));
         }
-        roles.add(grantedAuthority);
-        return new User(userName,user.getPassword(),roles);
+
+        return new CustomUserDetails(userName,user.getPassword(),roles, user.getOid());
     }
 }
 

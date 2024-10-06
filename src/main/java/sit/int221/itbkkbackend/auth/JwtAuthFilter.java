@@ -58,10 +58,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String boardId = uriExtractor.getBoardId(request);
         if (boardId != null) {
-//            if(!boardRepository.existsById(boardId)){
-//                notFoundResponseHandler(String.format("Board Id %s not found",boardId),request,response);
-//                return;
-//            }
             request.setAttribute("boardId",boardId);
         }
 
@@ -91,7 +87,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 request.setAttribute("errorType", ErrorType.USER_NOT_FOUND);
             } else {
                 String username = user.getUsername();
-                UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username,boardId == null ? null :  request.getAttribute("boardId").toString());
+                CustomUserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username,boardId == null ? null :  request.getAttribute("boardId").toString());
                 if (jwtTokenUtil.validateToken(jwtToken, JwtTokenUtil.TokenType.ACCESS)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

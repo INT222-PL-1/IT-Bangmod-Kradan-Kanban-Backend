@@ -16,7 +16,9 @@ import sit.int221.itbkkbackend.auth.UsersRepository;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.BoardDTO;
 import sit.int221.itbkkbackend.v3.dtos.StatusDTO;
+import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
+import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.StatusRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
@@ -44,6 +46,8 @@ public class BoardServiceV3 {
     private EntityManager entityManager;
     @Autowired
     private ValidatingServiceV3 validatingService;
+    @Autowired
+    private BoardPermissionRepositoryV3 boardPermissionRepository;
     public BoardV3 findById(String id){
         return boardRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"boardId does not exist")
@@ -60,7 +64,7 @@ public class BoardServiceV3 {
 
     public List<BoardDTO> findAllBoards(){
         Users user = usersRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        return listMapper.mapList(user == null ? boardRepository.findAllByVisibilityIsPublic() : boardRepository.findAllByOwnerOid(user.getOid()) ,BoardDTO.class,mapper);
+        return listMapper.mapList(user == null ? boardRepository.findAllByVisibilityIsPublic() : boardRepository.findAllByOwnerOidWithCollabs(user.getOid()) ,BoardDTO.class,mapper);
     }
 
     public BoardDTO findByIdAndOwnerId(String id){
@@ -91,7 +95,6 @@ public class BoardServiceV3 {
         }
         BoardDTO board = mapper.map(updateBoard, BoardDTO.class);
         validatingService.validateBoardDTO(board);
-        log.info(board.getVisibility());
         List<StatusDTO> exceedLimitStatus = listMapper.mapList(statusRepository.findStatusWithTasksExceedingLimit(id, updateBoard.getTaskLimitPerStatus()), StatusDTO.class,mapper);
         exceedLimitStatus.forEach(status -> {
             status.setBoardId(id);
@@ -117,6 +120,15 @@ public class BoardServiceV3 {
         newBoard.setOwnerOid(user.getOid());
         BoardV3 createdBoard = boardRepository.saveAndFlush(newBoard);
         entityManager.refresh(createdBoard);
+
+        //add owner permission
+        BoardPermissionV3 boardPermission = new BoardPermissionV3();
+        BoardPermissionV3.BoardUserKey boardUserKey = new BoardPermissionV3.BoardUserKey();
+        boardUserKey.setBoardId(newBoardId);
+        boardUserKey.setOid(user.getOid());
+        boardPermission.setBoardUserKey(boardUserKey);
+        boardPermission.setAccessRight("OWNER");
+        boardPermissionRepository.save(boardPermission);
 
         // craft response and return
         BoardDTO createdBoardDTO = mapper.map(createdBoard,BoardDTO.class);
