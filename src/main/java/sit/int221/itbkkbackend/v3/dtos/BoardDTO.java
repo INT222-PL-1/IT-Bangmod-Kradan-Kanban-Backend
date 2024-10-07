@@ -27,14 +27,16 @@ public class BoardDTO {
     @Pattern(regexp = "PUBLIC|PRIVATE" ,message = "must be either PUBLIC or PRIVATE")
     private String visibility;
     private List<StatusDTO> exceedLimitStatus;
+    private String accessRight;
     private UsersDTO owner;
 
-    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String oid, String ownerName) {
+    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String accessRight,String oid, String ownerName) {
         this.id = id;
         this.name = name;
         this.isTaskLimitEnabled = isTaskLimitEnabled;
         this.taskLimitPerStatus = taskLimitPerStatus;
         this.visibility = visibility;
+        this.accessRight = accessRight;
         this.owner = new UsersDTO(oid,ownerName);
     }
 }
