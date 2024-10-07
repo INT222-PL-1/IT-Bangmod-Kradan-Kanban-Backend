@@ -45,8 +45,6 @@ public class BoardControllerV3 {
     //Board
     @Autowired
     private BoardServiceV3 boardService;
-    @Autowired
-    private ModelMapper mapper;
 
     @GetMapping("")
     public List<BoardDTO> getAllBoards() {

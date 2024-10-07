@@ -64,7 +64,11 @@ public class BoardServiceV3 {
 
     public List<BoardDTO> findAllBoards(){
         Users user = usersRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
-        return listMapper.mapList(user == null ? boardRepository.findAllByVisibilityIsPublic() : boardRepository.findAllByOwnerOidWithCollabs(user.getOid()) ,BoardDTO.class,mapper);
+        if (user != null){
+            return boardRepository.findAllByOwnerOidWithCollabs(user.getOid());
+        } else {
+            return listMapper.mapList(boardRepository.findAllByVisibilityIsPublic(),BoardDTO.class,mapper);
+        }
     }
 
     public BoardDTO findByIdAndOwnerId(String id){
@@ -121,7 +125,7 @@ public class BoardServiceV3 {
         BoardV3 createdBoard = boardRepository.saveAndFlush(newBoard);
         entityManager.refresh(createdBoard);
 
-        //add owner permission
+        //add ownership
         BoardPermissionV3 boardPermission = new BoardPermissionV3();
         BoardPermissionV3.BoardUserKey boardUserKey = new BoardPermissionV3.BoardUserKey();
         boardUserKey.setBoardId(newBoardId);

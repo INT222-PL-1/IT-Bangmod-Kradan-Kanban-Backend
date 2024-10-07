@@ -28,4 +28,13 @@ public class BoardDTO {
     private String visibility;
     private List<StatusDTO> exceedLimitStatus;
     private UsersDTO owner;
+
+    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String oid, String ownerName) {
+        this.id = id;
+        this.name = name;
+        this.isTaskLimitEnabled = isTaskLimitEnabled;
+        this.taskLimitPerStatus = taskLimitPerStatus;
+        this.visibility = visibility;
+        this.owner = new UsersDTO(oid,ownerName);
+    }
 }
