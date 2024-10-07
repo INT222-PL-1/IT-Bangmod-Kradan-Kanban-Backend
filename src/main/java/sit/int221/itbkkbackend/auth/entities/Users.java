@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.auth;
+package sit.int221.itbkkbackend.auth.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

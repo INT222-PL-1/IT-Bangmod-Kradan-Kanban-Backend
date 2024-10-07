@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.auth.ErrorType;
+import sit.int221.itbkkbackend.auth.utils.ErrorType;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

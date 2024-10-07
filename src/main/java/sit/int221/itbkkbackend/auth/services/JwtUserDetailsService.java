@@ -1,6 +1,5 @@
-package sit.int221.itbkkbackend.auth;
+package sit.int221.itbkkbackend.auth.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,9 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sit.int221.itbkkbackend.auth.CustomUserDetails;
+import sit.int221.itbkkbackend.auth.entities.Users;
+import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
-import sit.int221.itbkkbackend.v3.services.BoardPermissionServiceV3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         return new User(userName,user.getPassword(),roles);
     }
 
-    public CustomUserDetails loadUserByUsername(String userName,String boardId) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String userName, String boardId) throws UsernameNotFoundException {
         Users user = usersRepository.findByUsername(userName);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, userName + " does not exist !!");

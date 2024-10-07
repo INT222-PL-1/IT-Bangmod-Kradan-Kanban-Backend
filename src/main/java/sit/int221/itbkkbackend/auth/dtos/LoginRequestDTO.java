@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.auth;
+package sit.int221.itbkkbackend.auth.dtos;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

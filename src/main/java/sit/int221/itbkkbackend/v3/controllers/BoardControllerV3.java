@@ -53,7 +53,6 @@ public class BoardControllerV3 {
 
     @GetMapping("/{id}")
     public BoardDTO getBoard(@PathVariable String id) {
-        // deai ma kae kub
         return boardService.findByIdAndOwnerId(id);
     }
 

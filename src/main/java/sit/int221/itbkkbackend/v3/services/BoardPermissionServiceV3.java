@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.auth.Users;
-import sit.int221.itbkkbackend.auth.UsersRepository;
+import sit.int221.itbkkbackend.auth.entities.Users;
+import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
@@ -30,6 +30,8 @@ public class BoardPermissionServiceV3 {
     ModelMapper mapper;
     @Autowired
     ListMapper listMapper;
+    @Autowired
+    ValidatingServiceV3 validatingService;
 
     public List<CollaboratorDTO> findAllCollaborator(String boardId){
         List<CollaboratorDTO> collaborators = boardPermissionRepository.findAllCollaboratorByBoardId(boardId);
@@ -45,6 +47,7 @@ public class BoardPermissionServiceV3 {
     }
 
     public CollaboratorDTO addPermissionOnBoard(String boardId, CollaboratorDTO collaborator){
+        validatingService.validateCollaboratorDTO(collaborator);
         BoardPermissionV3 boardPermission = new BoardPermissionV3();
         BoardPermissionV3.BoardUserKey boardUserKey = new BoardPermissionV3.BoardUserKey();
         Users user = userSharedRepository.findByEmail(collaborator.getEmail());
@@ -65,6 +68,7 @@ public class BoardPermissionServiceV3 {
     }
 
     public CollaboratorDTO updateAccessRight(String boardId, String oid, CollaboratorDTO collaborator){
+        validatingService.validateCollaboratorDTO(collaborator);
         BoardPermissionV3 boardPermission = boardPermissionRepository.findBoardPermissionV3(boardId,oid);
         if(boardPermission == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("Collaborator id %s does not exist in current board",oid));

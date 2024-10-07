@@ -4,8 +4,9 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import sit.int221.itbkkbackend.auth.LoginRequestDTO;
+import sit.int221.itbkkbackend.auth.dtos.LoginRequestDTO;
 import sit.int221.itbkkbackend.v3.dtos.BoardDTO;
+import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
 import sit.int221.itbkkbackend.v3.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v3.dtos.TaskDTO;
 import java.util.Collections;
@@ -29,4 +30,6 @@ public class ValidatingServiceV3 {
     public void validateLoginRequestDTO(@Valid LoginRequestDTO user){}
 
     public void validateBoardDTO(@Valid BoardDTO board){}
+
+    public void validateCollaboratorDTO(@Valid CollaboratorDTO collaborator){}
 }

@@ -1,18 +1,17 @@
-package sit.int221.itbkkbackend.controllers;
+package sit.int221.itbkkbackend.auth.controllers;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.auth.*;
+import sit.int221.itbkkbackend.auth.dtos.Token;
+import sit.int221.itbkkbackend.auth.entities.Users;
+import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
+import sit.int221.itbkkbackend.auth.utils.ErrorType;
+import sit.int221.itbkkbackend.auth.utils.JwtTokenUtil;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 
 import java.sql.Timestamp;

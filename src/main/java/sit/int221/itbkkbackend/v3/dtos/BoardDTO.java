@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.auth.UsersDTO;
+import sit.int221.itbkkbackend.auth.dtos.UsersDTO;
 
 import java.util.List;
 

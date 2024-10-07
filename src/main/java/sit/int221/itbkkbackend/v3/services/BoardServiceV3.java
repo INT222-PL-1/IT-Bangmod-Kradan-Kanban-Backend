@@ -10,18 +10,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.auth.Users;
-import sit.int221.itbkkbackend.auth.UsersDTO;
-import sit.int221.itbkkbackend.auth.UsersRepository;
+import sit.int221.itbkkbackend.auth.entities.Users;
+import sit.int221.itbkkbackend.auth.dtos.UsersDTO;
+import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.BoardDTO;
 import sit.int221.itbkkbackend.v3.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
-import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
-import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
-import sit.int221.itbkkbackend.v3.repositories.StatusRepositoryV3;
-import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
+import sit.int221.itbkkbackend.v3.entities.UserV3;
+import sit.int221.itbkkbackend.v3.repositories.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -41,13 +39,15 @@ public class BoardServiceV3 {
     @Autowired
     private TaskRepositoryV3 taskRepository;
     @Autowired
-    private UsersRepository usersRepository;
+    private UsersRepository userSharedRepository;
     @Autowired
     private EntityManager entityManager;
     @Autowired
     private ValidatingServiceV3 validatingService;
     @Autowired
     private BoardPermissionRepositoryV3 boardPermissionRepository;
+    @Autowired
+    private UserRepositoryV3 userRepository;
     public BoardV3 findById(String id){
         return boardRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"boardId does not exist")
@@ -63,7 +63,7 @@ public class BoardServiceV3 {
     // Controller Service Method [GET , PATCH , POST]
 
     public List<BoardDTO> findAllBoards(){
-        Users user = usersRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        Users user = userSharedRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user != null){
             return boardRepository.findAllByOwnerOidWithCollabs(user.getOid());
         } else {
@@ -74,7 +74,7 @@ public class BoardServiceV3 {
     public BoardDTO findByIdAndOwnerId(String id){
         BoardV3 board = findById(id);
         BoardDTO foundedBoard = mapper.map(board,BoardDTO.class);
-        Users user = usersRepository.findByOid(board.getOwnerOid());
+        UserV3 user = userRepository.findOwnerOfBoardId(id);
         UsersDTO owner = new UsersDTO(user.getOid(), user.getUsername());
         foundedBoard.setOwner(owner);
         return foundedBoard;
@@ -113,7 +113,7 @@ public class BoardServiceV3 {
         validatingService.validateBoardDTO(board);
 
         // get oid from token , initialize board and save
-        Users user = usersRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        Users user = userSharedRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         BoardV3 newBoard = new BoardV3();
         String newBoardId = NanoId.generate(10);
         while(boardRepository.existsById(newBoardId)){
