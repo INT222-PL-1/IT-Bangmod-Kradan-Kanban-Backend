@@ -18,4 +18,12 @@ public class CollaboratorDTO {
     private String email;
     @Pattern(regexp = "READ|WRITE" ,message = "must be either READ or WRITE")
     private String accessRight;
+    private ZonedDateTime addedOn;
+
+    public CollaboratorDTO(String oid, String name, String email, String accessRight) {
+        this.oid = oid;
+        this.name = name;
+        this.email = email;
+        this.accessRight = accessRight;
+    }
 }

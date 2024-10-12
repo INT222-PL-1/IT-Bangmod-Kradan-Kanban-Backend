@@ -21,7 +21,6 @@ public class StatusDTO {
     @Size(max=200)
     private String description;
     private String color;
-
     @JsonIgnore
     private String boardId;
     private Integer count;

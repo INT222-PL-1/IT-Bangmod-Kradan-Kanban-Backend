@@ -54,16 +54,8 @@ public class ValidateTokenController {
                 String oid = jwtTokenUtil.getOidFromToken(refreshToken, JwtTokenUtil.TokenType.REFRESH);
                 Users user = usersRepository.findByOid(oid);
                 String accessToken = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.ACCESS);
-//                String newRefreshToken = jwtTokenUtil.generateAccessToken();
                 return ResponseEntity.ok().body(new Token(accessToken));
             }
-//            catch (IllegalArgumentException | MalformedJwtException e) {
-//                    request.setAttribute("errorType", ErrorType.TOKEN_NOT_WELL_FORMED);
-//            } catch (ExpiredJwtException e) {
-//                    request.setAttribute("errorType", ErrorType.TOKEN_EXPIRED);
-//            } catch (SignatureException e){
-//                    request.setAttribute("errorType", ErrorType.TOKEN_TAMPERED);
-//            }
             catch (Exception e) {
                 return ResponseEntity.status(401).body(
                         new ErrorResponse(

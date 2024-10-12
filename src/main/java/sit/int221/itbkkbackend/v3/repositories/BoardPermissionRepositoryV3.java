@@ -11,10 +11,10 @@ import sit.int221.itbkkbackend.v3.entities.UserV3;
 import java.util.List;
 
 public interface BoardPermissionRepositoryV3 extends JpaRepository<BoardPermissionV3,BoardUserKey> {
-    @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and bp.accessRight != 'OWNER'")
+    @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight, bp.addedOn) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and bp.accessRight != 'OWNER'")
     List<CollaboratorDTO> findAllCollaboratorByBoardId(String boardId);
 
-    @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
+    @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight , bp.addedOn) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
     CollaboratorDTO findCollaboratorByBoardIdAndOid(String boardId,String oid);
 
     @Query("select bp from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")

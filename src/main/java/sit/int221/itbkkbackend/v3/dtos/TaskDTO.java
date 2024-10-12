@@ -20,20 +20,10 @@ public class TaskDTO {
     @NotBlank
     @Size(max = 100)
     private String title;
-    public void setTitle(String title){
-        this.title = title == null ? null : title.isBlank() ? "" : title.trim();
-    }
     @Size(max = 500 )
     private String description;
-    public void setDescription(String description){
-        this.description = description == null || description.isBlank() ? null : description.trim();
-    }
     @Size(max = 30)
     private String assignees;
-    public void setAssignees(String assignees) {
-        this.assignees = assignees == null ||  assignees.isBlank() ? null : assignees.trim();
-    }
-
     @JsonIgnore
     private StatusV3 status;
     private Integer statusId;
@@ -43,6 +33,17 @@ public class TaskDTO {
 
 
     public Integer getStatusId() { return status == null ? statusId :  status.getId(); }
+
+    public void setAssignees(String assignees) {
+        this.assignees = assignees == null ||  assignees.isBlank() ? null : assignees.trim();
+    }
+    public void setDescription(String description){
+        this.description = description == null || description.isBlank() ? null : description.trim();
+    }
+
+    public void setTitle(String title){
+        this.title = title == null ? null : title.isBlank() ? "" : title.trim();
+    }
 
 
 }

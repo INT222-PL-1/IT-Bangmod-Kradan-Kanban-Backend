@@ -11,9 +11,6 @@ import java.util.Collection;
 @Setter
 public class CustomUserDetails extends User {
     private String oid;
-    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-    }
 
     public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities,String oid) {
         super(username, password, authorities);

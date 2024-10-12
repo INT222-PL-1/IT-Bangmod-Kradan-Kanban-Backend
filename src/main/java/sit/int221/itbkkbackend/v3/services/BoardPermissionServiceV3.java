@@ -51,14 +51,18 @@ public class BoardPermissionServiceV3 {
         BoardPermissionV3 boardPermission = new BoardPermissionV3();
         BoardPermissionV3.BoardUserKey boardUserKey = new BoardPermissionV3.BoardUserKey();
         Users user = userSharedRepository.findByEmail(collaborator.getEmail());
+
+        // check there's exist user with given email.
         if(user == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("User with email %s does not exist !!!",collaborator.getEmail()));
         }
+        // check there's exist user with given email has logged in or be board owner.
         if (userRepository.existsById(user.getOid()) == false){
             userRepository.save(mapper.map(user,UserV3.class));
         } else if (boardPermissionRepository.isBoardOwner(boardId,user.getOid())){
             throw new ResponseStatusException(HttpStatus.CONFLICT,String.format("Provided user with email %s can't be collaborator.",collaborator.getEmail()));
         }
+
         boardUserKey.setBoardId(boardId);
         boardUserKey.setOid(user.getOid());
         boardPermission.setBoardUserKey(boardUserKey);

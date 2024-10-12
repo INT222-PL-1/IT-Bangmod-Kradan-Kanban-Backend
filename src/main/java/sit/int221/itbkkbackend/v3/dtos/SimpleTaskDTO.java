@@ -21,12 +21,10 @@ public class SimpleTaskDTO {
     @NotNull
     @Size(max = 100)
     private String title;
-
     @Size(max = 30)
     private String assignees;
     private StatusV3 status;
     private String boardId;
-
     private ZonedDateTime updatedOn;
 
     public void setTitle(String title) {

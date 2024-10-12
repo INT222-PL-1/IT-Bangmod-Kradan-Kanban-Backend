@@ -15,7 +15,7 @@ public enum ErrorType {
     AUTHENTICATION_FAILED("Authentication Failed, Please Try Again"),
     AUTHORIZATION_FAILED("Authorized Failed, Please Try Again"),
     USER_NOT_FOUND("User not found"),
-    REFRESH_TOKEN_INVALID("Invalid refresh token XDXD.");
+    REFRESH_TOKEN_INVALID("Invalid refresh token.");
 
     private final String message;
 
