@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
+import sit.int221.itbkkbackend.exceptions.UserEmailNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.AddCollaboratorDTO;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
@@ -56,12 +57,12 @@ public class BoardPermissionServiceV3 {
 
         // check there's exist user with given email.
         if(user == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("User with email %s does not exist !!!",collaborator.getEmail()));
+            throw new UserEmailNotFoundException(HttpStatus.NOT_FOUND,collaborator.getEmail());
         }
         // check there's exist user with given email has logged in or be board owner.
         if (userRepository.existsById(user.getOid()) == false){
             userRepository.save(mapper.map(user,UserV3.class));
-        } else if (boardPermissionRepository.isBoardOwner(boardId,user.getOid())){
+        } else if (boardPermissionRepository.isBoardOwner(boardId,user.getOid()) || boardPermissionRepository.existsCollaboratorByBoardIdAndOid(boardId,user.getOid())){
             throw new ResponseStatusException(HttpStatus.CONFLICT,String.format("Provided user with email %s can't be collaborator.",collaborator.getEmail()));
         }
         boardUserKey.setBoardId(boardId);

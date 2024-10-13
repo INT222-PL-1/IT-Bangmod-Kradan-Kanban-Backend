@@ -17,6 +17,9 @@ public interface BoardPermissionRepositoryV3 extends JpaRepository<BoardPermissi
     @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight , bp.addedOn) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
     CollaboratorDTO findCollaboratorByBoardIdAndOid(String boardId,String oid);
 
+    @Query("select case when count(bp) > 0 then true else false end from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
+    Boolean existsCollaboratorByBoardIdAndOid(String boardId,String oid);
+
     @Query("select bp from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
     BoardPermissionV3 findBoardPermissionV3(String boardId,String oid);
 
