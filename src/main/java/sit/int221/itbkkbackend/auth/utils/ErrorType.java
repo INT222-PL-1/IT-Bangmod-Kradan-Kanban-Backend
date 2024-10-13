@@ -17,8 +17,10 @@ public enum ErrorType {
     AUTHORIZATION_FAILED("Authorized Failed, Please Try Again"),
     USER_NOT_FOUND("User not found"),
     REFRESH_TOKEN_INVALID("Invalid refresh token."),
-    USER_EMAIL_NOT_FOUND("User with provided email does not exist !!!");
+    USER_EMAIL_NOT_FOUND("User with provided email does not exist !!!"),
+    COLLABORATOR_NOT_FOUND("Collaborator does not exist in current board !!!")
     ;
+
 
     private final String message;
 

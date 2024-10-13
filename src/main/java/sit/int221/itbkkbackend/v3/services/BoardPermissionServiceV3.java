@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
+import sit.int221.itbkkbackend.exceptions.CollaboratorNotFoundException;
 import sit.int221.itbkkbackend.exceptions.UserEmailNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.AddCollaboratorDTO;
@@ -44,7 +45,7 @@ public class BoardPermissionServiceV3 {
     public CollaboratorDTO findCollaboratorByOid(String boardId,String oid){
         CollaboratorDTO collaborator = boardPermissionRepository.findCollaboratorByBoardIdAndOid(boardId,oid);
         if(collaborator == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("Collaborator id %s does not exist in current board !!!",oid));
+            throw new CollaboratorNotFoundException(HttpStatus.NOT_FOUND,oid);
         }
         return collaborator;
     }
@@ -77,7 +78,7 @@ public class BoardPermissionServiceV3 {
         validatingService.validateUpdateCollaboratorDTO(collaborator);
         BoardPermissionV3 boardPermission = boardPermissionRepository.findBoardPermissionV3(boardId,oid);
         if(boardPermission == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("Collaborator id %s does not exist in current board",oid));
+            throw new CollaboratorNotFoundException(HttpStatus.NOT_FOUND,oid);
         }
         boardPermission.setAccessRight(collaborator.getAccessRight());
         boardPermissionRepository.save(boardPermission);
@@ -86,7 +87,7 @@ public class BoardPermissionServiceV3 {
     public void removeAccessRight(String boardId, String oid){
         BoardPermissionV3 boardPermission = boardPermissionRepository.findBoardPermissionV3(boardId,oid);
         if(boardPermission == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("Collaborator id %s does not exist in current board",oid));
+            throw new CollaboratorNotFoundException(HttpStatus.NOT_FOUND,oid);
         }
         boardPermissionRepository.delete(boardPermission);
     }

@@ -124,4 +124,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CollaboratorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCollaboratorNotFoundException(ResponseStatusException e, HttpServletRequest request){
+        ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        ErrorResponse error = new ErrorResponse(
+                ErrorType.COLLABORATOR_NOT_FOUND,
+                new Timestamp(System.currentTimeMillis()),
+                errorDetails.getStatus(),
+                e.getReason(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+    }
+
 }
