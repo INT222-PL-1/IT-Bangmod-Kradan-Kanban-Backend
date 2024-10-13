@@ -5,10 +5,8 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import sit.int221.itbkkbackend.auth.dtos.LoginRequestDTO;
-import sit.int221.itbkkbackend.v3.dtos.BoardDTO;
-import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
-import sit.int221.itbkkbackend.v3.dtos.StatusDTO;
-import sit.int221.itbkkbackend.v3.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v3.dtos.*;
+
 import java.util.Collections;
 
 @Service
@@ -32,4 +30,8 @@ public class ValidatingServiceV3 {
     public void validateBoardDTO(@Valid BoardDTO board){}
 
     public void validateCollaboratorDTO(@Valid CollaboratorDTO collaborator){}
+
+    public void validateAddCollaboratorDTO(@Valid AddCollaboratorDTO collaborator){}
+
+    public void validateUpdateCollaboratorDTO(@Valid UpdateCollaboratorDTO collaborator){}
 }

@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.v3.controllers;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+@Slf4j
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "http://localhost:3000",
@@ -159,14 +160,15 @@ public class BoardControllerV3 {
     @PreAuthorize("hasAuthority('OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
-    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody CollaboratorDTO collaborator){
+    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator){
+        log.info("test1");
         return boardPermissionService.addPermissionOnBoard(boardId,collaborator);
     }
 
     @PreAuthorize("hasAuthority('OWNER')")
     @PatchMapping("/{boardId}/collabs/{oid}")
-    public CollaboratorDTO updateCollaborator(@PathVariable String boardId, @PathVariable String oid, @RequestBody CollaboratorDTO collaboratorDTO){
-        return boardPermissionService.updateAccessRight(boardId,oid,collaboratorDTO);
+    public UpdateCollaboratorDTO updateCollaborator(@PathVariable String boardId, @PathVariable String oid, @RequestBody UpdateCollaboratorDTO collaborator){
+        return  boardPermissionService.updateAccessRight(boardId,oid,collaborator);
     }
 
 
