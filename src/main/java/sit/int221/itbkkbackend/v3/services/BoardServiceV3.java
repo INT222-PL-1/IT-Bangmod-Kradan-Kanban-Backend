@@ -15,6 +15,7 @@ import sit.int221.itbkkbackend.auth.dtos.UsersDTO;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.BoardDTO;
+import sit.int221.itbkkbackend.v3.dtos.BoardListDTO;
 import sit.int221.itbkkbackend.v3.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
@@ -62,12 +63,14 @@ public class BoardServiceV3 {
 
     // Controller Service Method [GET , PATCH , POST]
 
-    public List<BoardDTO> findAllBoards(){
+    public BoardListDTO findAllBoards(){
         Users user = userSharedRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user != null){
-            return boardRepository.findAllByOwnerOidWithCollabs(user.getOid());
+            List<BoardDTO> personalBoards = boardRepository.findAllPersonalBoards(user.getOid());
+            List<BoardDTO> collaborativeBoards = boardRepository.findAllCollaborativeBoards(user.getOid());
+            return new BoardListDTO(personalBoards,collaborativeBoards);
         } else {
-            return listMapper.mapList(boardRepository.findAllByVisibilityIsPublic(),BoardDTO.class,mapper);
+            return new BoardListDTO();
         }
     }
 
