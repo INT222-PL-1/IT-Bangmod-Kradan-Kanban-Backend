@@ -89,6 +89,7 @@ public class BoardControllerV3 {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/tasks")
     public TaskDTO addTask(@RequestBody(required = false) TaskDTO task,@PathVariable String boardId){
+        if (task == null) task = new TaskDTO();
         return taskService.addTask(task,boardId);
     }
 
@@ -101,6 +102,7 @@ public class BoardControllerV3 {
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @PutMapping("/{boardId}/tasks/{id}")
     public TaskDTO updateTask(@PathVariable Integer id , @RequestBody(required = false) TaskDTO task,@PathVariable String boardId){
+        if (task == null) task = new TaskDTO();
         return taskService.updateTaskById(id,task,boardId);
     }
 
@@ -123,12 +125,14 @@ public class BoardControllerV3 {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/statuses")
     public StatusV3 addStatus(@RequestBody(required = false) StatusDTO status,@PathVariable String boardId){
+        if (status == null) status = new StatusDTO();
         return service.addStatus(status,boardId);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @PutMapping("/{boardId}/statuses/{id}")
     public StatusV3 updateStatus(@PathVariable Integer id , @RequestBody(required = false) StatusDTO status,@PathVariable String boardId){
+        if (status == null) status = new StatusDTO();
         return service.updateStatusById(id,status,boardId);
     }
 
