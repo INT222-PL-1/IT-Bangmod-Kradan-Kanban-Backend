@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import sit.int221.itbkkbackend.auth.LoginRequestDTO;
+import sit.int221.itbkkbackend.auth.dtos.LoginRequestDTO;
 import sit.int221.itbkkbackend.v2.dtos.StatusDTO;
 import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 

@@ -1,11 +1,10 @@
-package sit.int221.itbkkbackend.controllers;
+package sit.int221.itbkkbackend.auth.controllers;
 
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import sit.int221.itbkkbackend.auth.utils.ErrorType;
 import sit.int221.itbkkbackend.exceptions.*;
 
 import javax.naming.AuthenticationException;
@@ -110,5 +110,32 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserEmailNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserEmailNotFoundException(ResponseStatusException e, HttpServletRequest request){
+        ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        ErrorResponse error = new ErrorResponse(
+                ErrorType.USER_EMAIL_NOT_FOUND,
+                new Timestamp(System.currentTimeMillis()),
+                errorDetails.getStatus(),
+                e.getReason(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CollaboratorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCollaboratorNotFoundException(ResponseStatusException e, HttpServletRequest request){
+        ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        ErrorResponse error = new ErrorResponse(
+                ErrorType.COLLABORATOR_NOT_FOUND,
+                new Timestamp(System.currentTimeMillis()),
+                errorDetails.getStatus(),
+                e.getReason(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+    }
 
 }

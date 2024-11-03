@@ -1,12 +1,11 @@
-package sit.int221.itbkkbackend.auth;
+package sit.int221.itbkkbackend.auth.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import sit.int221.itbkkbackend.auth.entities.Users;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -58,7 +57,7 @@ public class JwtTokenUtil implements Serializable {
         return  !isTokenExpired(token,tokenType);
     }
 
-    public String generateAccessToken(Users user,TokenType tokenType) {
+    public String generateAccessToken(Users user, TokenType tokenType) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("oid", user.getOid());
         if(tokenType == TokenType.ACCESS){

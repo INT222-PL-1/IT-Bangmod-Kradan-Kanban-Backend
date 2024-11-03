@@ -1,4 +1,4 @@
-package sit.int221.itbkkbackend.auth;
+package sit.int221.itbkkbackend.auth.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -10,30 +10,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import sit.int221.itbkkbackend.exceptions.AuthorizationFilterException;
+import sit.int221.itbkkbackend.auth.*;
+import sit.int221.itbkkbackend.auth.entities.Users;
+import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
+import sit.int221.itbkkbackend.auth.services.JwtUserDetailsService;
+import sit.int221.itbkkbackend.auth.utils.ErrorType;
+import sit.int221.itbkkbackend.auth.utils.JwtTokenUtil;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 import sit.int221.itbkkbackend.utils.UriExtractor;
 import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -58,10 +53,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String boardId = uriExtractor.getBoardId(request);
         if (boardId != null) {
-//            if(!boardRepository.existsById(boardId)){
-//                notFoundResponseHandler(String.format("Board Id %s not found",boardId),request,response);
-//                return;
-//            }
             request.setAttribute("boardId",boardId);
         }
 
@@ -91,7 +82,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 request.setAttribute("errorType", ErrorType.USER_NOT_FOUND);
             } else {
                 String username = user.getUsername();
-                UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username,boardId == null ? null :  request.getAttribute("boardId").toString());
+                CustomUserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username,boardId == null ? null :  request.getAttribute("boardId").toString());
                 if (jwtTokenUtil.validateToken(jwtToken, JwtTokenUtil.TokenType.ACCESS)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

@@ -1,8 +1,6 @@
-package sit.int221.itbkkbackend.controllers;
+package sit.int221.itbkkbackend.auth.controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,15 +10,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.auth.*;
+import sit.int221.itbkkbackend.auth.dtos.LoginRequestDTO;
+import sit.int221.itbkkbackend.auth.dtos.Token;
+import sit.int221.itbkkbackend.auth.entities.Users;
+import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
+import sit.int221.itbkkbackend.auth.utils.JwtTokenUtil;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
 import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
-
-import java.time.Duration;
 
 @RestController
 @RequestMapping("/login")

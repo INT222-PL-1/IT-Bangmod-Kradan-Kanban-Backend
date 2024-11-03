@@ -2,12 +2,17 @@ package sit.int221.itbkkbackend.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import sit.int221.itbkkbackend.auth.ErrorType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import sit.int221.itbkkbackend.auth.utils.ErrorType;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +40,7 @@ public class ErrorResponse {
         private final String field;
         private final String message;
     }
+
 
     public ErrorResponse(Timestamp timestamp, Integer status, String message, String instance) {
         this.timestamp = timestamp;

@@ -1,7 +1,8 @@
-package sit.int221.itbkkbackend.auth;
+package sit.int221.itbkkbackend.auth.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import sit.int221.itbkkbackend.exceptions.UserEmailNotFoundException;
 
 @Getter
 @AllArgsConstructor
@@ -15,7 +16,11 @@ public enum ErrorType {
     AUTHENTICATION_FAILED("Authentication Failed, Please Try Again"),
     AUTHORIZATION_FAILED("Authorized Failed, Please Try Again"),
     USER_NOT_FOUND("User not found"),
-    REFRESH_TOKEN_INVALID("Invalid refresh token XDXD.");
+    REFRESH_TOKEN_INVALID("Invalid refresh token."),
+    USER_EMAIL_NOT_FOUND("User with provided email does not exist !!!"),
+    COLLABORATOR_NOT_FOUND("Collaborator does not exist in current board !!!")
+    ;
+
 
     private final String message;
 
