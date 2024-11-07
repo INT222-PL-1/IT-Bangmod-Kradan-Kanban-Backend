@@ -28,7 +28,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class WebSecurityConfig {
     @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
+    JwtUserDetailsService jwtUserDetailsService;
     @Autowired
     JwtAuthFilter jwtAuthFilter;
     @Autowired
@@ -39,8 +39,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(
-                        authorize -> authorize.requestMatchers("/login","/error","/token").permitAll()
-                                     .requestMatchers(HttpMethod.GET).hasAnyAuthority("PUBLIC_ACCESS","OWNER","COLLABORATOR")
+                        authorize -> authorize.requestMatchers("/login","/error","/token","/**").permitAll()
+                                .requestMatchers(HttpMethod.GET).hasAnyAuthority("PUBLIC_ACCESS","OWNER","COLLABORATOR")
                                      .requestMatchers("/v3/boards/*/collabs","/v3/boards/*/collabs/*").hasAnyAuthority("OWNER","COLLABORATOR")
                                      .requestMatchers("/v3/boards").authenticated()
                                      .requestMatchers("/v3/boards/*").hasAuthority("OWNER")

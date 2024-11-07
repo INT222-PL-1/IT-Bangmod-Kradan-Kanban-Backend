@@ -17,6 +17,7 @@ import sit.int221.itbkkbackend.v3.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v3.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 import sit.int221.itbkkbackend.v3.entities.TaskV3;
+import sit.int221.itbkkbackend.v3.repositories.FileRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
 
@@ -37,6 +38,8 @@ public class TaskServiceV3 {
     private ModelMapper mapper;
     @Autowired
     private ListMapper listMapper;
+    @Autowired
+    private FileSystemStorageService fileService;
 
 
     private TaskV3 findById(Integer id){
@@ -141,6 +144,7 @@ public class TaskServiceV3 {
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
         validateTaskDTOField(task);
+        fileService.deleteFilesExcept(id,task.getAttachments());
         task.setBoardId(boardId);
         task.setId(id);
         TaskV3 validatedTask = initializeTask(task);
