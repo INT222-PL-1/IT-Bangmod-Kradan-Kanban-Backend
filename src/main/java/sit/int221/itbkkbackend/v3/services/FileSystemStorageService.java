@@ -1,5 +1,6 @@
 package sit.int221.itbkkbackend.v3.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -9,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -94,22 +96,17 @@ public class FileSystemStorageService implements StorageService {
         return fileRepository.findByFileNameAndTaskId(taskId,filename);
     }
 
-    public void delete(String filename, Integer taskId) {
-        try {
-            Path taskDirectory = rootLocation.resolve(taskId.toString());
-            if (!Files.exists(taskDirectory) || !Files.isDirectory(taskDirectory)) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task directory not found: " + taskId);
+    @Override
+    public void deleteAll(Integer taskId) {
+        Path taskDirectory = rootLocation.resolve(taskId.toString());
+        File directory = taskDirectory.toFile();
+
+        if (directory.exists()) {
+            try {
+                FileUtils.deleteDirectory(directory); // Force delete directory and all contents
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete directory: " + taskId, e);
             }
-            Path fileToDelete = taskDirectory.resolve(filename).normalize().toAbsolutePath();
-            if (Files.exists(fileToDelete)) {
-                Files.delete(fileToDelete); // Delete the file
-                log.info("File deleted successfully: " + fileToDelete);
-            } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found: " + filename);
-            }
-        } catch (IOException e) {
-            log.error("Failed to delete file: " + filename, e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete file: " + filename, e);
         }
     }
 

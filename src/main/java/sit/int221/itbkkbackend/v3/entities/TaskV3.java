@@ -56,7 +56,7 @@ public class TaskV3 {
 
 
     @OneToMany
-    @JoinColumn(name = "task_id")
+    @JoinColumn(name = "task_id",updatable = false)
     private List<FileV3> files;
 
 
