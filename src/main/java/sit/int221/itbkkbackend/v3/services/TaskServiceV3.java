@@ -95,8 +95,8 @@ public class TaskServiceV3 {
             if(sortBy.equals("createdOn")){
                 sort = sort.and(Sort.by(Sort.Direction.ASC,"id"));
             }
-            List<TaskV3> taskV3List = taskRepository.findAllByBoardId(boardId,sort) ;
-            List<TaskV3> filteredTaskList = filterStatuses == null || filterStatuses.size() == 0 ? taskV3List : taskV3List.stream().filter(taskV3 -> filterStatuses.contains(taskV3.getStatus().getName())).toList();
+            List<SimpleTaskDTO> taskV3List = taskRepository.findAllTasksWithFileCounts(boardId,sort) ;
+            List<SimpleTaskDTO> filteredTaskList = filterStatuses == null || filterStatuses.size() == 0 ? taskV3List : taskV3List.stream().filter(taskV3 -> filterStatuses.contains(taskV3.getStatus().getName())).toList();
             return listMapper.mapList(filteredTaskList, SimpleTaskDTO.class,mapper);
         }catch (Exception e)
         {
