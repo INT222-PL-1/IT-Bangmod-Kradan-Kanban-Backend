@@ -12,17 +12,13 @@ import java.util.stream.Stream;
 
 public interface StorageService {
 
-    void init();
-
     FileV3  loadAsData(String filename, Integer taskId);
 
     void delete(String fileName, Integer taskId);
 
-    void deleteAll(Integer taskId);
+    List<FileInfoDTO> store(MultipartFile[] files, Integer taskId,String boardId);
 
-    List<FileInfoDTO> store(MultipartFile[] files, Integer taskId);
-
-    List<FileInfoDTO> loadAll(Integer taskId);
+    List<FileInfoDTO> loadAll(Integer taskId,String boardId);
 
     Path load(String filename, Integer taskId);
 

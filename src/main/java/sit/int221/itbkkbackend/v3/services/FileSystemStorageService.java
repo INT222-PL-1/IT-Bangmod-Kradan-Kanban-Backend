@@ -40,7 +40,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public List<FileInfoDTO> store(MultipartFile[] files, Integer taskId) {
+    public List<FileInfoDTO> store(MultipartFile[] files, Integer taskId, String boardId) {
         try {
             Path taskDirectory = rootLocation.resolve(taskId.toString());
             if (!Files.exists(taskDirectory)) {
@@ -54,7 +54,7 @@ public class FileSystemStorageService implements StorageService {
                 fileRepository.save(new FileV3(file,taskId));
             }
 
-            return loadAll(taskId);
+            return loadAll(taskId,boardId);
 
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to store files.", e);
@@ -63,8 +63,8 @@ public class FileSystemStorageService implements StorageService {
 
 
     @Override
-    public List<FileInfoDTO> loadAll(Integer taskId) {
-        return ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId));
+    public List<FileInfoDTO> loadAll(Integer taskId,String boardId) {
+        return ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId),taskId,boardId);
     }
 
     @Override
@@ -113,10 +113,6 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-    @Override
-    public void deleteAll(Integer taskId) {
-
-    }
 
     public void deleteFilesExcept(Integer taskId, List<String> excludeNames) {
         try {
@@ -139,17 +135,6 @@ public class FileSystemStorageService implements StorageService {
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete files for task: " + taskId, e);
-        }
-    }
-
-
-
-    @Override
-    public void init() {
-        try {
-            Files.createDirectories(rootLocation);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not initialize storage", e);
         }
     }
 

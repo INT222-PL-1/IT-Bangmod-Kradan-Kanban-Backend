@@ -111,7 +111,7 @@ public class TaskServiceV3 {
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
         TaskDetailsDTO taskDetails = mapper.map(task, TaskDetailsDTO.class);
-        taskDetails.setAttachments(ListMapper.mapFileListToFileInfoDTOList(task.getFiles()));
+        taskDetails.setAttachments(ListMapper.mapFileListToFileInfoDTOList(task.getFiles(),id,boardId));
         return taskDetails;
     }
 

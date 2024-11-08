@@ -41,8 +41,8 @@ public class FileControllerV3 {
     private TaskRepositoryV3 taskRepository;
 
     @GetMapping("/{boardId}/tasks/{taskId}/files")
-    public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId) {
-        return storageService.loadAll(taskId);
+    public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId) {
+        return storageService.loadAll(taskId, boardId);
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}")
@@ -61,7 +61,7 @@ public class FileControllerV3 {
     }
 
     @PostMapping("/{boardId}/tasks/{taskId}/files")
-    public List<FileInfoDTO> handleFileUpload(@RequestParam("files") MultipartFile[] files, @PathVariable Integer taskId) {
-        return storageService.store(files,taskId);
+    public List<FileInfoDTO> handleFileUpload(@RequestParam("files") MultipartFile[] files, @PathVariable Integer taskId, @PathVariable String boardId) {
+        return storageService.store(files,taskId,boardId);
     }
 }

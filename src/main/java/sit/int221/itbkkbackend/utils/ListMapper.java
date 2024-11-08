@@ -22,9 +22,9 @@ public class ListMapper {
                 .map(FileV3::new) // Convert each MultipartFile to a FileV3 instance
                 .collect(Collectors.toList());
     }
-    public static List<FileInfoDTO> mapFileListToFileInfoDTOList(List<FileV3> files) {
+    public static List<FileInfoDTO> mapFileListToFileInfoDTOList(List<FileV3> files, Integer taskId, String boardId) {
         return files.stream()
-                .map(FileInfoDTO::new) // Use FileInfoDTO constructor to map each FileV3 to FileInfoDTO
+                .map(file -> new FileInfoDTO(file, taskId, boardId)) // Pass taskId and boardId explicitly
                 .collect(Collectors.toList());
     }
 
