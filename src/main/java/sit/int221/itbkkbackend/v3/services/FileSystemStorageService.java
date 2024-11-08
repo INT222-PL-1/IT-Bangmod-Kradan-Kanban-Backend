@@ -1,6 +1,5 @@
 package sit.int221.itbkkbackend.v3.services;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -8,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.utils.ListMapper;
@@ -92,6 +89,11 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    @Override
+    public FileV3 loadAsData(String filename, Integer taskId) {
+        return fileRepository.findByFileNameAndTaskId(taskId,filename);
+    }
+
     public void delete(String filename, Integer taskId) {
         try {
             Path taskDirectory = rootLocation.resolve(taskId.toString());
@@ -109,6 +111,11 @@ public class FileSystemStorageService implements StorageService {
             log.error("Failed to delete file: " + filename, e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete file: " + filename, e);
         }
+    }
+
+    @Override
+    public void deleteAll(Integer taskId) {
+
     }
 
     public void deleteFilesExcept(Integer taskId, List<String> excludeNames) {

@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 
 @Getter
@@ -52,6 +53,11 @@ public class TaskV3 {
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @Column(name = "updated_on", insertable = false ,updatable = false)
     private ZonedDateTime updatedOn;
+
+
+    @OneToMany
+    @JoinColumn(name = "task_id")
+    private List<FileV3> files;
 
 
     public Integer getStatusId() {

@@ -15,14 +15,15 @@ import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v3.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v3.dtos.TaskDetailsDTO;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 import sit.int221.itbkkbackend.v3.entities.TaskV3;
-import sit.int221.itbkkbackend.v3.repositories.FileRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 @Service
 public class TaskServiceV3 {
@@ -42,7 +43,7 @@ public class TaskServiceV3 {
     private FileSystemStorageService fileService;
 
 
-    private TaskV3 findById(Integer id){
+    public TaskV3 findById(Integer id){
         return taskRepository.findById(id).orElseThrow(()->
                 new ItemNotFoundException(HttpStatus.NOT_FOUND,id)
         );
@@ -67,9 +68,6 @@ public class TaskServiceV3 {
         StatusV3 taskStatus = statusService.findByIdAndBoardId(task.getStatusId(), task.getBoardId());
         BoardV3 currentBoard = boardService.findById(task.getBoardId());
         Integer taskAmount = taskRepository.countByStatusIdAndBoardId(task.getStatusId(), task.getBoardId());
-        log.info(task.getBoardId());
-        log.info(task.getStatusId().toString());
-        log.info(taskAmount.toString());
         Boolean isExceedLimit;
         if(task.getId() == null || task.getStatusId() != findById(task.getId()).getStatusId()){
             isExceedLimit = taskAmount + 1 > currentBoard.getTaskLimitPerStatus();
@@ -106,13 +104,15 @@ public class TaskServiceV3 {
         }
     }
 
-    public TaskV3 getTaskById(Integer id,String boardId){
+    public TaskDetailsDTO getTaskById(Integer id,String boardId){
         boardService.isExist(boardId);
         TaskV3 task =  taskRepository.findByIdAndBoardId(id,boardId) ;
         if(task == null){
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
-        return task;
+        TaskDetailsDTO taskDetails = mapper.map(task, TaskDetailsDTO.class);
+        taskDetails.setAttachments(ListMapper.mapFileListToFileInfoDTOList(task.getFiles()));
+        return taskDetails;
     }
 
     @Transactional

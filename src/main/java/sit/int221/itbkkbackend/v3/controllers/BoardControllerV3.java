@@ -81,7 +81,7 @@ public class BoardControllerV3 {
     }
 
     @GetMapping("/{boardId}/tasks/{id}")
-    public TaskV3 getTask(@PathVariable Integer id,@PathVariable String boardId){
+    public TaskDetailsDTO getTask(@PathVariable Integer id,@PathVariable String boardId){
         return taskService.getTaskById(id,boardId);
     }
 

@@ -14,7 +14,11 @@ public interface StorageService {
 
     void init();
 
+    FileV3  loadAsData(String filename, Integer taskId);
+
     void delete(String fileName, Integer taskId);
+
+    void deleteAll(Integer taskId);
 
     List<FileInfoDTO> store(MultipartFile[] files, Integer taskId);
 
