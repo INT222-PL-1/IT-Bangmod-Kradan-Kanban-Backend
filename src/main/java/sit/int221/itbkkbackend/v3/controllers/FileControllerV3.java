@@ -42,6 +42,9 @@ public class FileControllerV3 {
 
     @GetMapping("/{boardId}/tasks/{taskId}/files")
     public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId) {
+        if(taskRepository.existsByIdAndBoardId(taskId, boardId) == false) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         return storageService.loadAll(taskId, boardId);
     }
 
@@ -62,6 +65,9 @@ public class FileControllerV3 {
 
     @PostMapping("/{boardId}/tasks/{taskId}/files")
     public List<FileInfoDTO> handleFileUpload(@RequestParam("files") MultipartFile[] files, @PathVariable Integer taskId, @PathVariable String boardId) {
+        if(taskRepository.existsByIdAndBoardId(taskId, boardId) == false) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         return storageService.store(files,taskId,boardId);
     }
 }
