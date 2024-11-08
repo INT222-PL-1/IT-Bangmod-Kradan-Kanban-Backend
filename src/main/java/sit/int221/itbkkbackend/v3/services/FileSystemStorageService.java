@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.LinkedList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,15 +49,16 @@ public class FileSystemStorageService implements StorageService {
             if (!Files.exists(taskDirectory)) {
                 Files.createDirectories(taskDirectory);
             }
+            List<FileInfoDTO> fileList = new LinkedList<>();
             for (MultipartFile file : files) {
                 Path destinationFile = taskDirectory.resolve(
                                 Paths.get(file.getOriginalFilename()))
                         .normalize().toAbsolutePath();
                 Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
-                fileRepository.save(new FileV3(file,taskId));
+                fileList.add(new FileInfoDTO(fileRepository.save(new FileV3(file,taskId)),taskId,boardId));
             }
 
-            return loadAll(taskId,boardId);
+            return fileList;
 
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to store files.", e);
@@ -98,6 +100,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void deleteAll(Integer taskId) {
+        fileRepository.deleteByTaskId(taskId);
         Path taskDirectory = rootLocation.resolve(taskId.toString());
         File directory = taskDirectory.toFile();
 

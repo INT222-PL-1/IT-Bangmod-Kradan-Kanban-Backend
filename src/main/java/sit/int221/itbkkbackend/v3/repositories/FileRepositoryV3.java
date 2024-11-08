@@ -17,6 +17,10 @@ public interface FileRepositoryV3 extends JpaRepository<FileV3, FileV3.FileKey> 
     @Query("select f from FileV3 f where f.fileKey.taskId = :taskId and f.fileKey.name = :fileName")
     FileV3 findByFileNameAndTaskId(@Param("taskId") Integer taskId, @Param("fileName") String fileName);
 
+    @Transactional
+    @Modifying
+    @Query("delete from FileV3 f where f.fileKey.taskId = :taskId")
+    void deleteByTaskId(@Param("taskId") Integer taskId);
 
     @Transactional
     @Modifying

@@ -132,6 +132,7 @@ public class TaskServiceV3 {
         if(task == null){
             throw new DeleteItemNotFoundException(HttpStatus.NOT_FOUND);
         }
+        fileService.deleteAll(id);
         taskRepository.delete(task);
         return mapper.map(task,SimpleTaskDTO.class);
     }
