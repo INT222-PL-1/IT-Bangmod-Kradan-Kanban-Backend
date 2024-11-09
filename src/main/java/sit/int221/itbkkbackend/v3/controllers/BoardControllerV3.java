@@ -165,7 +165,6 @@ public class BoardControllerV3 {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
     public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator){
-        log.info("test1");
         return boardPermissionService.addPermissionOnBoard(boardId,collaborator);
     }
 

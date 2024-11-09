@@ -25,6 +25,7 @@ public interface TaskRepositoryV3 extends JpaRepository<TaskV3, Integer> {
             "t.id, t.title, t.assignees, t.status, t.boardId, " +
             " t.updatedOn, COUNT(f)) " +
             "FROM TaskV3 t LEFT JOIN t.files f " +
+            "WHERE t.boardId = :boardId " +
             "GROUP BY t.id, t.title, t.description, t.assignees, t.statusId, t.boardId, t.updatedOn")
     List<SimpleTaskDTO> findAllTasksWithFileCounts(@Param("boardId") String boardId, Sort sort);
     @Modifying
