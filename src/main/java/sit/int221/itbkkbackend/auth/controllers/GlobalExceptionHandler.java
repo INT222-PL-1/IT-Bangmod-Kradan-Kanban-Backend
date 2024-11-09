@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.auth.utils.ErrorType;
 import sit.int221.itbkkbackend.exceptions.*;
@@ -136,6 +137,18 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxSizeException(MaxUploadSizeExceededException e,HttpServletRequest request) {
+        ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.PAYLOAD_TOO_LARGE);
+        ErrorResponse error = new ErrorResponse(
+                new Timestamp(System.currentTimeMillis()),
+                errorDetails.getStatus(),
+                "File size exceeds the allowable limit. Please upload a smaller file.",
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error,HttpStatus.PAYLOAD_TOO_LARGE);
     }
 
 }

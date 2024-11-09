@@ -45,6 +45,9 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public List<FileInfoDTO> store(MultipartFile[] files, Integer taskId, String boardId) {
         try {
+            if(fileRepository.countFilesByTaskId(taskId) + files.length > 10){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"The number of files for this task exceeds the limit of 10.");
+            }
             Path taskDirectory = rootLocation.resolve(taskId.toString());
             if (!Files.exists(taskDirectory)) {
                 Files.createDirectories(taskDirectory);

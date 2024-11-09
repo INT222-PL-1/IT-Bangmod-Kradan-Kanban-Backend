@@ -11,6 +11,9 @@ import java.io.File;
 import java.util.List;
 
 public interface FileRepositoryV3 extends JpaRepository<FileV3, FileV3.FileKey> {
+
+    @Query("SELECT COUNT(f) FROM FileV3 f WHERE f.fileKey.taskId = :taskId")
+    long countFilesByTaskId(@Param("taskId") Integer taskId);
     @Query("select f from FileV3 f where f.fileKey.taskId = :taskId")
     List<FileV3> findAllByTaskId(@Param("taskId") Integer taskId);
 
