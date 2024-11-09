@@ -15,6 +15,7 @@ import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.StorageService;
 import sit.int221.itbkkbackend.v3.services.TaskServiceV3;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin(origins = {
@@ -50,7 +51,7 @@ public class FileControllerV3 {
 
     @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}")
     @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String fileName,@PathVariable Integer taskId, @PathVariable String boardId) {
+    public ResponseEntity<Resource> serveFile(@PathVariable String fileName,@PathVariable Integer taskId, @PathVariable String boardId) throws IOException {
         if(taskRepository.existsByIdAndBoardId(taskId, boardId) == false) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -60,7 +61,13 @@ public class FileControllerV3 {
         }
         Resource file = storageService.loadAsResource(fileName,taskId);
         MediaType fileType = MediaType.parseMediaType(data.getType());
-        return ResponseEntity.ok().contentType(fileType).body(file);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(fileType);
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentLength(file.contentLength());
+
+        return new ResponseEntity<>(file, headers, HttpStatus.OK);
     }
 
     @PostMapping("/{boardId}/tasks/{taskId}/files")
