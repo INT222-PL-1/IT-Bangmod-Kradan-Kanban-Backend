@@ -15,6 +15,7 @@ import sit.int221.itbkkbackend.exceptions.ItemNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.SimpleTaskDTO;
 import sit.int221.itbkkbackend.v3.dtos.TaskDTO;
+import sit.int221.itbkkbackend.v3.dtos.TaskDetailsDTO;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 import sit.int221.itbkkbackend.v3.entities.TaskV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
@@ -22,6 +23,7 @@ import sit.int221.itbkkbackend.v3.entities.BoardV3;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 @Service
 public class TaskServiceV3 {
@@ -37,9 +39,11 @@ public class TaskServiceV3 {
     private ModelMapper mapper;
     @Autowired
     private ListMapper listMapper;
+    @Autowired
+    private FileSystemStorageService fileService;
 
 
-    private TaskV3 findById(Integer id){
+    public TaskV3 findById(Integer id){
         return taskRepository.findById(id).orElseThrow(()->
                 new ItemNotFoundException(HttpStatus.NOT_FOUND,id)
         );
@@ -64,9 +68,6 @@ public class TaskServiceV3 {
         StatusV3 taskStatus = statusService.findByIdAndBoardId(task.getStatusId(), task.getBoardId());
         BoardV3 currentBoard = boardService.findById(task.getBoardId());
         Integer taskAmount = taskRepository.countByStatusIdAndBoardId(task.getStatusId(), task.getBoardId());
-        log.info(task.getBoardId());
-        log.info(task.getStatusId().toString());
-        log.info(taskAmount.toString());
         Boolean isExceedLimit;
         if(task.getId() == null || task.getStatusId() != findById(task.getId()).getStatusId()){
             isExceedLimit = taskAmount + 1 > currentBoard.getTaskLimitPerStatus();
@@ -94,8 +95,8 @@ public class TaskServiceV3 {
             if(sortBy.equals("createdOn")){
                 sort = sort.and(Sort.by(Sort.Direction.ASC,"id"));
             }
-            List<TaskV3> taskV3List = taskRepository.findAllByBoardId(boardId,sort) ;
-            List<TaskV3> filteredTaskList = filterStatuses == null || filterStatuses.size() == 0 ? taskV3List : taskV3List.stream().filter(taskV3 -> filterStatuses.contains(taskV3.getStatus().getName())).toList();
+            List<SimpleTaskDTO> taskV3List = taskRepository.findAllTasksWithFileCounts(boardId,sort) ;
+            List<SimpleTaskDTO> filteredTaskList = filterStatuses == null || filterStatuses.size() == 0 ? taskV3List : taskV3List.stream().filter(taskV3 -> filterStatuses.contains(taskV3.getStatus().getName())).toList();
             return listMapper.mapList(filteredTaskList, SimpleTaskDTO.class,mapper);
         }catch (Exception e)
         {
@@ -103,13 +104,15 @@ public class TaskServiceV3 {
         }
     }
 
-    public TaskV3 getTaskById(Integer id,String boardId){
+    public TaskDetailsDTO getTaskById(Integer id,String boardId){
         boardService.isExist(boardId);
         TaskV3 task =  taskRepository.findByIdAndBoardId(id,boardId) ;
         if(task == null){
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
-        return task;
+        TaskDetailsDTO taskDetails = mapper.map(task, TaskDetailsDTO.class);
+        taskDetails.setAttachments(ListMapper.mapFileListToFileInfoDTOList(task.getFiles(),id,boardId));
+        return taskDetails;
     }
 
     @Transactional
@@ -129,6 +132,7 @@ public class TaskServiceV3 {
         if(task == null){
             throw new DeleteItemNotFoundException(HttpStatus.NOT_FOUND);
         }
+        fileService.deleteAll(id);
         taskRepository.delete(task);
         return mapper.map(task,SimpleTaskDTO.class);
     }
@@ -141,6 +145,9 @@ public class TaskServiceV3 {
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
         validateTaskDTOField(task);
+        if(task.getAttachments() != null) {
+            fileService.deleteFilesExcept(id, task.getAttachments());
+        }
         task.setBoardId(boardId);
         task.setId(id);
         TaskV3 validatedTask = initializeTask(task);

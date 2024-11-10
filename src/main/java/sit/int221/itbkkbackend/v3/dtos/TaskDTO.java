@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 
+import java.util.List;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -28,6 +30,8 @@ public class TaskDTO {
     private StatusV3 status;
     private Integer statusId;
     private String boardId;
+
+    private List<String> attachments;
 
     public void setBoardId(String boardId) { this.boardId = boardId; }
 

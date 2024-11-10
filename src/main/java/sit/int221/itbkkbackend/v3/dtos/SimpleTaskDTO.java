@@ -26,6 +26,7 @@ public class SimpleTaskDTO {
     private StatusV3 status;
     private String boardId;
     private ZonedDateTime updatedOn;
+    private Long attachmentsCount;
 
     public void setTitle(String title) {
         this.title = title.trim();

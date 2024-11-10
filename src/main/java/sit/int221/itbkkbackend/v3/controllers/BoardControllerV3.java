@@ -81,7 +81,7 @@ public class BoardControllerV3 {
     }
 
     @GetMapping("/{boardId}/tasks/{id}")
-    public TaskV3 getTask(@PathVariable Integer id,@PathVariable String boardId){
+    public TaskDetailsDTO getTask(@PathVariable Integer id,@PathVariable String boardId){
         return taskService.getTaskById(id,boardId);
     }
 
@@ -165,7 +165,6 @@ public class BoardControllerV3 {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
     public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator){
-        log.info("test1");
         return boardPermissionService.addPermissionOnBoard(boardId,collaborator);
     }
 
