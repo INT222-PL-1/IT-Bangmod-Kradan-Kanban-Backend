@@ -40,6 +40,7 @@ public class WebSecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeRequests(
                         authorize -> authorize.requestMatchers("/login","/error","/token").permitAll()
+                                .requestMatchers("v3/boards/*/collabs/*").authenticated()
                                 .requestMatchers(HttpMethod.GET).hasAnyAuthority("PUBLIC_ACCESS","OWNER","COLLABORATOR")
                                 .requestMatchers("/v3/boards/*/collabs").hasAnyAuthority("OWNER","COLLABORATOR")
                                 .requestMatchers("/v3/boards","v3/boards/*/collabs/**").authenticated()
