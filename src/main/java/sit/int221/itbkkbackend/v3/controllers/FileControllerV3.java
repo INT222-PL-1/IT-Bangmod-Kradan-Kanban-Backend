@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
+import sit.int221.itbkkbackend.v3.services.EmailService;
 import sit.int221.itbkkbackend.v3.services.StorageService;
 import sit.int221.itbkkbackend.v3.services.TaskServiceV3;
 
@@ -40,6 +41,8 @@ public class FileControllerV3 {
     private StorageService storageService;
     @Autowired
     private TaskRepositoryV3 taskRepository;
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/{boardId}/tasks/{taskId}/files")
     public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId) {
@@ -77,4 +80,5 @@ public class FileControllerV3 {
         }
         return storageService.store(files,taskId,boardId);
     }
+
 }

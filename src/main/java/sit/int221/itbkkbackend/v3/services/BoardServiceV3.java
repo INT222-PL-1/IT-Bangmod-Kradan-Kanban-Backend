@@ -135,6 +135,7 @@ public class BoardServiceV3 {
         boardUserKey.setOid(user.getOid());
         boardPermission.setBoardUserKey(boardUserKey);
         boardPermission.setAccessRight("OWNER");
+        boardPermission.setInviteStatus(null);
         boardPermissionRepository.save(boardPermission);
 
         // craft response and return

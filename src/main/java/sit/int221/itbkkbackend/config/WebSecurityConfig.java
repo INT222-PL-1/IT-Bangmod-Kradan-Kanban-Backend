@@ -41,8 +41,8 @@ public class WebSecurityConfig {
                 .authorizeRequests(
                         authorize -> authorize.requestMatchers("/login","/error","/token").permitAll()
                                 .requestMatchers(HttpMethod.GET).hasAnyAuthority("PUBLIC_ACCESS","OWNER","COLLABORATOR")
-                                .requestMatchers("/v3/boards/*/collabs","/v3/boards/*/collabs/*").hasAnyAuthority("OWNER","COLLABORATOR")
-                                .requestMatchers("/v3/boards").authenticated()
+                                .requestMatchers("/v3/boards/*/collabs").hasAnyAuthority("OWNER","COLLABORATOR")
+                                .requestMatchers("/v3/boards","v3/boards/*/collabs/**").authenticated()
                                 .requestMatchers("/v3/boards/*").hasAuthority("OWNER")
                                 .requestMatchers("/v3/boards/**").hasAnyAuthority("OWNER","COLLABORATOR")
                 )
@@ -50,7 +50,7 @@ public class WebSecurityConfig {
                 .addFilterAfter(anonymousAuthFilter , JwtAuthFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
-                       .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 )
                 .httpBasic(withDefaults());
         return httpSecurity.build();
@@ -72,6 +72,4 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 }

@@ -1,5 +1,6 @@
 package sit.int221.itbkkbackend.auth.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +19,7 @@ import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Slf4j
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
@@ -56,7 +57,7 @@ public class JwtUserDetailsService implements UserDetailsService {
             roles.add(new SimpleGrantedAuthority(permission));
         }
 
-        return new CustomUserDetails(userName,user.getPassword(),roles, user.getOid());
+        return new CustomUserDetails(userName,user.getPassword(),roles, user.getOid(),user.getName());
     }
 }
 

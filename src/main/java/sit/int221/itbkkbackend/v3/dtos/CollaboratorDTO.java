@@ -20,6 +20,7 @@ public class CollaboratorDTO {
     @NotEmpty
     @Pattern(regexp = "READ|WRITE" ,message = "must be either READ or WRITE")
     private String accessRight;
+    private String inviteStatus;
     private ZonedDateTime addedOn;
 
     public CollaboratorDTO(String oid, String name, String email, String accessRight) {
