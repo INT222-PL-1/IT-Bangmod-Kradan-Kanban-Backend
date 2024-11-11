@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
+import sit.int221.itbkkbackend.v3.dtos.CollaboratorDetailsDTO;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3.BoardUserKey;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
@@ -14,8 +15,8 @@ public interface BoardPermissionRepositoryV3 extends JpaRepository<BoardPermissi
     @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight, bp.inviteStatus, bp.addedOn) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and bp.accessRight != 'OWNER'")
     List<CollaboratorDTO> findAllCollaboratorByBoardId(String boardId);
 
-    @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO(u.oid, u.name, u.email, bp.accessRight ,bp.inviteStatus, bp.addedOn) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
-    CollaboratorDTO findCollaboratorByBoardIdAndOid(String boardId,String oid);
+    @Query("select new sit.int221.itbkkbackend.v3.dtos.CollaboratorDetailsDTO(u.oid, u.name, u.email, bp.accessRight ,bp.inviteStatus, bp.addedOn) from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
+    CollaboratorDetailsDTO findCollaboratorByBoardIdAndOid(String boardId, String oid);
 
     @Query("select case when count(bp) > 0 then true else false end from BoardPermissionV3 bp join UserV3 u on u.oid = bp.boardUserKey.oid where bp.boardUserKey.boardId = :boardId and u.oid = :oid and bp.accessRight != 'OWNER'")
     Boolean existsCollaboratorByBoardIdAndOid(String boardId,String oid);

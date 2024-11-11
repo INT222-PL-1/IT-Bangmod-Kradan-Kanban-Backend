@@ -16,6 +16,7 @@ import sit.int221.itbkkbackend.exceptions.UserEmailNotFoundException;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.AddCollaboratorDTO;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
+import sit.int221.itbkkbackend.v3.dtos.CollaboratorDetailsDTO;
 import sit.int221.itbkkbackend.v3.dtos.UpdateCollaboratorDTO;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
@@ -51,11 +52,13 @@ public class BoardPermissionServiceV3 {
         return collaborators;
     }
 
-    public CollaboratorDTO findCollaboratorByOid(String boardId,String oid){
-        CollaboratorDTO collaborator = boardPermissionRepository.findCollaboratorByBoardIdAndOid(boardId,oid);
+    public CollaboratorDetailsDTO findCollaboratorByOid(String boardId,String oid){
+        CollaboratorDetailsDTO collaborator = boardPermissionRepository.findCollaboratorByBoardIdAndOid(boardId,oid);
         if(collaborator == null){
             throw new CollaboratorNotFoundException(HttpStatus.NOT_FOUND,oid);
-        }
+        };
+        collaborator.setOwnerName(userRepository.findOwnerOfBoardId(boardId).getName());
+        collaborator.setBoardName(boardRepository.getBoardNameFromId(boardId));
         return collaborator;
     }
 
