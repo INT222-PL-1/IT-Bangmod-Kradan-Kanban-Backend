@@ -5,6 +5,8 @@ import org.modelmapper.ModelMapper;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,13 +38,15 @@ import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
 }, allowCredentials = "true")
 public class AuthController {
     private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
     private final ValidatingServiceV3 validatingService;
     private final UsersRepository usersRepository;
     private final ModelMapper mapper;
     private final UserRepositoryV3 userRepositoryV3;
 
-    public AuthController(JwtTokenUtil jwtTokenUtil, ValidatingServiceV3 validatingService, UsersRepository usersRepository, ModelMapper mapper, UserRepositoryV3 userRepositoryV3) {
+    public AuthController(JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, ValidatingServiceV3 validatingService, UsersRepository usersRepository, ModelMapper mapper, UserRepositoryV3 userRepositoryV3) {
         this.jwtTokenUtil = jwtTokenUtil;
+        this.authenticationManager = authenticationManager;
         this.validatingService = validatingService;
         this.usersRepository = usersRepository;
         this.mapper = mapper;
@@ -51,14 +55,19 @@ public class AuthController {
 
     @PostMapping("")
     public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser, HttpServletResponse response) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
         validatingService.validateLoginRequestDTO(jwtRequestUser);
 
         try{
+            
             Users user = usersRepository.findByUsername(jwtRequestUser.getUserName());
             String token = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.ACCESS);
             String refreshToken = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.REFRESH);
 
             String userOid = user.getOid();
+
+            authenticationManager.authenticate(authenticationToken);
 
             // Check if user is not registered in UserV3
             if(!userRepositoryV3.existsById(userOid)){
