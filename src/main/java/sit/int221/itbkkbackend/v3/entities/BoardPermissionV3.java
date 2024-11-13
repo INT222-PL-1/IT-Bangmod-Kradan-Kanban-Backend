@@ -26,9 +26,13 @@ public class BoardPermissionV3 {
     @JoinColumn(name = "user_oid",insertable = false,updatable = false)
     private UserV3 user;
 
+    @Column(name = "invite_status")
+    private String inviteStatus;
+
     @JsonFormat(pattern =  "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     @Column(name = "added_on", insertable = false ,updatable = false)
     private ZonedDateTime addedOn;
+
 
     @Getter
     @Setter

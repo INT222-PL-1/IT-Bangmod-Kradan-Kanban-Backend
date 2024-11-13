@@ -157,8 +157,10 @@ public class BoardControllerV3 {
         return boardPermissionService.findAllCollaborator(boardId);
     }
 
+    // need to be fix change to query based instead
+    @PreAuthorize("hasAnyAuthority('OWNER','COLLABORATOR') or #oid == authentication.principal.oid")
     @GetMapping("/{boardId}/collabs/{oid}")
-    public CollaboratorDTO getCollaborator(@PathVariable String boardId, @PathVariable String oid){
+    public CollaboratorDetailsDTO getCollaborator(@PathVariable String boardId, @PathVariable String oid){
         return boardPermissionService.findCollaboratorByOid(boardId,oid);
     }
     @PreAuthorize("hasAuthority('OWNER')")
@@ -172,6 +174,12 @@ public class BoardControllerV3 {
     @PatchMapping("/{boardId}/collabs/{oid}")
     public UpdateCollaboratorDTO updateCollaborator(@PathVariable String boardId, @PathVariable String oid, @RequestBody UpdateCollaboratorDTO collaborator){
         return  boardPermissionService.updateAccessRight(boardId,oid,collaborator);
+    }
+
+    @PreAuthorize("#oid == authentication.principal.oid")
+    @PatchMapping("/{boardId}/collabs/{oid}/accept")
+    public void updateCollaboratorInvite(@PathVariable String boardId, @PathVariable String oid){
+        boardPermissionService.updateInviteStatus(boardId,oid);
     }
 
 
