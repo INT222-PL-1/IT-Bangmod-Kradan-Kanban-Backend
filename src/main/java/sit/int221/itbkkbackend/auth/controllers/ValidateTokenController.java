@@ -2,7 +2,6 @@ package sit.int221.itbkkbackend.auth.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +9,8 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.auth.dtos.Token;
 import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
-import sit.int221.itbkkbackend.auth.utils.ErrorType;
 import sit.int221.itbkkbackend.auth.utils.JwtTokenUtil;
+import sit.int221.itbkkbackend.auth.utils.enums.ErrorType;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 
 import java.sql.Timestamp;
@@ -36,10 +35,13 @@ import java.util.Map;
         "https://intproj23.sit.kmutt.ac.th"
 },allowCredentials = "true")
 public class ValidateTokenController {
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    UsersRepository usersRepository;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UsersRepository usersRepository;
+
+    public ValidateTokenController(JwtTokenUtil jwtTokenUtil, UsersRepository usersRepository) {
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.usersRepository = usersRepository;
+    }
 
     @GetMapping("/validate")
     public ResponseEntity<Object> validateToken() {

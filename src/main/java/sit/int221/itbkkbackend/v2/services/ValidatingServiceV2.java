@@ -26,5 +26,5 @@ public class ValidatingServiceV2 {
         }
     }
 
-    public void validateLoginRequestDTO(@Valid LoginRequestDTO user){}
+    public void validateLoginRequestDTO(@Valid LoginRequestDTO user) {}
 }

@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,18 +21,21 @@ import java.util.*;
 @Slf4j
 @Service
 public class StatusServiceV3 {
-    @Autowired
-    private StatusRepositoryV3 statusRepository;
-    @Autowired
-    private TaskRepositoryV3 taskRepository;
-    @Autowired
-    private BoardServiceV3 boardServiceV3;
-    @Autowired
-    private ValidatingServiceV3 validatingService;
-    @Autowired
-    private ListMapper listMapper;
-    @Autowired
-    private ModelMapper mapper;
+    private final StatusRepositoryV3 statusRepository;
+    private final TaskRepositoryV3 taskRepository;
+    private final BoardServiceV3 boardServiceV3;
+    private final ValidatingServiceV3 validatingService;
+    private final ListMapper listMapper;
+    private final ModelMapper mapper;
+
+    public StatusServiceV3(StatusRepositoryV3 statusRepository, TaskRepositoryV3 taskRepository, BoardServiceV3 boardServiceV3, ValidatingServiceV3 validatingService, ListMapper listMapper, ModelMapper mapper) {
+        this.statusRepository = statusRepository;
+        this.taskRepository = taskRepository;
+        this.boardServiceV3 = boardServiceV3;
+        this.validatingService = validatingService;
+        this.listMapper = listMapper;
+        this.mapper = mapper;
+    }
 
     public Boolean isExist(Integer id){
         try{
@@ -52,7 +54,7 @@ public class StatusServiceV3 {
             return statusRepository.findByName("No Status");
         }
         StatusV3 status = statusRepository.findById(id).orElseThrow(()->  new ResponseStatusException(HttpStatus.NOT_FOUND,"The status does not exist"));
-        if(status.getBoardId() == null && status.getIsPredefined() == false){
+        if(status.getBoardId() == null && !status.getIsPredefined().booleanValue()){
             checkDefaultStatusConfig(id,boardId);
         }
         if(status.getBoardId() != null && !Objects.equals(status.getBoardId(), boardId)){
@@ -71,16 +73,16 @@ public class StatusServiceV3 {
 
     public Boolean checkDuplicateStatusName(StatusDTO status){
         List<StatusV3> duplicateStatuses = statusRepository.findByNameAndBoardIdIsNotNull(status.getName(), status.getBoardId());
-        StatusV3 duplicateStatus = duplicateStatuses.size() == 0 ? null :  duplicateStatuses.get(duplicateStatuses.size() - 1);
+        StatusV3 duplicateStatus = duplicateStatuses.isEmpty() ? null :  duplicateStatuses.get(duplicateStatuses.size() - 1);
         // check if duplicate status is default status can be edit
-        if(duplicateStatus != null && duplicateStatus.getBoardId() == null && duplicateStatus.getIsPredefined() == false){
+        if(duplicateStatus != null && duplicateStatus.getBoardId() == null && !duplicateStatus.getIsPredefined().booleanValue()){
             int configIndex = statusRepository.findRowIndexOfEditableDefaultStatusByStatusId(duplicateStatus.getId());
             char[] config = boardServiceV3.findById(status.getBoardId()).getDefaultStatusConfig().toCharArray();
             if(config[configIndex - 1] == '0'){
                 duplicateStatus = null;
             }
         }
-        return duplicateStatus != null && Objects.equals(duplicateStatus.getId(), status.getId()) == false;
+        return duplicateStatus != null && !Objects.equals(duplicateStatus.getId(), status.getId());
     }
 
     private void disableDefaultStatus(String boardId, StatusV3 oldStatus) {
@@ -90,7 +92,7 @@ public class StatusServiceV3 {
         char[] config = boardServiceV3.findById(boardId).getDefaultStatusConfig().toCharArray();
         config[configIndex] = '0';
         Map<String, Optional<Object>> updateDefaultStatusConfig = new HashMap<>();
-        updateDefaultStatusConfig.put("defaultStatusConfig",Optional.of(String.valueOf(config)));;
+        updateDefaultStatusConfig.put("defaultStatusConfig",Optional.of(String.valueOf(config)));
         boardServiceV3.updateBoardById(boardId, updateDefaultStatusConfig);
     }
 
@@ -101,7 +103,7 @@ public class StatusServiceV3 {
         } catch (ConstraintViolationException exception){
             CustomConstraintViolationException customConstraintViolationException = new CustomConstraintViolationException(exception.getConstraintViolations());
 
-            if (isDuplicate){
+            if (isDuplicate.booleanValue()){
                 customConstraintViolationException.getAdditionalErrorFields().put("name","must be unique");
             }
             customConstraintViolationException.setRootEntityName("StatusV3");
@@ -120,12 +122,10 @@ public class StatusServiceV3 {
             int configIndex = statusRepository.findRowIndexOfEditableDefaultStatusByStatusId(editableStatus.getId());
             char[] config = boardServiceV3.findById(boardId).getDefaultStatusConfig().toCharArray();
             if (config[configIndex - 1] == '0') {
-                statusList.removeIf(statusDTO -> statusDTO.getId() == editableStatus.getId());
+                statusList.removeIf(statusDTO -> statusDTO.getId().equals(editableStatus.getId()));
             }
         }
-        statusList.forEach(status -> {
-            status.setCount(taskRepository.countByStatusIdAndBoardId(status.getId(), boardId));
-        });
+        statusList.forEach(status -> status.setCount(taskRepository.countByStatusIdAndBoardId(status.getId(), boardId)));
         return statusList;
 
     }
@@ -151,7 +151,7 @@ public class StatusServiceV3 {
     public StatusV3 updateStatusById(Integer id, StatusDTO status,String boardId){
         boardServiceV3.isExist(boardId);
         StatusV3 updateStatus = findByIdAndBoardId(id,boardId);
-        if (updateStatus.getIsPredefined()){
+        if (updateStatus.getIsPredefined().booleanValue()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be modified",updateStatus.getName()));
         }
         if(updateStatus.getBoardId() == null){
@@ -174,7 +174,7 @@ public class StatusServiceV3 {
         boardServiceV3.isExist(boardId);
         StatusV3 deleteStatus = findByIdAndBoardId(id,boardId);
         Integer taskAmount = taskRepository.countByStatusIdAndBoardId(id,boardId);
-        if (deleteStatus.getIsPredefined()){
+        if (deleteStatus.getIsPredefined().booleanValue()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",deleteStatus.getName()));
         }
         if(taskAmount > 0){
@@ -199,13 +199,13 @@ public class StatusServiceV3 {
         BoardV3 currentBoard = boardServiceV3.findById(boardId);
         Integer oldStatusTaskAmount = taskRepository.countByStatusIdAndBoardId(oldId,boardId);
         Integer newStatusTaskAmount = taskRepository.countByStatusIdAndBoardId(newId,boardId);
-        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsTaskLimitEnabled() && !newStatus.getIsPredefined()){
+        if(newStatusTaskAmount + oldStatusTaskAmount > currentBoard.getTaskLimitPerStatus() && currentBoard.getIsTaskLimitEnabled().booleanValue() && !newStatus.getIsPredefined().booleanValue()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",newStatus.getName()));
         }
         if (oldStatusTaskAmount == 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Unable to transfer task. The current status does not contain any tasks.");
         }
-        if (oldStatus.getIsPredefined()){
+        if (oldStatus.getIsPredefined().booleanValue()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("%s cannot be deleted",oldStatus.getName()));
         }
         transferTasksStatus(oldStatus, newStatus, boardId);

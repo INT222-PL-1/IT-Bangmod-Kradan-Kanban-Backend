@@ -1,7 +1,5 @@
 package sit.int221.itbkkbackend.v2.dtos;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

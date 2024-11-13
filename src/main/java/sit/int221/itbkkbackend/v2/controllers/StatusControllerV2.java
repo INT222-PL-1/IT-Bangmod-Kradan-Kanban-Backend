@@ -1,8 +1,5 @@
 package sit.int221.itbkkbackend.v2.controllers;
 
-
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +26,11 @@ import sit.int221.itbkkbackend.v2.services.StatusServiceV2;
 @RestController
 @RequestMapping("/v2/statuses")
 public class StatusControllerV2 {
+    private final StatusServiceV2 service;
 
-    @Autowired
-    private StatusServiceV2 service;
+    public StatusControllerV2(StatusServiceV2 service) {
+        this.service = service;
+    }
 
     @GetMapping("")
     public ResponseEntity<Object> getAllStatus(@RequestParam(required = false) Integer boardId){

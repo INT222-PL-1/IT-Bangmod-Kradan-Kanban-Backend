@@ -2,7 +2,6 @@ package sit.int221.itbkkbackend.v2.controllers;
 
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.BoardDTO;
 import sit.int221.itbkkbackend.v2.services.BoardServiceV2;
@@ -29,10 +28,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/v2/boards")
 public class BoardControllerV2 {
-    @Autowired
-    private BoardServiceV2 service;
-    @Autowired
-    private ModelMapper mapper;
+    private final BoardServiceV2 service;
+    private final ModelMapper mapper;
+
+    public BoardControllerV2(BoardServiceV2 service, ModelMapper mapper) {
+        this.service = service;
+        this.mapper = mapper;
+    }
+
     @GetMapping("")
     public List<BoardDTO> getAllBoards(){
         return service.findAllBoard();

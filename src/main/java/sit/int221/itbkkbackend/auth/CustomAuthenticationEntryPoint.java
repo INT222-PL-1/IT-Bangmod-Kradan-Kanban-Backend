@@ -11,7 +11,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import sit.int221.itbkkbackend.auth.utils.ErrorType;
+
+import sit.int221.itbkkbackend.auth.utils.enums.ErrorType;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 
 import java.io.IOException;

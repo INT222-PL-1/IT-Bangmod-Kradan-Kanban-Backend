@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 
-import java.io.File;
 import java.util.List;
 
 public interface FileRepositoryV3 extends JpaRepository<FileV3, FileV3.FileKey> {

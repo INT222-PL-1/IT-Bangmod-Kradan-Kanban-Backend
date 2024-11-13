@@ -27,7 +27,7 @@ public class AuthDataSourceConfig {
     @Bean
     public DataSourceProperties authDataSourceProperties(){
         return new DataSourceProperties();
-    };
+    }
 
 
     @Bean

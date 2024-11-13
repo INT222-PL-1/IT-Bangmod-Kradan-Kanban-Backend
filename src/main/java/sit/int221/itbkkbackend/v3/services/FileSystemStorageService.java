@@ -12,7 +12,6 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -30,15 +29,13 @@ import sit.int221.itbkkbackend.v3.repositories.FileRepositoryV3;
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
+    private final FileRepositoryV3 fileRepository;
 
-    @Autowired
-    private FileRepositoryV3 fileRepository;
-
-    @Autowired
-    public FileSystemStorageService(StorageProperties properties) {
+    public FileSystemStorageService(StorageProperties properties, FileRepositoryV3 fileRepository) {
         if (properties.getLocation().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload location cannot be empty.");
         }
+        this.fileRepository = fileRepository;
         this.rootLocation = Paths.get(properties.getLocation());
     }
 

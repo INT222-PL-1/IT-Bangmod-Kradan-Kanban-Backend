@@ -5,7 +5,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,27 +27,30 @@ import java.util.*;
 @Slf4j
 @Service
 public class BoardServiceV3 {
+    private final BoardRepositoryV3 boardRepository;
+    private final ModelMapper mapper;
+    private final ListMapper listMapper;
+    private final StatusRepositoryV3 statusRepository;
+    private final TaskRepositoryV3 taskRepository;
+    private final UsersRepository userSharedRepository;
+    private final EntityManager entityManager;
+    private final ValidatingServiceV3 validatingService;
+    private final BoardPermissionRepositoryV3 boardPermissionRepository;
+    private final UserRepositoryV3 userRepository;
 
-    @Autowired
-    private BoardRepositoryV3 boardRepository;
-    @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    private ListMapper listMapper;
-    @Autowired
-    private StatusRepositoryV3 statusRepository;
-    @Autowired
-    private TaskRepositoryV3 taskRepository;
-    @Autowired
-    private UsersRepository userSharedRepository;
-    @Autowired
-    private EntityManager entityManager;
-    @Autowired
-    private ValidatingServiceV3 validatingService;
-    @Autowired
-    private BoardPermissionRepositoryV3 boardPermissionRepository;
-    @Autowired
-    private UserRepositoryV3 userRepository;
+    public BoardServiceV3(BoardRepositoryV3 boardRepository, ModelMapper mapper, ListMapper listMapper, StatusRepositoryV3 statusRepository, TaskRepositoryV3 taskRepository, UsersRepository userSharedRepository, EntityManager entityManager, ValidatingServiceV3 validatingService, BoardPermissionRepositoryV3 boardPermissionRepository, UserRepositoryV3 userRepository) {
+        this.boardRepository = boardRepository;
+        this.mapper = mapper;
+        this.listMapper = listMapper;
+        this.statusRepository = statusRepository;
+        this.taskRepository = taskRepository;
+        this.userSharedRepository = userSharedRepository;
+        this.entityManager = entityManager;
+        this.validatingService = validatingService;
+        this.boardPermissionRepository = boardPermissionRepository;
+        this.userRepository = userRepository;
+    }
+
     public BoardV3 findById(String id){
         return boardRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"boardId does not exist")

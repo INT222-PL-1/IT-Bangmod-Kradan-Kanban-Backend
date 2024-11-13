@@ -1,7 +1,6 @@
 package sit.int221.itbkkbackend.auth.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,12 +21,15 @@ import java.util.List;
 @Slf4j
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UsersRepository usersRepository;
-    @Autowired
-    private BoardRepositoryV3 boardRepository;
-    @Autowired
-    private BoardPermissionRepositoryV3 boardPermissionRepository;
+    private final UsersRepository usersRepository;
+    private final BoardRepositoryV3 boardRepository;
+    private final BoardPermissionRepositoryV3 boardPermissionRepository;
+
+    public JwtUserDetailsService(UsersRepository usersRepository, BoardRepositoryV3 boardRepository, BoardPermissionRepositoryV3 boardPermissionRepository) {
+        this.usersRepository = usersRepository;
+        this.boardRepository = boardRepository;
+        this.boardPermissionRepository = boardPermissionRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
@@ -49,15 +51,14 @@ public class JwtUserDetailsService implements UserDetailsService {
             roles.add(new SimpleGrantedAuthority("PUBLIC_ACCESS"));
         }
         String permission = (boardId != null) ? boardPermissionRepository.getAccessRightByBoardIdAndOid(boardId, user.getOid()) : null;
-        if (permission == null){
-        } else if(permission.equals("OWNER")){
+        if (permission.equals("OWNER")) {
             roles.add(new SimpleGrantedAuthority(permission));
         } else if (permission.equals("READ") || permission.equals("WRITE")){
             roles.add(new SimpleGrantedAuthority("COLLABORATOR"));
             roles.add(new SimpleGrantedAuthority(permission));
         }
 
-        return new CustomUserDetails(userName,user.getPassword(),roles, user.getOid(),user.getName());
+        return new CustomUserDetails(userName, user.getPassword(), roles, user.getOid(), user.getName());
     }
 }
 

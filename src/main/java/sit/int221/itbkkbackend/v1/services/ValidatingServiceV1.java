@@ -8,5 +8,5 @@ import sit.int221.itbkkbackend.v1.dtos.TaskDTO;
 @Service
 @Validated
 public class ValidatingServiceV1 {
-    void validateTaskDTO(@Valid TaskDTO task){}
+    void validateTaskDTO(@Valid TaskDTO task) {}
 }

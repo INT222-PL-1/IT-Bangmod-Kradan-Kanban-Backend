@@ -1,6 +1,5 @@
 package sit.int221.itbkkbackend.v3.dtos;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;

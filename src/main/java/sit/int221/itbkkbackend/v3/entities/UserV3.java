@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
 
 import java.time.ZonedDateTime;
 import java.util.List;

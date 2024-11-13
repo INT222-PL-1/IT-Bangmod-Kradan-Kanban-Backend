@@ -2,7 +2,6 @@ package sit.int221.itbkkbackend.v2.services;
 
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,17 +18,20 @@ import java.util.*;
 
 @Service
 public class BoardServiceV2 {
+    private final BoardRepositoryV2 boardRepository;
+    private final ModelMapper mapper;
+    private final ListMapper listMapper;
+    private final StatusRepositoryV2 statusRepository;
+    private final TaskRepositoryV2 taskRepository;
 
-    @Autowired
-    private BoardRepositoryV2 boardRepository;
-    @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    private ListMapper listMapper;
-    @Autowired
-    private StatusRepositoryV2 statusRepository;
-    @Autowired
-    private TaskRepositoryV2 taskRepository;
+    public BoardServiceV2(BoardRepositoryV2 boardRepository, ModelMapper mapper, ListMapper listMapper, StatusRepositoryV2 statusRepository, TaskRepositoryV2 taskRepository) {
+        this.boardRepository = boardRepository;
+        this.mapper = mapper;
+        this.listMapper = listMapper;
+        this.statusRepository = statusRepository;
+        this.taskRepository = taskRepository;
+    }
+
     public BoardV2 findById(Integer id){
         if (id == null){id = 1;}
         return boardRepository.findById(id).orElseThrow(

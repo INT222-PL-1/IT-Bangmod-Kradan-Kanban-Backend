@@ -2,7 +2,6 @@ package sit.int221.itbkkbackend.v3.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;

@@ -1,9 +1,7 @@
 package sit.int221.itbkkbackend.v3.services;
 
-import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.exceptions.CollaboratorNotFoundException;
 import sit.int221.itbkkbackend.exceptions.UserEmailNotFoundException;
-import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.AddCollaboratorDTO;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDetailsDTO;
@@ -24,39 +21,38 @@ import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.BoardRepositoryV3;
 import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Slf4j
 @Service
 public class BoardPermissionServiceV3 {
-    @Autowired
-    BoardPermissionRepositoryV3 boardPermissionRepository;
-    @Autowired
-    BoardRepositoryV3 boardRepository;
-    @Autowired
-    UserRepositoryV3 userRepository;
-    @Autowired
-    UsersRepository userSharedRepository;
-    @Autowired
-    ModelMapper mapper;
-    @Autowired
-    ListMapper listMapper;
-    @Autowired
-    ValidatingServiceV3 validatingService;
-    @Autowired
-    EmailService emailService;
+    private final BoardPermissionRepositoryV3 boardPermissionRepository;
+    private final BoardRepositoryV3 boardRepository;
+    private final UserRepositoryV3 userRepository;
+    private final UsersRepository userSharedRepository;
+    private final ModelMapper mapper;
+    private final ValidatingServiceV3 validatingService;
+    private final EmailService emailService;
+
+    public BoardPermissionServiceV3(BoardPermissionRepositoryV3 boardPermissionRepository, BoardRepositoryV3 boardRepository, UserRepositoryV3 userRepository, UsersRepository userSharedRepository, ModelMapper mapper, ValidatingServiceV3 validatingService, EmailService emailService) {
+        this.boardPermissionRepository = boardPermissionRepository;
+        this.boardRepository = boardRepository;
+        this.userRepository = userRepository;
+        this.userSharedRepository = userSharedRepository;
+        this.mapper = mapper;
+        this.validatingService = validatingService;
+        this.emailService = emailService;
+    }
 
     public List<CollaboratorDTO> findAllCollaborator(String boardId){
-        List<CollaboratorDTO> collaborators = boardPermissionRepository.findAllCollaboratorByBoardId(boardId);
-        return collaborators;
+        return boardPermissionRepository.findAllCollaboratorByBoardId(boardId);
     }
 
     public CollaboratorDetailsDTO findCollaboratorByOid(String boardId,String oid){
         CollaboratorDetailsDTO collaborator = boardPermissionRepository.findCollaboratorByBoardIdAndOid(boardId,oid);
         if(collaborator == null){
             throw new CollaboratorNotFoundException(HttpStatus.NOT_FOUND,oid);
-        };
+        }
         collaborator.setOwnerName(userRepository.findOwnerOfBoardId(boardId).getName());
         collaborator.setBoardName(boardRepository.getBoardNameFromId(boardId));
         return collaborator;
@@ -73,7 +69,7 @@ public class BoardPermissionServiceV3 {
             throw new UserEmailNotFoundException(HttpStatus.NOT_FOUND,collaborator.getEmail());
         }
         // check there's exist user with given email has logged in or be board owner.
-        if (userRepository.existsById(user.getOid()) == false){
+        if (!userRepository.existsById(user.getOid())){
             userRepository.save(mapper.map(user,UserV3.class));
         } else if (boardPermissionRepository.isBoardOwner(boardId,user.getOid()) || boardPermissionRepository.existsCollaboratorByBoardIdAndOid(boardId,user.getOid())){
             throw new ResponseStatusException(HttpStatus.CONFLICT,String.format("Provided user with email %s can't be collaborator.",collaborator.getEmail()));

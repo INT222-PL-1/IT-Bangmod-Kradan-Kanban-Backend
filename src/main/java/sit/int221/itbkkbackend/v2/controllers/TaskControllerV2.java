@@ -1,9 +1,5 @@
 package sit.int221.itbkkbackend.v2.controllers;
 
-
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v2.dtos.SimpleTaskDTO;
@@ -11,7 +7,6 @@ import sit.int221.itbkkbackend.v2.dtos.TaskDTO;
 import sit.int221.itbkkbackend.v2.entities.TaskV2;
 import sit.int221.itbkkbackend.v2.services.TaskServiceV2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,15 +28,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/v2/tasks")
 public class TaskControllerV2 {
-    @Autowired
-    private TaskServiceV2 service;
+    private final TaskServiceV2 service;
+
+    public TaskControllerV2(TaskServiceV2 service) {
+        this.service = service;
+    }
 
     @GetMapping("")
     public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,
                                            @RequestParam(defaultValue = "ASC") String sortDirection,
-                                           @RequestParam(required = false) ArrayList<String> filterStatuses,
+                                           @RequestParam(required = false) List<String> filterStatuses,
                                            @RequestParam(required = false) Integer boardId){
-        return service.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses,boardId);
+        return service.getAllSimpleTasksDTO(sortBy, sortDirection, filterStatuses, boardId);
     }
 
     @GetMapping("/{id}")

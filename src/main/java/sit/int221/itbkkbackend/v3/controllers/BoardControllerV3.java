@@ -1,26 +1,18 @@
 package sit.int221.itbkkbackend.v3.controllers;
 
-
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v3.dtos.*;
-import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
-import sit.int221.itbkkbackend.v3.entities.BoardV3;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
-import sit.int221.itbkkbackend.v3.entities.TaskV3;
-import sit.int221.itbkkbackend.v3.repositories.BoardPermissionRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.BoardPermissionServiceV3;
 import sit.int221.itbkkbackend.v3.services.StatusServiceV3;
 import sit.int221.itbkkbackend.v3.services.TaskServiceV3;
 import sit.int221.itbkkbackend.v3.services.BoardServiceV3;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,9 +35,19 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/v3/boards")
 public class BoardControllerV3 {
-    //Board
-    @Autowired
-    private BoardServiceV3 boardService;
+    private final BoardServiceV3 boardService;
+    private final TaskServiceV3 taskService;
+    private final StatusServiceV3 statusService;
+    private final BoardPermissionServiceV3 boardPermissionService;
+    
+    // Board Controller
+
+    public BoardControllerV3(BoardServiceV3 boardService, TaskServiceV3 taskService, StatusServiceV3 statusService, BoardPermissionServiceV3 boardPermissionService) {
+        this.boardService = boardService;
+        this.taskService = taskService;
+        this.statusService = statusService;
+        this.boardPermissionService = boardPermissionService;
+    }
 
     @GetMapping("")
     public BoardListDTO getAllBoards() {
@@ -68,16 +70,14 @@ public class BoardControllerV3 {
         return boardService.updateBoardById(id, board);
     }
 
-    //Task
-    @Autowired
-    private TaskServiceV3 taskService;
+    // Task Controller
 
     @GetMapping("/{boardId}/tasks")
     public List<SimpleTaskDTO> getAllTasks(@RequestParam(defaultValue = "createdOn") String sortBy ,
                                            @RequestParam(defaultValue = "ASC") String sortDirection,
-                                           @RequestParam(required = false) ArrayList<String> filterStatuses,
+                                           @RequestParam(required = false) List<String> filterStatuses,
                                            @PathVariable String boardId){
-        return taskService.getAllSimpleTasksDTO(sortBy,sortDirection,filterStatuses,boardId);
+        return taskService.getAllSimpleTasksDTO(sortBy, sortDirection, filterStatuses, boardId);
     }
 
     @GetMapping("/{boardId}/tasks/{id}")
@@ -106,52 +106,47 @@ public class BoardControllerV3 {
         return taskService.updateTaskById(id,task,boardId);
     }
 
-    //Statuses
-
-    @Autowired
-    private StatusServiceV3 service;
+    // Statuses Controller
 
     @GetMapping("/{boardId}/statuses")
     public ResponseEntity<Object> getAllStatus(@PathVariable String boardId){
-        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(service.getAllStatus(boardId)) ;
+        return ResponseEntity.status(HttpStatusCode.valueOf(200)).body(statusService.getAllStatus(boardId)) ;
     }
 
     @GetMapping("/{boardId}/statuses/{id}")
     public ResponseEntity<Object> getStatus(@PathVariable Integer id ,@PathVariable String boardId){
-        return ResponseEntity.status(HttpStatus.OK).body(service.getStatusById(id,boardId));
+        return ResponseEntity.status(HttpStatus.OK).body(statusService.getStatusById(id,boardId));
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/statuses")
-    public StatusV3 addStatus(@RequestBody(required = false) StatusDTO status,@PathVariable String boardId){
+    public StatusV3 addStatus(@RequestBody(required = false) StatusDTO status, @PathVariable String boardId){
         if (status == null) status = new StatusDTO();
-        return service.addStatus(status,boardId);
+        return statusService.addStatus(status, boardId);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @PutMapping("/{boardId}/statuses/{id}")
     public StatusV3 updateStatus(@PathVariable Integer id , @RequestBody(required = false) StatusDTO status,@PathVariable String boardId){
         if (status == null) status = new StatusDTO();
-        return service.updateStatusById(id,status,boardId);
+        return statusService.updateStatusById(id, status, boardId);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @DeleteMapping("/{boardId}/statuses/{id}")
     public StatusV3 deleteStatus(@PathVariable Integer id,@PathVariable String boardId){
-        return service.deleteStatusById(id,boardId);
+        return statusService.deleteStatusById(id,boardId);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @DeleteMapping("/{boardId}/statuses/{oldId}/{newId}")
     public StatusV3 transferAndDeleteStatus(@PathVariable Integer oldId, @PathVariable Integer newId,@PathVariable String boardId){
-        return service.transferAndDeleteStatus(oldId,newId,boardId);
+        return statusService.transferAndDeleteStatus(oldId,newId,boardId);
     }
 
-    @Autowired
-    BoardPermissionServiceV3 boardPermissionService;
-
-    // Collaborators
+    // Collaborators Controller
+    
     @GetMapping("/{boardId}/collabs")
     public List<CollaboratorDTO> getAllCollaborators(@PathVariable String boardId){
         return boardPermissionService.findAllCollaborator(boardId);
@@ -188,6 +183,4 @@ public class BoardControllerV3 {
     public void removeCollaborator(@PathVariable String boardId, @PathVariable String oid){
         boardPermissionService.removeAccessRight(boardId,oid);
     }
-
-
 }

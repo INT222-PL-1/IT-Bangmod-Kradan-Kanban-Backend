@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import sit.int221.itbkkbackend.auth.utils.ErrorType;
+
+import sit.int221.itbkkbackend.auth.utils.enums.ErrorType;
 import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 
 import java.io.IOException;
