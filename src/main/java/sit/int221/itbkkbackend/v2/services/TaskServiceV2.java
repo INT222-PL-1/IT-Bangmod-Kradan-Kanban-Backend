@@ -107,7 +107,7 @@ public class TaskServiceV2 {
         BoardV2 currentBoard = boardService.findById(task.getBoardId());
         Integer taskAmount = taskRepository.countByStatusId(task.getStatusId());
         Boolean isExceedLimit;
-        if(task.getId() == null || task.getStatusId().equals(findById(task.getId()).getStatusId())){
+        if(task.getId() == null || !task.getStatusId().equals(findById(task.getId()).getStatusId())){
             isExceedLimit = taskAmount + 1 > currentBoard.getTaskLimitPerStatus();
         }else {
             isExceedLimit = false;
