@@ -51,11 +51,13 @@ public class JwtUserDetailsService implements UserDetailsService {
             roles.add(new SimpleGrantedAuthority("PUBLIC_ACCESS"));
         }
         String permission = (boardId != null) ? boardPermissionRepository.getAccessRightByBoardIdAndOid(boardId, user.getOid()) : null;
-        if (permission.equals("OWNER")) {
-            roles.add(new SimpleGrantedAuthority(permission));
-        } else if (permission.equals("READ") || permission.equals("WRITE")){
-            roles.add(new SimpleGrantedAuthority("COLLABORATOR"));
-            roles.add(new SimpleGrantedAuthority(permission));
+        if (permission != null) {
+            if (permission.equals("OWNER")) {
+                roles.add(new SimpleGrantedAuthority(permission));
+            } else if (permission.equals("READ") || permission.equals("WRITE")){
+                roles.add(new SimpleGrantedAuthority("COLLABORATOR"));
+                roles.add(new SimpleGrantedAuthority(permission));
+            }
         }
 
         return new CustomUserDetails(userName, user.getPassword(), roles, user.getOid(), user.getName());
