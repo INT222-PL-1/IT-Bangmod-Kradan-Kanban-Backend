@@ -27,7 +27,13 @@ public class StatusDTO {
     private Boolean isPredefined;
 
     public void setName(String name) {
-        this.name = name == null ? null : name.isBlank() ? "" :  name.trim();
+        if (name == null) {
+            this.name = null;
+        } else if (name.isBlank()) {
+            this.name = "";
+        } else {
+            this.name = name.trim();
+        }
     }
 
     public void setDescription(String description) {

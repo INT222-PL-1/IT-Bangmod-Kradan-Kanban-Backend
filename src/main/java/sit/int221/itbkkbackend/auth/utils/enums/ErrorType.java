@@ -1,8 +1,7 @@
-package sit.int221.itbkkbackend.auth.utils;
+package sit.int221.itbkkbackend.auth.utils.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sit.int221.itbkkbackend.exceptions.UserEmailNotFoundException;
 
 @Getter
 @AllArgsConstructor
@@ -18,8 +17,7 @@ public enum ErrorType {
     USER_NOT_FOUND("User not found"),
     REFRESH_TOKEN_INVALID("Invalid refresh token."),
     USER_EMAIL_NOT_FOUND("User with provided email does not exist !!!"),
-    COLLABORATOR_NOT_FOUND("Collaborator does not exist in current board !!!")
-    ;
+    COLLABORATOR_NOT_FOUND("Collaborator does not exist in current board !!!");
 
 
     private final String message;

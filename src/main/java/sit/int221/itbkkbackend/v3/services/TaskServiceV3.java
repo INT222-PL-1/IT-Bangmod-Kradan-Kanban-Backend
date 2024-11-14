@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,27 +20,28 @@ import sit.int221.itbkkbackend.v3.entities.TaskV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
 import sit.int221.itbkkbackend.v3.entities.BoardV3;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class TaskServiceV3 {
-    @Autowired
-    private TaskRepositoryV3 taskRepository;
-    @Autowired
-    private StatusServiceV3 statusService;
-    @Autowired
-    private BoardServiceV3 boardService;
-    @Autowired
-    ValidatingServiceV3 validatingService;
-    @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    private ListMapper listMapper;
-    @Autowired
-    private FileSystemStorageService fileService;
+    private final TaskRepositoryV3 taskRepository;
+    private final StatusServiceV3 statusService;
+    private final BoardServiceV3 boardService;
+    private final ValidatingServiceV3 validatingService;
+    private final ModelMapper mapper;
+    private final ListMapper listMapper;
+    private final FileSystemStorageService fileService;
 
+    public TaskServiceV3(TaskRepositoryV3 taskRepository, StatusServiceV3 statusService, BoardServiceV3 boardService, ValidatingServiceV3 validatingService, ModelMapper mapper, ListMapper listMapper, FileSystemStorageService fileService) {
+        this.taskRepository = taskRepository;
+        this.statusService = statusService;
+        this.boardService = boardService;
+        this.validatingService = validatingService;
+        this.mapper = mapper;
+        this.listMapper = listMapper;
+        this.fileService = fileService;
+    }
 
     public TaskV3 findById(Integer id){
         return taskRepository.findById(id).orElseThrow(()->
@@ -55,7 +55,7 @@ public class TaskServiceV3 {
             validatingService.validateTaskDTO(task,isStatusExist);
         }catch (ConstraintViolationException exception){
             CustomConstraintViolationException taskConstraintViolationException = new CustomConstraintViolationException(exception.getConstraintViolations());
-            if (!isStatusExist){
+            if (!isStatusExist.booleanValue()){
                 taskConstraintViolationException.getAdditionalErrorFields().put("status","does not exist");
             }
             taskConstraintViolationException.setRootEntityName("TaskV3");
@@ -69,14 +69,14 @@ public class TaskServiceV3 {
         BoardV3 currentBoard = boardService.findById(task.getBoardId());
         Integer taskAmount = taskRepository.countByStatusIdAndBoardId(task.getStatusId(), task.getBoardId());
         Boolean isExceedLimit;
-        if(task.getId() == null || task.getStatusId() != findById(task.getId()).getStatusId()){
+        if(task.getId() == null || !task.getStatusId().equals(findById(task.getId()).getStatusId())){
             isExceedLimit = taskAmount + 1 > currentBoard.getTaskLimitPerStatus();
         }else {
             isExceedLimit = false;
         }
-        if(!taskStatus.getIsPredefined() &&
-                currentBoard.getIsTaskLimitEnabled() &&
-                isExceedLimit
+        if(!taskStatus.getIsPredefined().booleanValue() &&
+                currentBoard.getIsTaskLimitEnabled().booleanValue() &&
+                isExceedLimit.booleanValue()
         ){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,String.format("The status %s will have too many tasks",taskStatus.getName()));
         }
@@ -87,7 +87,7 @@ public class TaskServiceV3 {
 
     // Controller Service Method [GET , POST , DELETE , PUT]
 
-    public List<SimpleTaskDTO> getAllSimpleTasksDTO(String sortBy,String sortDirection, ArrayList<String> filterStatuses,String boardId){
+    public List<SimpleTaskDTO> getAllSimpleTasksDTO(String sortBy,String sortDirection, List<String> filterStatuses,String boardId){
         boardService.isExist(boardId);
         try{
             // create sort object , find all task in specific board with sort , filter tasks
@@ -96,7 +96,7 @@ public class TaskServiceV3 {
                 sort = sort.and(Sort.by(Sort.Direction.ASC,"id"));
             }
             List<SimpleTaskDTO> taskV3List = taskRepository.findAllTasksWithFileCounts(boardId,sort) ;
-            List<SimpleTaskDTO> filteredTaskList = filterStatuses == null || filterStatuses.size() == 0 ? taskV3List : taskV3List.stream().filter(taskV3 -> filterStatuses.contains(taskV3.getStatus().getName())).toList();
+            List<SimpleTaskDTO> filteredTaskList = filterStatuses == null || filterStatuses.isEmpty() ? taskV3List : taskV3List.stream().filter(taskV3 -> filterStatuses.contains(taskV3.getStatus().getName())).toList();
             return listMapper.mapList(filteredTaskList, SimpleTaskDTO.class,mapper);
         }catch (Exception e)
         {

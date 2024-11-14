@@ -1,7 +1,5 @@
 package sit.int221.itbkkbackend.v1.controllers;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.itbkkbackend.v1.dtos.SimpleTaskDTO;
@@ -31,8 +29,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/v1/tasks")
 public class TaskControllerV1 {
-    @Autowired
-    private TaskServiceV1 service;
+    private final TaskServiceV1 service;
+
+    public TaskControllerV1(TaskServiceV1 service) {
+        this.service = service;
+    }
 
     @GetMapping("")
     public List<SimpleTaskDTO> getAllTasks(){

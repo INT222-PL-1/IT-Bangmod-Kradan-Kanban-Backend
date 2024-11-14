@@ -7,7 +7,6 @@ import sit.int221.itbkkbackend.v3.dtos.CollaboratorDTO;
 import sit.int221.itbkkbackend.v3.dtos.CollaboratorDetailsDTO;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3;
 import sit.int221.itbkkbackend.v3.entities.BoardPermissionV3.BoardUserKey;
-import sit.int221.itbkkbackend.v3.entities.UserV3;
 
 import java.util.List;
 

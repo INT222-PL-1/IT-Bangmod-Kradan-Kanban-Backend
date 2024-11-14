@@ -3,7 +3,6 @@ package sit.int221.itbkkbackend.v1.services;
 
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,14 +22,17 @@ import java.util.*;
 
 @Service
 public class TaskServiceV1 {
-    @Autowired
-    private TaskRepositoryV1 repository;
-    @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    private ListMapper listMapper;
-    @Autowired
-    ValidatingServiceV1 validatingService;
+    private final TaskRepositoryV1 repository;
+    private final ModelMapper mapper;
+    private final ListMapper listMapper;
+    private final ValidatingServiceV1 validatingService;
+
+    public TaskServiceV1(TaskRepositoryV1 repository, ModelMapper mapper, ListMapper listMapper, ValidatingServiceV1 validatingService) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.listMapper = listMapper;
+        this.validatingService = validatingService;
+    }
 
     private TaskV1 findById(Integer id){
         return repository.findById(id).orElseThrow(()-> new ItemNotFoundException(

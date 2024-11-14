@@ -3,6 +3,8 @@ package sit.int221.itbkkbackend.auth.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import sit.int221.itbkkbackend.auth.entities.Users;
@@ -15,14 +17,21 @@ import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-    @Value("${jwt.access-secret}")
-    private String ACCESS_SECRET_KEY;
-    @Value("${jwt.refresh-secret}")
-    private String REFRESH_SECRET_KEY;
-    @Value("#{${jwt.max-token-interval-hour}*60*60*1000}")
-    private long JWT_ACCESS_TOKEN_VALIDITY;
-    @Value("#{${jwt.max-refresh-token-interval-hour}*60*60*1000}")
-    private long JWT_REFRESH_TOKEN_VALIDITY;
+    private final String accessSecretKey;
+    private final String refreshSecretKey;
+    private final long jwtAccessTokenValidity;
+    private final long jwtRefreshTokenValidity;
+
+    public JwtTokenUtil(@Value("${jwt.access-secret}") String accessSecretKey,
+                        @Value("${jwt.refresh-secret}") String refreshSecretKey,
+                        @Value("#{${jwt.max-token-interval-hour}*60*60*1000}") long jwtAccessTokenValidity,
+                        @Value("#{${jwt.max-refresh-token-interval-hour}*60*60*1000}") long jwtRefreshTokenValidity) {
+        this.accessSecretKey = accessSecretKey;
+        this.refreshSecretKey = refreshSecretKey;
+        this.jwtAccessTokenValidity = jwtAccessTokenValidity;
+        this.jwtRefreshTokenValidity = jwtRefreshTokenValidity;
+    }
+
     SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     public enum TokenType{
@@ -43,9 +52,12 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public Claims getAllClaimsFromToken(String token,TokenType tokenType) {
-        String secret = tokenType == TokenType.ACCESS ? ACCESS_SECRET_KEY : REFRESH_SECRET_KEY;
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-        return claims;
+        String secret = tokenType == TokenType.ACCESS ? accessSecretKey : refreshSecretKey;
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Boolean isTokenExpired(String token,TokenType tokenType) {
@@ -65,8 +77,8 @@ public class JwtTokenUtil implements Serializable {
             claims.put("name", user.getName());
             claims.put("email", user.getEmail());
         }
-        long validity = tokenType == TokenType.ACCESS ? JWT_ACCESS_TOKEN_VALIDITY : JWT_REFRESH_TOKEN_VALIDITY;
-        String secret = tokenType == TokenType.ACCESS ? ACCESS_SECRET_KEY : REFRESH_SECRET_KEY;
+        long validity = tokenType == TokenType.ACCESS ? jwtAccessTokenValidity : jwtRefreshTokenValidity;
+        String secret = tokenType == TokenType.ACCESS ? accessSecretKey : refreshSecretKey;
         return doGenerateToken(claims, validity,secret);
     }
 
@@ -77,7 +89,8 @@ public class JwtTokenUtil implements Serializable {
                 .setIssuer("https://intproj23.sit.kmutt.ac.th/pl1")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + validity))
-                .signWith(signatureAlgorithm, secret).compact();
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), signatureAlgorithm)
+                .compact();
     }
 
 }

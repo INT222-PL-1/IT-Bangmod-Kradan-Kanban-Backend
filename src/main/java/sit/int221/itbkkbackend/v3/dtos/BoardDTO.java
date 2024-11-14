@@ -31,7 +31,7 @@ public class BoardDTO {
     private String inviteStatus;
     private UsersDTO owner;
 
-    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String accessRight,String oid, String ownerName) {
+    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String accessRight, String oid, String ownerName) {
         this.id = id;
         this.name = name;
         this.isTaskLimitEnabled = isTaskLimitEnabled;
@@ -41,7 +41,7 @@ public class BoardDTO {
         this.owner = new UsersDTO(oid,ownerName);
     }
 
-    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String accessRight,String inviteStatus,String oid, String ownerName) {
+    public BoardDTO(String id, String name, Boolean isTaskLimitEnabled, Integer taskLimitPerStatus, String visibility,String accessRight, String inviteStatus,String oid, String ownerName) {
         this.id = id;
         this.name = name;
         this.isTaskLimitEnabled = isTaskLimitEnabled;

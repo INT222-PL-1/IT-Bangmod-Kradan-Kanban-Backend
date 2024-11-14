@@ -19,6 +19,6 @@ public class UsersDTO {
     public UsersDTO(String oid, String name){
         this.name = name;
         this.oid = oid;
-    };
+    }
 
 }

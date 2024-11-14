@@ -1,7 +1,5 @@
 package sit.int221.itbkkbackend.config;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +18,7 @@ import sit.int221.itbkkbackend.auth.*;
 import sit.int221.itbkkbackend.auth.filters.AnonymousAuthFilter;
 import sit.int221.itbkkbackend.auth.filters.JwtAuthFilter;
 import sit.int221.itbkkbackend.auth.services.JwtUserDetailsService;
+import sit.int221.itbkkbackend.auth.utils.enums.UserAuthority;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -27,25 +26,39 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    @Autowired
-    JwtUserDetailsService jwtUserDetailsService;
-    @Autowired
-    JwtAuthFilter jwtAuthFilter;
-    @Autowired
-    AnonymousAuthFilter anonymousAuthFilter;
+    private final JwtUserDetailsService jwtUserDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final AnonymousAuthFilter anonymousAuthFilter;
 
+    public WebSecurityConfig(JwtUserDetailsService jwtUserDetailsService, JwtAuthFilter jwtAuthFilter, AnonymousAuthFilter anonymousAuthFilter) {
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.anonymousAuthFilter = anonymousAuthFilter;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
-                .authorizeRequests(
+                .authorizeHttpRequests(
                         authorize -> authorize.requestMatchers("/login","/error","/token").permitAll()
                                 .requestMatchers("v3/boards/*/collabs/*").authenticated()
-                                .requestMatchers(HttpMethod.GET).hasAnyAuthority("PUBLIC_ACCESS","OWNER","COLLABORATOR")
-                                .requestMatchers("/v3/boards/*/collabs").hasAnyAuthority("OWNER","COLLABORATOR")
+                                .requestMatchers(HttpMethod.GET).hasAnyAuthority(
+                                    UserAuthority.PUBLIC_ACCESS.getAuthority(),
+                                    UserAuthority.OWNER.getAuthority(),
+                                    UserAuthority.COLLABOLATOR.getAuthority()
+                                )
+                                .requestMatchers("/v3/boards/*/collabs").hasAnyAuthority(
+                                    UserAuthority.OWNER.getAuthority(),
+                                    UserAuthority.COLLABOLATOR.getAuthority()
+                                )
                                 .requestMatchers("/v3/boards","v3/boards/*/collabs/**").authenticated()
-                                .requestMatchers("/v3/boards/*").hasAuthority("OWNER")
-                                .requestMatchers("/v3/boards/**").hasAnyAuthority("OWNER","COLLABORATOR")
+                                .requestMatchers("/v3/boards/*").hasAuthority(
+                                    UserAuthority.OWNER.getAuthority()
+                                )
+                                .requestMatchers("/v3/boards/**").hasAnyAuthority(
+                                    UserAuthority.OWNER.getAuthority(),
+                                    UserAuthority.COLLABOLATOR.getAuthority()
+                                )
                 )
                 .addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(anonymousAuthFilter , JwtAuthFilter.class)

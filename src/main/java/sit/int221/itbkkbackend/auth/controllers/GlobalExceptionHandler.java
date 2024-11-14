@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.itbkkbackend.auth.utils.ErrorType;
+
+import sit.int221.itbkkbackend.auth.utils.enums.ErrorType;
 import sit.int221.itbkkbackend.exceptions.*;
 
 import javax.naming.AuthenticationException;
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
                 "The task does not exist",
                 request.getRequestURI()
         );
-        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicateStatusNameException.class)
@@ -43,7 +44,7 @@ public class GlobalExceptionHandler {
                 new Timestamp(System.currentTimeMillis()),
                 errorDetails.getStatus(),
                 errorDetails.getTitle(),
-                String.format("the status name %s is already in use.",e.getReason()),
+                String.format("the status name %s is already in use.", e.getReason()),
                 request.getRequestURI()
         );
 
@@ -55,11 +56,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(ConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        String RootEntityErrorName = exception.getConstraintViolations().iterator().next().getLeafBean().getClass().getSimpleName();
+        String rootEntityErrorName = exception.getConstraintViolations().iterator().next().getLeafBean().getClass().getSimpleName();
         ErrorResponse resBody = new ErrorResponse(
                 errorDetails.getStatus(),
-                String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" , RootEntityErrorName),
-                request.getRequestURI());
+                String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" , rootEntityErrorName),
+                request.getRequestURI()
+        );
         for (ConstraintViolation<?> error : errors){
             String field = null;
             for (Path.Node node : error.getPropertyPath()) {
@@ -75,10 +77,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTaskValidationException(CustomConstraintViolationException exception, HttpServletRequest request){
         Set<ConstraintViolation<?>> errors =  exception.getConstraintViolations();
         ProblemDetail errorDetails = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        String RootEntityErrorName = exception.getRootEntityName();
-        ErrorResponse resBody = new ErrorResponse(errorDetails.getStatus(),
-                String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate" ,RootEntityErrorName),
-                request.getRequestURI());
+        String rootEntityErrorName = exception.getRootEntityName();
+        ErrorResponse resBody = new ErrorResponse(
+                errorDetails.getStatus(),
+                String.format("Validation error. Check 'errors' field for details. %sForCreateOrUpdate", rootEntityErrorName),
+                request.getRequestURI()
+        );
         for (ConstraintViolation<?> error : errors){
             String field = null;
             for (Path.Node node : error.getPropertyPath()) {

@@ -21,7 +21,13 @@ public class TaskDTO {
     @Size(max = 100)
     private String title;
     public void setTitle(String title){
-        this.title = title == null ? null : title.isBlank() ? "" : title.trim();
+        if (title == null) {
+            this.title = null;
+        } else if (title.isBlank()) {
+            this.title = "";
+        } else {
+            this.title = title.trim();
+        }
     }
     @Size(max = 500 )
     private String description;

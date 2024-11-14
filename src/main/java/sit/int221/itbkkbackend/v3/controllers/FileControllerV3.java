@@ -1,6 +1,5 @@
 package sit.int221.itbkkbackend.v3.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,9 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
-import sit.int221.itbkkbackend.v3.services.EmailService;
 import sit.int221.itbkkbackend.v3.services.StorageService;
-import sit.int221.itbkkbackend.v3.services.TaskServiceV3;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,25 +34,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/v3/boards")
 public class FileControllerV3 {
-    @Autowired
-    private StorageService storageService;
-    @Autowired
-    private TaskRepositoryV3 taskRepository;
-    @Autowired
-    private EmailService emailService;
+    private final StorageService storageService;
+    private final TaskRepositoryV3 taskRepository;
+
+    public FileControllerV3(StorageService storageService, TaskRepositoryV3 taskRepository) {
+        this.storageService = storageService;
+        this.taskRepository = taskRepository;
+    }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files")
     public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId) {
-        if(taskRepository.existsByIdAndBoardId(taskId, boardId) == false) {
+        if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return storageService.loadAll(taskId, boardId);
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}")
-    @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String fileName,@PathVariable Integer taskId, @PathVariable String boardId) throws IOException {
-        if(taskRepository.existsByIdAndBoardId(taskId, boardId) == false) {
+        if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         FileV3 data = storageService.loadAsData(fileName,taskId);
@@ -75,7 +72,7 @@ public class FileControllerV3 {
 
     @PostMapping("/{boardId}/tasks/{taskId}/files")
     public List<FileInfoDTO> handleFileUpload(@RequestParam("files") MultipartFile[] files, @PathVariable Integer taskId, @PathVariable String boardId) {
-        if(taskRepository.existsByIdAndBoardId(taskId, boardId) == false) {
+        if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return storageService.store(files,taskId,boardId);

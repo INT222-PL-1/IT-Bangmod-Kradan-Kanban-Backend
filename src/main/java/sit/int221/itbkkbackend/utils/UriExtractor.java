@@ -1,7 +1,6 @@
 package sit.int221.itbkkbackend.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
