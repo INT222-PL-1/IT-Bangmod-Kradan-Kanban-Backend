@@ -22,8 +22,8 @@ public class JwtTokenUtil implements Serializable {
     private final long jwtAccessTokenValidity;
     private final long jwtRefreshTokenValidity;
 
-    public JwtTokenUtil(@Value("${jwt.access-secret}") String accessSecretKey,
-                        @Value("${jwt.refresh-secret}") String refreshSecretKey,
+    public JwtTokenUtil(@Value("${jwt.secret.access}") String accessSecretKey,
+                        @Value("${jwt.secret.refresh}") String refreshSecretKey,
                         @Value("#{${jwt.max-token-interval-hour}*60*60*1000}") long jwtAccessTokenValidity,
                         @Value("#{${jwt.max-refresh-token-interval-hour}*60*60*1000}") long jwtRefreshTokenValidity) {
         this.accessSecretKey = accessSecretKey;
