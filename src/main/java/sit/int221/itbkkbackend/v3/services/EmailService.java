@@ -52,13 +52,13 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendInvitationEmail(Users toUser, String accessRight, CustomUserDetails senderDetails, String boardId, String boardName) throws MessagingException, IOException {
+    public void sendInvitationEmail(Users toUser, String accessRight, CustomUserDetails senderDetails, String boardId, String boardName, String requestUrl) throws MessagingException, IOException {
         String senderName = senderDetails.getName();
         String toUsername = toUser.getName();
         String toEmail = toUser.getEmail();
         
         String subject = String.format("%s has invited you to collaborate with %s access right on %s board", senderName, accessRight, boardName);
-        String link = String.format("https://intproj23.sit.kmutt.ac.th/pl1/board/%s/collab/invitations", boardId);
+        String link = String.format("%s/board/%s/collab/invitations", requestUrl, boardId);
         
         String template = null;
         String htmlBody = null;

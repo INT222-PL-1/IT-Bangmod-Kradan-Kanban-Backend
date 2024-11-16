@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.servlet.http.HttpServletRequest;
 import sit.int221.itbkkbackend.v3.dtos.*;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 import sit.int221.itbkkbackend.v3.services.BoardPermissionServiceV3;
@@ -161,8 +163,13 @@ public class BoardControllerV3 {
     @PreAuthorize("hasAuthority('OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
-    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator){
-        return boardPermissionService.addPermissionOnBoard(boardId, collaborator);
+    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator, HttpServletRequest request){
+        String protocol = request.getScheme();
+        String hostname = request.getServerName();
+        int port = request.getServerPort();
+        String requestUrl = protocol + "://" + hostname + ":" + port;
+        if (!requestUrl.endsWith("/pl1")) requestUrl += "/pl1";
+        return boardPermissionService.addPermissionOnBoard(boardId, collaborator, requestUrl);
     }
 
     @PreAuthorize("hasAuthority('OWNER')")

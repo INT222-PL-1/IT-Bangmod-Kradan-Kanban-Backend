@@ -58,7 +58,7 @@ public class BoardPermissionServiceV3 {
         return collaborator;
     }
 
-    public CollaboratorDTO addPermissionOnBoard(String boardId, AddCollaboratorDTO collaborator)  {
+    public CollaboratorDTO addPermissionOnBoard(String boardId, AddCollaboratorDTO collaborator, String requestUrl) {
         validatingService.validateAddCollaboratorDTO(collaborator);
         BoardPermissionV3 boardPermission = new BoardPermissionV3();
         BoardPermissionV3.BoardUserKey boardUserKey = new BoardPermissionV3.BoardUserKey();
@@ -86,7 +86,7 @@ public class BoardPermissionServiceV3 {
             CustomUserDetails senderDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String boardName = boardRepository.getBoardNameFromId(boardId);
 
-            emailService.sendInvitationEmail(user, collaborator.getAccessRight(), senderDetails, boardId, boardName); 
+            emailService.sendInvitationEmail(user, collaborator.getAccessRight(), senderDetails, boardId, boardName, requestUrl); 
         } catch (Exception e) {
             log.error("Error sending email to " + collaborator.getEmail(), e);
         }
