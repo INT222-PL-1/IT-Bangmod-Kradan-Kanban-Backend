@@ -71,25 +71,25 @@ public class BoardPermissionServiceV3 {
         // check there's exist user with given email has logged in or be board owner.
         if (!userRepository.existsById(user.getOid())){
             userRepository.save(mapper.map(user,UserV3.class));
-        } else if (boardPermissionRepository.isBoardOwner(boardId,user.getOid()) || boardPermissionRepository.existsCollaboratorByBoardIdAndOid(boardId,user.getOid())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,String.format("Provided user with email %s can't be collaborator.",collaborator.getEmail()));
+        } else if (boardPermissionRepository.isBoardOwner(boardId, user.getOid()) || boardPermissionRepository.existsCollaboratorByBoardIdAndOid(boardId,user.getOid())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Provided user with email %s can't be collaborator.",collaborator.getEmail()));
         }
+        
         boardUserKey.setBoardId(boardId);
         boardUserKey.setOid(user.getOid());
         boardPermission.setBoardUserKey(boardUserKey);
         boardPermission.setAccessRight(collaborator.getAccessRight());
         boardPermission.setInviteStatus("PENDING");
         boardPermissionRepository.save(boardPermission);
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String boardName = boardRepository.getBoardNameFromId(boardId);
-        String subject = String.format("%s has invited you to collaborate with %s access right on %s board",userDetails.getName(),collaborator.getAccessRight(),boardName);
-        String link = String.format(" https://intproj23.sit.kmutt.ac.th/pl1/board/%s/collab/invitations",boardId);
-        String body = "Hello,\n\n"
-                + "You have been invited to collaborate on the board: " + boardName + ".\n\n"
-                + "Please use the following link to either accept or decline the invitation:\n"
-                + link + "\n\n"
-                + "Thank you!\n\n";
-            emailService.sendSimpleEmail(collaborator.getEmail(),subject,body);
+
+        try {
+            CustomUserDetails senderDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String boardName = boardRepository.getBoardNameFromId(boardId);
+
+            emailService.sendInvitationEmail(user, collaborator.getAccessRight(), senderDetails, boardId, boardName); 
+        } catch (Exception e) {
+            log.error("Error sending email to " + collaborator.getEmail(), e);
+        }
         return new CollaboratorDTO(user.getOid(), user.getName(), collaborator.getEmail(), collaborator.getAccessRight());
     }
 

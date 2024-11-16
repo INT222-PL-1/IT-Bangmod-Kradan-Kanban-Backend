@@ -162,7 +162,7 @@ public class BoardControllerV3 {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
     public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator){
-        return boardPermissionService.addPermissionOnBoard(boardId,collaborator);
+        return boardPermissionService.addPermissionOnBoard(boardId, collaborator);
     }
 
     @PreAuthorize("hasAuthority('OWNER')")
