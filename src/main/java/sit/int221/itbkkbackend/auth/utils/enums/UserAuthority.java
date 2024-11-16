@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserAuthority {
     OWNER("OWNER"),
-    COLLABOLATOR("COLLABOLATOR"),
+    COLLABORATOR("COLLABORATOR"),
     PUBLIC_ACCESS("PUBLIC_ACCESS");
     
     private final String authority;

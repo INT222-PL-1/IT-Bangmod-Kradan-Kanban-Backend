@@ -45,11 +45,11 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET).hasAnyAuthority(
                                     UserAuthority.PUBLIC_ACCESS.getAuthority(),
                                     UserAuthority.OWNER.getAuthority(),
-                                    UserAuthority.COLLABOLATOR.getAuthority()
+                                    UserAuthority.COLLABORATOR.getAuthority()
                                 )
                                 .requestMatchers("/v3/boards/*/collabs").hasAnyAuthority(
                                     UserAuthority.OWNER.getAuthority(),
-                                    UserAuthority.COLLABOLATOR.getAuthority()
+                                    UserAuthority.COLLABORATOR.getAuthority()
                                 )
                                 .requestMatchers("/v3/boards","v3/boards/*/collabs/**").authenticated()
                                 .requestMatchers("/v3/boards/*").hasAuthority(
@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                                 )
                                 .requestMatchers("/v3/boards/**").hasAnyAuthority(
                                     UserAuthority.OWNER.getAuthority(),
-                                    UserAuthority.COLLABOLATOR.getAuthority()
+                                    UserAuthority.COLLABORATOR.getAuthority()
                                 )
                 )
                 .addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
