@@ -28,4 +28,4 @@ jobs:
           push: true
           tags: wanassanan/itb-kk-backend:development
       - name: Trigger redeploy
-        run: 'curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" http://20.243.133.115/watchtower/v1/update'
+        run: 'curl -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}" http://20.243.133.115/pl1/watchtower/v1/update'
