@@ -72,11 +72,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             jwtToken = extractJwtToken(requestTokenHeader, request);
             if (jwtToken != null) {
                 if(isTokenSourceFromMicrosoft(jwtToken,request)){
-                    System.out.println("ms");
                     userOid = getUserOidFromMicrosoftToken(jwtToken,request);
                     authenticateMicrosoftUser(jwtToken, userOid, boardId, request);
                 }else {
-                    System.out.println("own");
                     userOid = getUserOidFromOwnToken(jwtToken,request);
                     authenticateOwnUser(jwtToken, userOid, boardId, request);
                 }

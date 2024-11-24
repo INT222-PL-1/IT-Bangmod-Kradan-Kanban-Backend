@@ -82,7 +82,7 @@ public class BoardServiceV3 {
         BoardV3 board = findById(id);
         BoardDTO foundedBoard = mapper.map(board,BoardDTO.class);
         UserV3 user = userRepository.findOwnerOfBoardId(id);
-        UsersDTO owner = new UsersDTO(user.getOid(), user.getUsername());
+        UsersDTO owner = new UsersDTO(user.getOid(),user.getUsername(),user.getName());
         foundedBoard.setOwner(owner);
         return foundedBoard;
     }
