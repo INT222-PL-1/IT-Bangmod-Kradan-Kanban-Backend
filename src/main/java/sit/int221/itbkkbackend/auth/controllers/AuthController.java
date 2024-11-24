@@ -1,5 +1,8 @@
 package sit.int221.itbkkbackend.auth.controllers;
 
+import com.microsoft.graph.models.User;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
+import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 
@@ -15,9 +18,14 @@ import sit.int221.itbkkbackend.auth.dtos.Token;
 import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.auth.utils.JwtTokenUtil;
+import sit.int221.itbkkbackend.auth.utils.JwksTokenUtil;
+import sit.int221.itbkkbackend.config.MicrosoftGraphConfig;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
 import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/login")
@@ -43,14 +51,16 @@ public class AuthController {
     private final UsersRepository usersRepository;
     private final ModelMapper mapper;
     private final UserRepositoryV3 userRepositoryV3;
+    private final JwksTokenUtil jwksTokenUtil;
 
-    public AuthController(JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, ValidatingServiceV3 validatingService, UsersRepository usersRepository, ModelMapper mapper, UserRepositoryV3 userRepositoryV3) {
+    public AuthController(JwtTokenUtil jwtTokenUtil, AuthenticationManager authenticationManager, ValidatingServiceV3 validatingService, UsersRepository usersRepository, ModelMapper mapper, UserRepositoryV3 userRepositoryV3,JwksTokenUtil jwksTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticationManager = authenticationManager;
         this.validatingService = validatingService;
         this.usersRepository = usersRepository;
         this.mapper = mapper;
         this.userRepositoryV3 = userRepositoryV3;
+        this.jwksTokenUtil = jwksTokenUtil;
     }
 
     @PostMapping("")
@@ -84,6 +94,14 @@ public class AuthController {
         catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "There is a problem. Please try again later.");
         }
+    }
+
+    @GetMapping("/ms")
+    public String loginWithMs(@RequestHeader(name = "Authorization",required = false) String token)
+    {
+        GraphServiceClient graphClient = MicrosoftGraphConfig.getGraphClient(token);
+        User result = graphClient.users().byUserId("65130500023@ad.sit.kmutt.ac.th").get();
+        return result.getDisplayName();
     }
 
 }

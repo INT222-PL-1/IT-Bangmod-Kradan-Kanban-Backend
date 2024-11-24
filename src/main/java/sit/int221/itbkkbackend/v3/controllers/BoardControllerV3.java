@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import sit.int221.itbkkbackend.auth.CustomUserDetails;
 import sit.int221.itbkkbackend.v3.dtos.*;
 import sit.int221.itbkkbackend.v3.entities.StatusV3;
 import sit.int221.itbkkbackend.v3.services.BoardPermissionServiceV3;
@@ -52,8 +54,8 @@ public class BoardControllerV3 {
     }
 
     @GetMapping("")
-    public BoardListDTO getAllBoards() {
-        return boardService.findAllBoards();
+    public BoardListDTO getAllBoards(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return boardService.findAllBoards(userDetails);
     }
 
     @GetMapping("/{id}")
@@ -63,8 +65,8 @@ public class BoardControllerV3 {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public BoardDTO addBoard(@RequestBody BoardDTO board) {
-        return boardService.addBoard(board);
+    public BoardDTO addBoard(@RequestBody BoardDTO board,@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return boardService.addBoard(board,userDetails);
     }
 
     @PatchMapping("/{id}")

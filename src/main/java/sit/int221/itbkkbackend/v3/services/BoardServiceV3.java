@@ -6,9 +6,11 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sit.int221.itbkkbackend.auth.CustomUserDetails;
 import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.auth.dtos.UsersDTO;
 import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
@@ -65,8 +67,8 @@ public class BoardServiceV3 {
 
     // Controller Service Method [GET , PATCH , POST]
 
-    public BoardListDTO findAllBoards(){
-        Users user = userSharedRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+    public BoardListDTO findAllBoards(CustomUserDetails userDetails){
+        UserV3 user = userRepository.findByOid(userDetails.getOid());
         if (user != null){
             List<BoardDTO> personalBoards = boardRepository.findAllPersonalBoards(user.getOid());
             List<BoardDTO> collaborativeBoards = boardRepository.findAllCollaborativeBoards(user.getOid());
@@ -114,11 +116,11 @@ public class BoardServiceV3 {
     }
 
     @Transactional
-    public BoardDTO addBoard(BoardDTO board){
+    public BoardDTO addBoard(BoardDTO board,CustomUserDetails userDetails){
         validatingService.validateBoardDTO(board);
 
         // get oid from token , initialize board and save
-        Users user = userSharedRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        UserV3 user = userRepository.findByOid(userDetails.getOid());
         BoardV3 newBoard = new BoardV3();
         String newBoardId = NanoId.generate(10);
         while(boardRepository.existsById(newBoardId)){
