@@ -58,7 +58,7 @@ public class BoardPermissionServiceV3 {
         return collaborator;
     }
 
-    public CollaboratorDTO addPermissionOnBoard(String boardId, AddCollaboratorDTO collaborator, String requestUrl) {
+    public CollaboratorDTO addPermissionOnBoard(String boardId, AddCollaboratorDTO collaborator, String requestUrl, String token) {
         validatingService.validateAddCollaboratorDTO(collaborator);
         BoardPermissionV3 boardPermission = new BoardPermissionV3();
         BoardPermissionV3.BoardUserKey boardUserKey = new BoardPermissionV3.BoardUserKey();

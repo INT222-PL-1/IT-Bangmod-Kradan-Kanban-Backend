@@ -89,7 +89,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             notFoundResponseHandler(String.format("Board Id %s not found",boardId),request,response);
             return;
         }
-
+        log.info("jwt filter");
+        log.info(String.valueOf(SecurityContextHolder.getContext().getAuthentication().isAuthenticated()));
         chain.doFilter(request, response);
     }
 

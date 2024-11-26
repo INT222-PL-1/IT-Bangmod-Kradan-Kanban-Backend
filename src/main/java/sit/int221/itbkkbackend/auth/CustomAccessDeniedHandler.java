@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,7 +15,7 @@ import sit.int221.itbkkbackend.exceptions.ErrorResponse;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-
+@Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -36,5 +37,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setStatus(403);
         objectMapper.writeValue(response.getWriter(), error);
+
+        log.info("access denied handler");
+        log.info(errorMessage.getMessage());
     }
 }

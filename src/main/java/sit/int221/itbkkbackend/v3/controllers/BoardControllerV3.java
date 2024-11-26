@@ -166,13 +166,18 @@ public class BoardControllerV3 {
     @PreAuthorize("hasAuthority('OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/collabs")
-    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator, HttpServletRequest request){
+    public CollaboratorDTO addCollaborator(@PathVariable String boardId, @RequestBody AddCollaboratorDTO collaborator, HttpServletRequest request,@RequestHeader(name = "Authorization") String requestTokenHeader){
         String protocol = request.getScheme();
         String hostname = request.getServerName();
         int port = request.getServerPort();
         String requestUrl = protocol + "://" + hostname + ":" + port;
         if (!requestUrl.endsWith("/pl1")) requestUrl += "/pl1";
-        return boardPermissionService.addPermissionOnBoard(boardId, collaborator, requestUrl);
+
+        String token = null;
+        if (requestTokenHeader.startsWith("Bearer ")) {
+            token = requestTokenHeader.substring(7);
+        }
+        return boardPermissionService.addPermissionOnBoard(boardId, collaborator, requestUrl,token);
     }
 
     @PreAuthorize("hasAuthority('OWNER')")
