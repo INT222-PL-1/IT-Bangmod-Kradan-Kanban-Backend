@@ -32,7 +32,8 @@ import java.util.Map;
         "https://ip23pl1.sit.kmutt.ac.th:3000",
         "https://ip23pl1.sit.kmutt.ac.th:4173",
         "https://ip23pl1.sit.kmutt.ac.th",
-        "https://intproj23.sit.kmutt.ac.th"
+        "https://intproj23.sit.kmutt.ac.th",
+        "https://20.243.133.115"
 },allowCredentials = "true")
 public class ValidateTokenController {
     private final JwtTokenUtil jwtTokenUtil;
