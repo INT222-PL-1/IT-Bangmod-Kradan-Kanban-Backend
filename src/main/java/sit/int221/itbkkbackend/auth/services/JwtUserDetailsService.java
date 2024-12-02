@@ -66,10 +66,6 @@ public class JwtUserDetailsService implements UserDetailsService {
         String oid = jwksTokenUtil.getOidFromToken(token);
         GraphServiceClient graphClient = MicrosoftGraphConfig.getGraphClient(token);
         com.microsoft.graph.models.User user = graphClient.users().byUserId(oid).get();
-        System.out.println(user.getDisplayName());
-        System.out.println(user.getId());
-        System.out.println(user.getMail());
-        System.out.println(user);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with Id"  + " does not exist !!");
         }

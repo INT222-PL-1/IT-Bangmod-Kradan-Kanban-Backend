@@ -4,6 +4,7 @@ import com.microsoft.graph.models.User;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
 import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import sit.int221.itbkkbackend.auth.repositories.UsersRepository;
 import sit.int221.itbkkbackend.auth.utils.JwtTokenUtil;
 import sit.int221.itbkkbackend.auth.utils.JwksTokenUtil;
 import sit.int221.itbkkbackend.config.MicrosoftGraphConfig;
+import sit.int221.itbkkbackend.exceptions.CustomConstraintViolationException;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
 import sit.int221.itbkkbackend.v3.repositories.UserRepositoryV3;
 import sit.int221.itbkkbackend.v3.services.ValidatingServiceV3;
@@ -68,17 +70,18 @@ public class AuthController {
     public ResponseEntity<Object> login(@RequestBody LoginRequestDTO jwtRequestUser, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
-        validatingService.validateLoginRequestDTO(jwtRequestUser);
+
 
         try{
-            
+            validatingService.validateLoginRequestDTO(jwtRequestUser);
+            authenticationManager.authenticate(authenticationToken);
             Users user = usersRepository.findByUsername(jwtRequestUser.getUserName());
             String token = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.ACCESS);
             String refreshToken = jwtTokenUtil.generateAccessToken(user, JwtTokenUtil.TokenType.REFRESH);
 
             String userOid = user.getOid();
 
-            authenticationManager.authenticate(authenticationToken);
+//          authenticationManager.authenticate(authenticationToken);
 
             // Check if user is not registered in UserV3
             if(!userRepositoryV3.existsById(userOid)){
@@ -92,17 +95,14 @@ public class AuthController {
         catch (AuthenticationException e){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or Password is incorrect");
         }
+        catch (ConstraintViolationException exception){
+            CustomConstraintViolationException taskConstraintViolationException = new CustomConstraintViolationException(exception.getConstraintViolations());
+            taskConstraintViolationException.setRootEntityName("LoginRequestDTO");
+            throw taskConstraintViolationException;
+        }
         catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "There is a problem. Please try again later.");
         }
-    }
-
-    @GetMapping("/ms")
-    public String loginWithMs(@RequestHeader(name = "Authorization",required = false) String token)
-    {
-        GraphServiceClient graphClient = MicrosoftGraphConfig.getGraphClient(token);
-        User result = graphClient.users().byUserId("65130500023@ad.sit.kmutt.ac.th").get();
-        return result.getDisplayName();
     }
 
 }

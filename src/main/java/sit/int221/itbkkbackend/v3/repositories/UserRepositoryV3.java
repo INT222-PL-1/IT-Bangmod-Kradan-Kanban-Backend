@@ -10,4 +10,6 @@ public interface UserRepositoryV3 extends JpaRepository<UserV3,String> {
     UserV3 findOwnerOfBoardId(@Param("boardId") String boardId);
 
     UserV3 findByOid(String oid);
+
+    UserV3 findByEmail(String Email);
 }
