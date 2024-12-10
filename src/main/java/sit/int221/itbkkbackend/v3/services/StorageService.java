@@ -16,7 +16,7 @@ public interface StorageService {
 
     List<FileInfoDTO> store(MultipartFile[] files, Integer taskId,String boardId);
 
-    List<FileInfoDTO> loadAll(Integer taskId,String boardId);
+    List<FileInfoDTO> loadAll(Integer taskId, String boardId);
 
     Path load(String filename, Integer taskId);
 

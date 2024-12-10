@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import jakarta.servlet.http.HttpServletRequest;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
@@ -44,11 +46,15 @@ public class FileControllerV3 {
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files")
-    public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId) {
+    public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId, HttpServletRequest request) {
         if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return storageService.loadAll(taskId, boardId);
+        List<FileInfoDTO> allFileDto = storageService.loadAll(taskId, boardId);
+        for (FileInfoDTO fileDto : allFileDto) {
+            fileDto.setSrcOrigin(request.getHeader("origin"));
+        }
+        return allFileDto;
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}")

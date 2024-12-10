@@ -1,5 +1,7 @@
 package sit.int221.itbkkbackend.v3.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +18,32 @@ public class FileInfoDTO {
     private Long size;
     private String url;
 
-    public FileInfoDTO(FileV3 file,Integer taskId, String boardId){
+    @JsonIgnore
+    private Integer taskId;
+
+    @JsonIgnore
+    private String boardId;
+
+    public FileInfoDTO(FileV3 file, Integer taskId, String boardId) {
         this.name = file.getFileKey().getName();
         this.type = file.getType();
         this.size = file.getSize();
-        this.url = String.format("https://intproj23.sit.kmutt.ac.th/pl1/api/v3/boards/%s/tasks/%d/files/%s",boardId,taskId,this.name);
+        this.boardId = boardId;
+        this.taskId = taskId;
+        this.url = formatUrl("https://intproj23.sit.kmutt.ac.th", boardId, taskId);
+    }
 
+    private String formatUrl(String origin, String boardId, Integer taskId) {
+        return String.format(
+            "%s/pl1/api/v3/boards/%s/tasks/%d/files/%s",
+            origin,
+            boardId,
+            taskId,
+            this.name
+        );
+    }
+
+    public void setSrcOrigin(String origin) {
+        this.url = formatUrl(origin, this.boardId, this.taskId);
     }
 }
