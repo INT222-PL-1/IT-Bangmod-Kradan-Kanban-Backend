@@ -18,9 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import jakarta.servlet.http.HttpServletRequest;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
+import sit.int221.itbkkbackend.v3.entities.TaskV3;
 import sit.int221.itbkkbackend.v3.properties.StorageProperties;
 import sit.int221.itbkkbackend.v3.repositories.FileRepositoryV3;
 
@@ -65,10 +68,32 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    private List<FileInfoDTO> addFilesOrigin(List<FileInfoDTO> files, HttpServletRequest request) {
+        String protocol = request.getScheme();
+        String hostname = request.getServerName();
+        int port = request.getServerPort();
+        String requestOrigin = protocol + "://" + hostname + ":" + port;
+
+        if (!hostname.equals("localhost")) {
+            requestOrigin = requestOrigin + "/pl1/api";
+        }
+        
+        for (FileInfoDTO file : files) {
+            file.setSrcOrigin(requestOrigin);
+        }
+        return files;
+    }
 
     @Override
-    public List<FileInfoDTO> loadAll(Integer taskId,String boardId) {
-        return ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId),taskId,boardId);
+    public List<FileInfoDTO> loadAll(TaskV3 task, String boardId, HttpServletRequest request) {
+        List<FileInfoDTO> allFileDto = ListMapper.mapFileListToFileInfoDTOList(task.getFiles(), task.getId(), boardId);
+        return addFilesOrigin(allFileDto, request);
+    }
+
+    @Override
+    public List<FileInfoDTO> loadAll(Integer taskId, String boardId, HttpServletRequest request) {
+        List<FileInfoDTO> allFileDto = ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId), taskId, boardId);
+        return addFilesOrigin(allFileDto, request);
     }
 
     @Override

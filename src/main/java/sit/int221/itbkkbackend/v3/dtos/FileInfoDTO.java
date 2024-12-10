@@ -30,12 +30,12 @@ public class FileInfoDTO {
         this.size = file.getSize();
         this.boardId = boardId;
         this.taskId = taskId;
-        this.url = formatUrl("https://intproj23.sit.kmutt.ac.th", boardId, taskId);
+        this.url = formatUrl("https://intproj23.sit.kmutt.ac.th/pl1/api/", boardId, taskId);
     }
 
     private String formatUrl(String origin, String boardId, Integer taskId) {
         return String.format(
-            "%s/pl1/api/v3/boards/%s/tasks/%d/files/%s",
+            "%s/v3/boards/%s/tasks/%d/files/%s",
             origin,
             boardId,
             taskId,

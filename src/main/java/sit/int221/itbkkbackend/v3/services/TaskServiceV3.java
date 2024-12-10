@@ -1,5 +1,6 @@
 package sit.int221.itbkkbackend.v3.services;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -104,14 +105,14 @@ public class TaskServiceV3 {
         }
     }
 
-    public TaskDetailsDTO getTaskById(Integer id,String boardId){
+    public TaskDetailsDTO getTaskById(Integer id, String boardId, HttpServletRequest request){
         boardService.isExist(boardId);
         TaskV3 task =  taskRepository.findByIdAndBoardId(id,boardId) ;
         if(task == null){
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
         TaskDetailsDTO taskDetails = mapper.map(task, TaskDetailsDTO.class);
-        taskDetails.setAttachments(ListMapper.mapFileListToFileInfoDTOList(task.getFiles(),id,boardId));
+        taskDetails.setAttachments(fileService.loadAll(task, boardId, request));
         return taskDetails;
     }
 

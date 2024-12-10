@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import sit.int221.itbkkbackend.auth.CustomUserDetails;
-import sit.int221.itbkkbackend.auth.entities.Users;
 import sit.int221.itbkkbackend.v3.entities.UserV3;
 
 @Service

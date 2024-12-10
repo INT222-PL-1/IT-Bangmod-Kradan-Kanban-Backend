@@ -86,16 +86,16 @@ public class BoardControllerV3 {
     }
 
     @GetMapping("/{boardId}/tasks/{id}")
-    public TaskDetailsDTO getTask(@PathVariable Integer id,@PathVariable String boardId){
-        return taskService.getTaskById(id,boardId);
+    public TaskDetailsDTO getTask(@PathVariable Integer id,@PathVariable String boardId, HttpServletRequest request){
+        return taskService.getTaskById(id, boardId, request);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{boardId}/tasks")
-    public TaskDTO addTask(@RequestBody(required = false) TaskDTO task,@PathVariable String boardId){
+    public TaskDTO addTask(@RequestBody(required = false) TaskDTO task, @PathVariable String boardId){
         if (task == null) task = new TaskDTO();
-        return taskService.addTask(task,boardId);
+        return taskService.addTask(task, boardId);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")

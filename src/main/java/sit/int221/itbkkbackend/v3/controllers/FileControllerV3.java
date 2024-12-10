@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 import sit.int221.itbkkbackend.v3.repositories.TaskRepositoryV3;
+import sit.int221.itbkkbackend.v3.services.FileSystemStorageService;
 import sit.int221.itbkkbackend.v3.services.StorageService;
 
 import java.io.IOException;
@@ -37,10 +38,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/v3/boards")
 public class FileControllerV3 {
-    private final StorageService storageService;
+    private final FileSystemStorageService storageService;
     private final TaskRepositoryV3 taskRepository;
 
-    public FileControllerV3(StorageService storageService, TaskRepositoryV3 taskRepository) {
+    public FileControllerV3(FileSystemStorageService storageService, TaskRepositoryV3 taskRepository) {
         this.storageService = storageService;
         this.taskRepository = taskRepository;
     }
@@ -50,11 +51,7 @@ public class FileControllerV3 {
         if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        List<FileInfoDTO> allFileDto = storageService.loadAll(taskId, boardId);
-        for (FileInfoDTO fileDto : allFileDto) {
-            fileDto.setSrcOrigin(request.getHeader("origin"));
-        }
-        return allFileDto;
+        return storageService.loadAll(taskId, boardId, request);
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}")
