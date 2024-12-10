@@ -86,8 +86,8 @@ public class BoardControllerV3 {
     }
 
     @GetMapping("/{boardId}/tasks/{id}")
-    public TaskDetailsDTO getTask(@PathVariable Integer id,@PathVariable String boardId, HttpServletRequest request){
-        return taskService.getTaskById(id, boardId, request);
+    public TaskDetailsDTO getTask(@PathVariable Integer id,@PathVariable String boardId){
+        return taskService.getTaskById(id, boardId);
     }
 
     @PreAuthorize("hasAnyAuthority('WRITE','OWNER')")

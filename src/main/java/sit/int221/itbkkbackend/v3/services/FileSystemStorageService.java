@@ -68,32 +68,14 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-    private List<FileInfoDTO> addFilesOrigin(List<FileInfoDTO> files, HttpServletRequest request) {
-        String protocol = request.getScheme();
-        String hostname = request.getServerName();
-        int port = request.getServerPort();
-        String requestOrigin = protocol + "://" + hostname + ":" + port;
-
-        if (!hostname.equals("localhost")) {
-            requestOrigin = requestOrigin + "/pl1/api";
-        }
-        
-        for (FileInfoDTO file : files) {
-            file.setSrcOrigin(requestOrigin);
-        }
-        return files;
+    @Override
+    public List<FileInfoDTO> loadAll(TaskV3 task, String boardId) {
+        return ListMapper.mapFileListToFileInfoDTOList(task.getFiles(), task.getId(), boardId);
     }
 
     @Override
-    public List<FileInfoDTO> loadAll(TaskV3 task, String boardId, HttpServletRequest request) {
-        List<FileInfoDTO> allFileDto = ListMapper.mapFileListToFileInfoDTOList(task.getFiles(), task.getId(), boardId);
-        return addFilesOrigin(allFileDto, request);
-    }
-
-    @Override
-    public List<FileInfoDTO> loadAll(Integer taskId, String boardId, HttpServletRequest request) {
-        List<FileInfoDTO> allFileDto = ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId), taskId, boardId);
-        return addFilesOrigin(allFileDto, request);
+    public List<FileInfoDTO> loadAll(Integer taskId, String boardId) {
+        return ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId), taskId, boardId);
     }
 
     @Override

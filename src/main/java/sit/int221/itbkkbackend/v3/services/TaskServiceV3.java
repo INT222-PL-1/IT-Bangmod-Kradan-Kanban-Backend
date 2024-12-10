@@ -105,14 +105,14 @@ public class TaskServiceV3 {
         }
     }
 
-    public TaskDetailsDTO getTaskById(Integer id, String boardId, HttpServletRequest request){
+    public TaskDetailsDTO getTaskById(Integer id, String boardId) {
         boardService.isExist(boardId);
         TaskV3 task =  taskRepository.findByIdAndBoardId(id,boardId) ;
         if(task == null){
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
         TaskDetailsDTO taskDetails = mapper.map(task, TaskDetailsDTO.class);
-        taskDetails.setAttachments(fileService.loadAll(task, boardId, request));
+        taskDetails.setAttachments(fileService.loadAll(task, boardId));
         return taskDetails;
     }
 

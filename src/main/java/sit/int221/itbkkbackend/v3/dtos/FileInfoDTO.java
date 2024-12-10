@@ -16,7 +16,7 @@ public class FileInfoDTO {
     private String name;
     private String type;
     private Long size;
-    private String url;
+    private String path;
 
     @JsonIgnore
     private Integer taskId;
@@ -30,20 +30,11 @@ public class FileInfoDTO {
         this.size = file.getSize();
         this.boardId = boardId;
         this.taskId = taskId;
-        this.url = formatUrl("https://intproj23.sit.kmutt.ac.th/pl1/api/", boardId, taskId);
-    }
-
-    private String formatUrl(String origin, String boardId, Integer taskId) {
-        return String.format(
-            "%s/v3/boards/%s/tasks/%d/files/%s",
-            origin,
+        this.path = String.format(
+            "/v3/boards/%s/tasks/%d/files/%s",
             boardId,
             taskId,
             this.name
         );
-    }
-
-    public void setSrcOrigin(String origin) {
-        this.url = formatUrl(origin, this.boardId, this.taskId);
     }
 }

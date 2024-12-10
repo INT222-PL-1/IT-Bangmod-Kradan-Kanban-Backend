@@ -38,20 +38,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/v3/boards")
 public class FileControllerV3 {
-    private final FileSystemStorageService storageService;
+    private final FileSystemStorageService fileService;
     private final TaskRepositoryV3 taskRepository;
 
-    public FileControllerV3(FileSystemStorageService storageService, TaskRepositoryV3 taskRepository) {
-        this.storageService = storageService;
+    public FileControllerV3(FileSystemStorageService fileService, TaskRepositoryV3 taskRepository) {
+        this.fileService = fileService;
         this.taskRepository = taskRepository;
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files")
-    public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId, HttpServletRequest request) {
+    public List<FileInfoDTO> listUploadedFiles(@PathVariable Integer taskId, @PathVariable String boardId) {
         if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return storageService.loadAll(taskId, boardId, request);
+        return fileService.loadAll(taskId, boardId);
     }
 
     @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}")
@@ -59,11 +59,11 @@ public class FileControllerV3 {
         if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        FileV3 data = storageService.loadAsData(fileName,taskId);
+        FileV3 data = fileService.loadAsData(fileName,taskId);
         if(data == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        Resource file = storageService.loadAsResource(fileName,taskId);
+        Resource file = fileService.loadAsResource(fileName,taskId);
         MediaType fileType = MediaType.parseMediaType(data.getType());
 
         HttpHeaders headers = new HttpHeaders();
@@ -79,7 +79,7 @@ public class FileControllerV3 {
         if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return storageService.store(files,taskId,boardId);
+        return fileService.store(files,taskId,boardId);
     }
 
 }
