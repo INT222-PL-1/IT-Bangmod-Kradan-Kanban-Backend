@@ -9,10 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -147,6 +145,13 @@ public class FileSystemStorageService implements StorageService {
 
 
     public void deleteFilesExcept(Integer taskId, List<String> excludeNames) {
+
+        List<String> excludeNamesWithThumbnail = new LinkedList<>();
+        for (String excludeName : excludeNames) {
+            excludeNamesWithThumbnail.add(excludeName);
+            excludeNamesWithThumbnail.add("thumbnail_" + excludeName + ".jpg");
+        }
+
         try {
             // Get the task directory
             Path taskDirectory = rootLocation.resolve(taskId.toString());
@@ -156,7 +161,7 @@ public class FileSystemStorageService implements StorageService {
                 for (Path path : stream) {
                     String fileName = path.getFileName().toString();
                     // Check if the file is not in the exclude list
-                    if (!excludeNames.contains(fileName)) {
+                    if (!excludeNamesWithThumbnail.contains(fileName)) {
                         // Delete the file
                         Files.delete(path);
 
