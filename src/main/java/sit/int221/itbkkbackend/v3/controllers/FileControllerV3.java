@@ -88,7 +88,7 @@ public class FileControllerV3 {
         if(!data.getType().equals("image/svg+xml")) {
             thumbnailFileName = "thumbnail_" + fileName + ".jpg";
         }
-        Resource file = fileService.loadAsResource("thumbnail_" + thumbnailFileName + ".jpg", taskId);
+        Resource file = fileService.loadAsResource(thumbnailFileName, taskId);
         MediaType fileType = MediaType.parseMediaType("image/jpeg");
 
         HttpHeaders headers = new HttpHeaders();
