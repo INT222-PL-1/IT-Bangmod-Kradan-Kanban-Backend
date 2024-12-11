@@ -218,6 +218,8 @@ public class FileSystemStorageService implements StorageService {
                         .size(100, 100)
                         .outputFormat("jpg")
                         .toFile(thumbnailFile);
+
+                log.info("Thumbnail created for file: " + mf.getOriginalFilename());
             } else {
                 log.error("Unsupported mime type: " + mimeType);
             }
