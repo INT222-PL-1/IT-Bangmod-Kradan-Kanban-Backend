@@ -7,7 +7,9 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwksTokenUtil implements Serializable {
     private final String jwksUrl;
@@ -55,7 +58,7 @@ public class JwksTokenUtil implements Serializable {
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
             return signedJWT.getJWTClaimsSet();
-        } catch (Exception e){
+        }  catch (Exception e) {
             throw new MalformedJwtException("Token is malformed.");
         }
     }
