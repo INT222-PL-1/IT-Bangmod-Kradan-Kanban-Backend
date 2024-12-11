@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import sit.int221.itbkkbackend.utils.ListMapper;
-import sit.int221.itbkkbackend.utils.VideoThumbnailGenerator;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 import sit.int221.itbkkbackend.v3.entities.TaskV3;
@@ -193,8 +192,6 @@ public class FileSystemStorageService implements StorageService {
                 } else {
                     log.error("Failed to read image file: " + file.getAbsolutePath());
                 }
-            } else if (mimeType != null && mimeType.startsWith("video/")) {
-                return true;
             } else {
                 log.error("Unsupported mime type: " + mimeType);
             }
@@ -221,8 +218,6 @@ public class FileSystemStorageService implements StorageService {
                         .size(100, 100)
                         .outputFormat("jpg")
                         .toFile(thumbnailFile);
-            } else if (mimeType != null && mimeType.startsWith("video/")) {
-                VideoThumbnailGenerator.createVideoThumbnail(file.getAbsolutePath(), taskDirectory.resolve("thumbnail_" + mf.getOriginalFilename() + ".jpg").toString());
             } else {
                 log.error("Unsupported mime type: " + mimeType);
             }
