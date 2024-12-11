@@ -1,6 +1,7 @@
 package sit.int221.itbkkbackend.v3.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,9 @@ public class FileInfoDTO {
     private String type;
     private Long size;
     private String path;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String thumbnailPath;
 
     @JsonIgnore
     private Integer taskId;

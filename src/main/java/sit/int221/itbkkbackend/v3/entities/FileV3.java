@@ -22,10 +22,16 @@ public class FileV3 {
         this.size = file.getSize();
     }
 
-    public FileV3(MultipartFile file,Integer taskId) {
-        this.fileKey = new FileKey(file.getOriginalFilename(),taskId);
+    public FileV3(MultipartFile file, Integer taskId) {
+        this.fileKey = new FileKey(file.getOriginalFilename(), taskId);
         this.type = file.getContentType();
         this.size = file.getSize();
+    }
+
+    public FileV3(String name, Integer taskId, String type, Long size) {
+        this.fileKey = new FileKey(name, taskId);
+        this.type = type;
+        this.size = size;
     }
 
     @Getter

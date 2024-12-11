@@ -59,12 +59,37 @@ public class FileControllerV3 {
         if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        FileV3 data = fileService.loadAsData(fileName,taskId);
+        FileV3 data = fileService.loadAsData(fileName, taskId);
         if(data == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        Resource file = fileService.loadAsResource(fileName,taskId);
+        Resource file = fileService.loadAsResource(fileName, taskId);
         MediaType fileType = MediaType.parseMediaType(data.getType());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(fileType);
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentLength(file.contentLength());
+
+        return new ResponseEntity<>(file, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/{boardId}/tasks/{taskId}/files/{fileName}/thumbnail")
+    public ResponseEntity<Resource> serveThumbnail(@PathVariable String fileName, @PathVariable Integer taskId, @PathVariable String boardId) throws IOException {
+        if(!taskRepository.existsByIdAndBoardId(taskId, boardId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        FileV3 data = fileService.loadAsData(fileName, taskId);
+        if(data == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        
+        String thumbnailFileName = fileName;
+        if(!data.getType().equals("image/svg+xml")) {
+            thumbnailFileName = "thumbnail_" + fileName + ".jpg";
+        }
+        Resource file = fileService.loadAsResource("thumbnail_" + thumbnailFileName + ".jpg", taskId);
+        MediaType fileType = MediaType.parseMediaType("image/jpeg");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(fileType);

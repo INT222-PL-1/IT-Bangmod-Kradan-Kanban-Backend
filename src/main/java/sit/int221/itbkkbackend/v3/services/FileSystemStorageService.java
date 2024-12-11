@@ -1,16 +1,24 @@
 package sit.int221.itbkkbackend.v3.services;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
+
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,8 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import jakarta.servlet.http.HttpServletRequest;
 import sit.int221.itbkkbackend.utils.ListMapper;
+import sit.int221.itbkkbackend.utils.VideoThumbnailGenerator;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
 import sit.int221.itbkkbackend.v3.entities.TaskV3;
@@ -53,29 +61,47 @@ public class FileSystemStorageService implements StorageService {
                 Files.createDirectories(taskDirectory);
             }
             List<FileInfoDTO> fileList = new LinkedList<>();
-            for (MultipartFile file : files) {
-                Path destinationFile = taskDirectory.resolve(
-                                Paths.get(file.getOriginalFilename()))
-                        .normalize().toAbsolutePath();
-                Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
-                fileList.add(new FileInfoDTO(fileRepository.save(new FileV3(file,taskId)),taskId,boardId));
+            for (MultipartFile mf : files) {
+                Path destinationPath = taskDirectory.resolve(Paths.get(mf.getOriginalFilename())).normalize().toAbsolutePath();
+                File file = destinationPath.toFile();
+                Files.copy(mf.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+                boolean isThumbnailCreated = false;
+                if (canCreateThumbnail(file)) {
+                    createThumbnail(file, taskDirectory, mf);
+                    isThumbnailCreated = true;
+                }
+                FileInfoDTO fileInfoDto = new FileInfoDTO(fileRepository.save(new FileV3(mf, taskId)), taskId, boardId);
+                if (isThumbnailCreated) {
+                    addThumbnailPath(fileInfoDto);
+                }
+                fileList.add(fileInfoDto);
             }
 
             return fileList;
 
         } catch (IOException e) {
+            log.error("Failed to store files.", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to store files.", e);
         }
     }
 
     @Override
     public List<FileInfoDTO> loadAll(TaskV3 task, String boardId) {
-        return ListMapper.mapFileListToFileInfoDTOList(task.getFiles(), task.getId(), boardId);
+        List<FileInfoDTO> fileInfoDtoList = ListMapper.mapFileListToFileInfoDTOList(task.getFiles(), task.getId(), boardId);
+        for (FileInfoDTO fileInfoDto : fileInfoDtoList) {
+            addThumbnailPath(fileInfoDto);
+        }
+        return fileInfoDtoList;
     }
 
     @Override
     public List<FileInfoDTO> loadAll(Integer taskId, String boardId) {
-        return ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId), taskId, boardId);
+        List<FileInfoDTO> fileInfoDtoList = ListMapper.mapFileListToFileInfoDTOList(fileRepository.findAllByTaskId(taskId), taskId, boardId);
+        for (FileInfoDTO fileInfoDto : fileInfoDtoList) {
+            addThumbnailPath(fileInfoDto);
+        }
+        return fileInfoDtoList;
     }
 
     @Override
@@ -102,7 +128,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public FileV3 loadAsData(String filename, Integer taskId) {
-        return fileRepository.findByFileNameAndTaskId(taskId,filename);
+        return fileRepository.findByFileNameAndTaskId(taskId, filename);
     }
 
     @Override
@@ -123,18 +149,25 @@ public class FileSystemStorageService implements StorageService {
 
     public void deleteFilesExcept(Integer taskId, List<String> excludeNames) {
         try {
-            // Delete files from the filesystem
+            // Get the task directory
             Path taskDirectory = rootLocation.resolve(taskId.toString());
-            if (Files.exists(taskDirectory) && Files.isDirectory(taskDirectory)) {
-                Files.list(taskDirectory)
-                        .filter(path -> !excludeNames.contains(path.getFileName().toString()))
-                        .forEach(path -> {
-                            try {
-                                Files.delete(path);
-                            } catch (IOException e) {
-                                throw new RuntimeException("Failed to delete file: " + path.getFileName(), e);
-                            }
-                        });
+
+            // List all files in the task directory
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(taskDirectory)) {
+                for (Path path : stream) {
+                    String fileName = path.getFileName().toString();
+                    // Check if the file is not in the exclude list
+                    if (!excludeNames.contains(fileName)) {
+                        // Delete the file
+                        Files.delete(path);
+
+                        // Check and delete the corresponding thumbnail file
+                        Path thumbnailPath = taskDirectory.resolve("thumbnail_" + fileName);
+                        if (Files.exists(thumbnailPath)) {
+                            Files.delete(thumbnailPath);
+                        }
+                    }
+                }
             }
 
             // Delete records from the database
@@ -145,4 +178,75 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    public boolean canCreateThumbnail(File file) {
+        try {
+            if (!file.exists()) {
+                log.error("File does not exist: " + file.getAbsolutePath());
+                return false;
+            }
+    
+            String mimeType = Files.probeContentType(file.toPath());
+            if (mimeType != null && mimeType.startsWith("image/") && !mimeType.equals("image/svg+xml")) {
+                BufferedImage image = ImageIO.read(file);
+                if (image != null) {
+                    return true;
+                } else {
+                    log.error("Failed to read image file: " + file.getAbsolutePath());
+                }
+            } else if (mimeType != null && mimeType.startsWith("video/")) {
+                return true;
+            } else {
+                log.error("Unsupported mime type: " + mimeType);
+            }
+        } catch (IOException e) {
+            log.error("IOException occurred while checking thumbnail creation for file: " + file.getName(), e);
+        } catch (Exception e) {
+            log.error("Failed to create thumbnail for file: " + file.getName(), e);
+        }
+        return false;
+    }
+
+    public void createThumbnail(File file, Path taskDirectory, MultipartFile mf) {
+        try {
+            if (!file.exists()) {
+                log.error("File does not exist: " + file.getAbsolutePath());
+                return;
+            }
+
+            String mimeType = Files.probeContentType(file.toPath());
+
+            if (mimeType != null && mimeType.startsWith("image/")) {
+                File thumbnailFile = taskDirectory.resolve("thumbnail_" + mf.getOriginalFilename()).toFile();
+                Thumbnails.of(file)
+                        .size(100, 100)
+                        .outputFormat("jpg")
+                        .toFile(thumbnailFile);
+            } else if (mimeType != null && mimeType.startsWith("video/")) {
+                VideoThumbnailGenerator.createVideoThumbnail(file.getAbsolutePath(), taskDirectory.resolve("thumbnail_" + mf.getOriginalFilename() + ".jpg").toString());
+            } else {
+                log.error("Unsupported mime type: " + mimeType);
+            }
+        } catch (IOException e) {
+            log.error("IOException occurred while creating thumbnail for file: " + mf.getOriginalFilename(), e);
+        } catch (Exception e) {
+            log.error("Failed to create thumbnail for file: " + mf.getOriginalFilename(), e);
+        }
+    }
+
+    private boolean hasThumbnail(Integer taskId, String fileName) {
+        Path taskDirectory = rootLocation.resolve(taskId.toString());
+        Path thumbnailPath = taskDirectory.resolve("thumbnail_" + fileName + ".jpg");
+        return Files.exists(thumbnailPath);
+    }
+
+    private void addThumbnailPath(FileInfoDTO fileInfoDto) {
+        if (hasThumbnail(fileInfoDto.getTaskId(), fileInfoDto.getName())) {
+            fileInfoDto.setThumbnailPath(String.format(
+                "/v3/boards/%s/tasks/%d/files/%s/thumbnail",
+                fileInfoDto.getBoardId(),
+                fileInfoDto.getTaskId(),
+                fileInfoDto.getName()
+            ));
+        }
+    }
 }
