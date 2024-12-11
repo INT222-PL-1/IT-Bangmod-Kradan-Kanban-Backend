@@ -212,6 +212,8 @@ public class FileSystemStorageService implements StorageService {
 
             String mimeType = Files.probeContentType(file.toPath());
 
+            log.info(mimeType);
+
             if (mimeType != null && mimeType.startsWith("image/")) {
                 File thumbnailFile = taskDirectory.resolve("thumbnail_" + mf.getOriginalFilename()).toFile();
                 Thumbnails.of(file)
