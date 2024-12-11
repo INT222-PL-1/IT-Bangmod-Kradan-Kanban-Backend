@@ -5,6 +5,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -110,7 +111,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             request.setAttribute(ERROR_TYPE, ErrorType.TOKEN_MALFORMED);
         } catch (ExpiredJwtException e) {
             request.setAttribute(ERROR_TYPE, ErrorType.TOKEN_EXPIRED);
-        } catch (SignatureException e){
+        } catch (SignatureException | UnsupportedJwtException e){
             request.setAttribute(ERROR_TYPE, ErrorType.TOKEN_TAMPERED);
         }
         return null;
@@ -123,7 +124,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             request.setAttribute(ERROR_TYPE, ErrorType.TOKEN_MALFORMED);
         } catch (ExpiredJwtException e) {
             request.setAttribute(ERROR_TYPE, ErrorType.TOKEN_EXPIRED);
-        } catch (SignatureException e){
+        } catch (SignatureException | UnsupportedJwtException e){
             request.setAttribute(ERROR_TYPE, ErrorType.TOKEN_TAMPERED);
         }
         return null;

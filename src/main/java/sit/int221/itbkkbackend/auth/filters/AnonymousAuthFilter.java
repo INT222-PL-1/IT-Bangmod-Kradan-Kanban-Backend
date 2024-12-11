@@ -49,7 +49,6 @@ public class AnonymousAuthFilter extends OncePerRequestFilter {
         if (!HttpMethod.GET.matches(request.getMethod()) && SecurityContextHolder.getContext().getAuthentication() == null && request.getAttribute(ERROR_TYPE) == null){
             request.setAttribute(ERROR_TYPE, ErrorType.UNAUTHORIZED_UPDATE);
         }
-        log.info("anoy filter");
         chain.doFilter(request, response);
     }
 
