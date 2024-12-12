@@ -103,7 +103,6 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public Path load(String filename, Integer taskId) {
-        // Resolve the path to the file under the specified task directory
         return rootLocation.resolve(taskId.toString()).resolve(filename).normalize().toAbsolutePath();
     }
 
@@ -153,19 +152,14 @@ public class FileSystemStorageService implements StorageService {
         }
 
         try {
-            // Get the task directory
             Path taskDirectory = rootLocation.resolve(taskId.toString());
 
-            // List all files in the task directory
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(taskDirectory)) {
                 for (Path path : stream) {
                     String fileName = path.getFileName().toString();
-                    // Check if the file is not in the exclude list
                     if (!excludeNamesWithThumbnail.contains(fileName)) {
-                        // Delete the file
                         Files.delete(path);
 
-                        // Check and delete the corresponding thumbnail file
                         Path thumbnailPath = taskDirectory.resolve("thumbnail_" + fileName);
                         if (Files.exists(thumbnailPath)) {
                             Files.delete(thumbnailPath);
@@ -174,7 +168,6 @@ public class FileSystemStorageService implements StorageService {
                 }
             }
 
-            // Delete records from the database
             fileRepository.deleteFilesByTaskIdExcludingNames(taskId, excludeNames);
 
         } catch (IOException e) {
@@ -182,7 +175,7 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-    public boolean canCreateThumbnail(File file) {
+    private boolean canCreateThumbnail(File file) {
         try {
             if (!file.exists()) {
                 log.error("File does not exist: " + file.getAbsolutePath());
@@ -208,7 +201,7 @@ public class FileSystemStorageService implements StorageService {
         return false;
     }
 
-    public void createThumbnail(File file, Path taskDirectory, MultipartFile mf) {
+    private void createThumbnail(File file, Path taskDirectory, MultipartFile mf) {
         try {
             if (!file.exists()) {
                 log.error("File does not exist: " + file.getAbsolutePath());
