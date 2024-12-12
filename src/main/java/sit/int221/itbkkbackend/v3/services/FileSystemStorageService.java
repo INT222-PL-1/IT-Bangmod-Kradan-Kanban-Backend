@@ -172,6 +172,8 @@ public class FileSystemStorageService implements StorageService {
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete files for task: " + taskId, e);
+        } catch (Exception e) {
+            log.error("Failed to delete files for task: " + taskId, e);
         }
     }
 
