@@ -146,7 +146,7 @@ public class TaskServiceV3 {
             throw new ItemNotFoundException(HttpStatus.NOT_FOUND,id);
         }
         validateTaskDTOField(task);
-        if(task.getAttachments() != null) {
+        if(!task.getAttachments().isEmpty()) {
             fileService.deleteFilesExcept(id, task.getAttachments());
         }
         task.setBoardId(boardId);
