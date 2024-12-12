@@ -158,12 +158,7 @@ public class FileSystemStorageService implements StorageService {
                 for (Path path : stream) {
                     String fileName = path.getFileName().toString();
                     if (!excludeNamesWithThumbnail.contains(fileName)) {
-                        Files.delete(path);
-
-                        Path thumbnailPath = taskDirectory.resolve("thumbnail_" + fileName);
-                        if (Files.exists(thumbnailPath)) {
-                            Files.delete(thumbnailPath);
-                        }
+                        Files.deleteIfExists(path);
                     }
                 }
             }
