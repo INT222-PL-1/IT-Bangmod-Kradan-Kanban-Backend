@@ -146,9 +146,11 @@ public class FileSystemStorageService implements StorageService {
     public void deleteFilesExcept(Integer taskId, List<String> excludeNames) {
 
         List<String> excludeNamesWithThumbnail = new LinkedList<>();
-        for (String excludeName : excludeNames) {
-            excludeNamesWithThumbnail.add(excludeName);
-            excludeNamesWithThumbnail.add("thumbnail_" + excludeName + ".jpg");
+        if (excludeNames != null && !excludeNames.isEmpty()) {
+            for (String excludeName : excludeNames) {
+                excludeNamesWithThumbnail.add(excludeName);
+                excludeNamesWithThumbnail.add("thumbnail_" + excludeName + ".jpg");
+            }
         }
 
         try {
