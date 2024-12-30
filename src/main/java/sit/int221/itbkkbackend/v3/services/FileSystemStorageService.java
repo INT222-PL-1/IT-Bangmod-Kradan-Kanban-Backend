@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import kotlin.collections.builders.ListBuilder;
 import sit.int221.itbkkbackend.utils.ListMapper;
 import sit.int221.itbkkbackend.v3.dtos.FileInfoDTO;
 import sit.int221.itbkkbackend.v3.entities.FileV3;
@@ -166,7 +169,8 @@ public class FileSystemStorageService implements StorageService {
             }
 
             fileRepository.deleteFilesByTaskIdExcludingNames(taskId, excludeNames);
-
+        } catch (NoSuchFileException e) {
+            log.error("Failed to delete files for task: " + taskId, e);
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete files for task: " + taskId, e);
         } catch (Exception e) {
